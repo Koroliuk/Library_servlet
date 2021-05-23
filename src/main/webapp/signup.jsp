@@ -1,17 +1,29 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: koroliuk
-  Date: 23.05.21
-  Time: 13:35
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Registration Page</title>
 </head>
 <body>
-    <h2>Registration</h2>
-    <a href="${pageContext.request.contextPath}/index.jsp">Index</a>
+    <h1>Registration</h1>
+    <div>
+        <form method="post" action="${pageContext.request.contextPath}/app/signup">
+            <div>
+                <input type="text" name="login">
+            </div>
+            <div>
+                <input type="password" name="password">
+            </div>
+            <div>
+                <input class="button" type="submit" value="Sign Up">
+            </div>
+            <div>
+                <a href="${pageContext.request.contextPath}/app/login">Already singed up</a>
+            </div>
+        </form>
+    </div>
+    <div>
+        <a href="${pageContext.request.contextPath}/index.jsp">To home page</a>
+    </div>
 </body>
 </html>

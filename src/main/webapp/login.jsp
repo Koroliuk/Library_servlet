@@ -1,21 +1,24 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: koroliuk
-  Date: 23.05.21
-  Time: 13:35
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Login Page</title>
 </head>
 <body>
     <h1>Login</h1>
-    <form method="get" action="${pageContext.request.contextPath}/app/login">
-        <input type="text" name="name"><br/>
-        <input type="password" name="pass"><br/><br/>
-        <input class="button" type="submit" value="Війти">
+    <form method="post" action="${pageContext.request.contextPath}/app/login">
+        <div>
+            <input type="text" name="login">
+        </div>
+        <div>
+            <input type="password" name="password">
+        </div>
+        <div>
+            <input class="button" type="submit" value="Login">
+        </div>
+        <div>
+            <a href="${pageContext.request.contextPath}/app/signup">Singed up</a>
+        </div>
     </form>
     <br/>
     <a href="${pageContext.request.contextPath}/app/logout">На головну</a>
