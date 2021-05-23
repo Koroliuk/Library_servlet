@@ -1,16 +1,13 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: koroliuk
-  Date: 23.05.21
-  Time: 13:25
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Search Page</title>
 </head>
 <body>
-    <h2>Search</h2>
+    <h1>Search</h1>
+    <div>
+        <a href="${pageContext.request.contextPath}/index.jsp">To home page</a>
+    </div>
 </body>
 </html>
