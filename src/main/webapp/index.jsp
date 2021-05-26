@@ -4,6 +4,7 @@
     <title>Main Page</title>
 </head>
 <body>
+
     <h2>Welcome to library</h2>
     <div>
         <p><a href="${pageContext.request.contextPath}/search.jsp">Search</a></p>
