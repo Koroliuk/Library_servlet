@@ -1,10 +1,13 @@
 package ua.training.model.dao.impl;
 
+import com.sun.corba.se.impl.util.RepositoryIdCache;
 import ua.training.model.dao.UserDao;
+import ua.training.model.entity.Role;
 import ua.training.model.entity.User;
 
 import java.sql.*;
 import java.util.List;
+import java.util.Optional;
 
 public class JDBCUserDao implements UserDao {
     private final Connection connection;
@@ -55,5 +58,26 @@ public class JDBCUserDao implements UserDao {
     @Override
     public void close() {
 
+    }
+
+    @Override
+    public Optional<User> findByLogin(String login) {
+        String query = "SELECT * FROM users WHERE login=?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, login);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                long id = resultSet.getLong(1);
+                String password = resultSet.getString(3);
+                Role role = Role.valueOf(resultSet.getString(4));
+                boolean is_blocked = resultSet.getBoolean(5);
+                User user = new User(login, password, role, is_blocked);
+                user.setId(id);
+                return Optional.of(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 }

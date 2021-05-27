@@ -19,7 +19,7 @@ public class Servlet extends HttpServlet {
 
     public void init() {
         commandMap.put("signup", new Signup(new UserService()));
-        commandMap.put("login", new Login());
+        commandMap.put("login", new Login(new UserService()));
         commandMap.put("logout", new Logout());
     }
 
@@ -38,7 +38,6 @@ public class Servlet extends HttpServlet {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
-        System.out.println(path);
         path = path.replaceAll(".*/app/" , "");
         Command command = commandMap.getOrDefault(path, (r) -> "/index.jsp");
         String page = command.execute(request);
