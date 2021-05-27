@@ -9,8 +9,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Main Page</title>
-<%--    <link rel="stylesheet" href="/css/index.css">--%>
-<%--    <link rel="stylesheet" href="/css/footer.css">--%>
 </head>
 <header>
     <div class="header_name">
