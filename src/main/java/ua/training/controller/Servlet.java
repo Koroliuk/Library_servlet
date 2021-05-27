@@ -4,6 +4,7 @@ import ua.training.controller.command.Command;
 import ua.training.controller.command.Login;
 import ua.training.controller.command.Logout;
 import ua.training.controller.command.Signup;
+import ua.training.model.service.UserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,7 +18,7 @@ public class Servlet extends HttpServlet {
     private final Map<String, Command> commandMap = new HashMap<>();
 
     public void init() {
-        commandMap.put("signup", new Signup());
+        commandMap.put("signup", new Signup(new UserService()));
         commandMap.put("login", new Login());
         commandMap.put("logout", new Logout());
     }
