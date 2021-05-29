@@ -2,7 +2,6 @@ package ua.training.controller.command;
 
 import ua.training.model.entity.Role;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashSet;
