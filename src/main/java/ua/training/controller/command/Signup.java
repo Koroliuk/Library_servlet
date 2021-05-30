@@ -20,7 +20,7 @@ public class Signup implements Command {
     public String execute(HttpServletRequest request) {
         String login = request.getParameter("login");
         String password = request.getParameter("password");
-        if (login == null  || password == null) {
+        if (login == null  || password == null || login.equals("") || password.equals("")) {
             return "/signup.jsp";
         }
         String loginPattern = "^(?!.*\\.\\.)(?!.*\\.$)[^\\W][\\w.]{4,20}$";
