@@ -1,9 +1,6 @@
 package ua.training.controller;
 
-import ua.training.controller.command.Command;
-import ua.training.controller.command.Login;
-import ua.training.controller.command.Logout;
-import ua.training.controller.command.Signup;
+import ua.training.controller.command.*;
 import ua.training.model.service.UserService;
 
 import javax.servlet.ServletException;
@@ -21,6 +18,9 @@ public class Servlet extends HttpServlet {
         commandMap.put("signup", new Signup(new UserService()));
         commandMap.put("login", new Login(new UserService()));
         commandMap.put("logout", new Logout());
+        commandMap.put("reader/home", new ReaderHome());
+        commandMap.put("librarian/home", new LibrarianHome());
+        commandMap.put("admin/home", new AdminHome());
     }
 
     public void doGet(HttpServletRequest request,
