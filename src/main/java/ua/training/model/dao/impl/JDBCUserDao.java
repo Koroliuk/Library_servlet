@@ -1,11 +1,11 @@
 package ua.training.model.dao.impl;
 
-import com.sun.corba.se.impl.util.RepositoryIdCache;
 import ua.training.model.dao.UserDao;
-import ua.training.model.entity.Role;
+import ua.training.model.dao.mapper.UserMapper;
 import ua.training.model.entity.User;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,8 +17,8 @@ public class JDBCUserDao implements UserDao {
     }
     @Override
     public void create(User entity) {
-        String query = "INSERT INTO users (login, password_hash, user_role, is_blocked) VALUES (?, ?, ?::\"role\", ?)";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(SQLConstants.CREATE_USER, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, entity.getLogin());
             statement.setString(2, entity.getPassword_hash());
             statement.setString(3, entity.getRole().name());
@@ -26,7 +26,7 @@ public class JDBCUserDao implements UserDao {
             if (statement.executeUpdate() > 0) {
                 try (ResultSet resultSet = statement.getGeneratedKeys()) {
                     if (resultSet.next()) {
-                        entity.setId(resultSet.getInt(1));
+                        entity.setId(resultSet.getInt("id"));
                     }
                 }
             }
@@ -36,13 +36,54 @@ public class JDBCUserDao implements UserDao {
     }
 
     @Override
-    public User findById(int id) {
-        return null;
+    public Optional<User> findById(long id) {
+        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_USER_BY_ID)) {
+            statement.setLong(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    UserMapper mapper = new UserMapper();
+                    User user = mapper.extractFromResultSet(resultSet);
+                    return Optional.of(user);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<User> findByLogin(String login) {
+        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_USER_BY_LOGIN)) {
+            statement.setString(1, login);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    UserMapper mapper = new UserMapper();
+                    User user = mapper.extractFromResultSet(resultSet);
+                    return Optional.of(user);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override
     public List<User> findAll() {
-        return null;
+        List<User> userList = new ArrayList<>();
+        try (Statement statement = connection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(SQLConstants.GET_ALL_USERS)) {
+                while (resultSet.next()) {
+                    UserMapper mapper = new UserMapper();
+                    User user = mapper.extractFromResultSet(resultSet);
+                    userList.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userList;
     }
 
     @Override
@@ -51,33 +92,21 @@ public class JDBCUserDao implements UserDao {
     }
 
     @Override
-    public void delete(int id) {
-
+    public void delete(long id) {
+        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.DELETE_USER_BY_ID)) {
+            statement.setLong(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void close() {
-
-    }
-
-    @Override
-    public Optional<User> findByLogin(String login) {
-        String query = "SELECT * FROM users WHERE login=?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, login);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                long id = resultSet.getLong(1);
-                String password = resultSet.getString(3);
-                Role role = Role.valueOf(resultSet.getString(4));
-                boolean is_blocked = resultSet.getBoolean(5);
-                User user = new User(login, password, role, is_blocked);
-                user.setId(id);
-                return Optional.of(user);
-            }
+        try {
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return Optional.empty();
     }
 }
