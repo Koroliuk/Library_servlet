@@ -1,12 +1,16 @@
 package ua.training.controller.command;
 
-import ua.training.model.entity.Role;
+import ua.training.model.entity.enums.Role;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class CommandUtility {
+
     public static boolean checkUserIsLogged(HttpServletRequest request, String login) {
         HashSet<String> loggedUsers = (HashSet<String>) request.getSession().getServletContext().getAttribute("loggedUsers");
         if (loggedUsers == null) {

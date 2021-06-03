@@ -1,6 +1,6 @@
 package ua.training.controller.command;
 
-import ua.training.model.entity.Role;
+import ua.training.model.entity.enums.Role;
 import ua.training.model.entity.User;
 import ua.training.model.service.UserService;
 
@@ -30,7 +30,7 @@ public class Login implements Command {
         if (!isLoginValid || !isPasswordValid) {
             return "/login.jsp?validError=true";
         }
-        Optional<User> optionalUser = userService.getUserByLogin(login);
+        Optional<User> optionalUser = userService.findByLogin(login);
         if (!optionalUser.isPresent()) {
             return "/login.jsp?loginError=true";
         }
