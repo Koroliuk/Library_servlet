@@ -1,6 +1,6 @@
 package ua.training.controller.command;
 
-import ua.training.model.entity.Role;
+import ua.training.model.entity.enums.Role;
 import ua.training.model.entity.User;
 import ua.training.model.service.UserService;
 
@@ -30,11 +30,16 @@ public class Signup implements Command {
         if (!isLoginValid || !isPasswordValid) {
             return "/signup.jsp?validError=true";
         }
-        Optional<User> optionalUser = userService.getUserByLogin(login);
+        Optional<User> optionalUser = userService.findByLogin(login);
         if (optionalUser.isPresent()) {
             return "/signup.jsp?loginError=true";
         }
-        User user = new User(login, password, Role.READER, false);
+        User user = new User.Builder()
+                .login(login)
+                .password_hash(password)
+                .role(Role.READER)
+                .isBlocked(false)
+                .build();
         userService.singUpUser(user);
         return "/signup.jsp?successEvent=true";
     }
