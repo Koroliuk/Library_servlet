@@ -9,6 +9,7 @@ import java.util.*;
 
 public class BookService {
     private final DaoFactory daoFactory = DaoFactory.getInstance();
+    private long bookCounter;
 
     public void createBook(Book book) {
         try (BookDao bookDao = daoFactory.createBookDao()) {
@@ -115,34 +116,15 @@ public class BookService {
         }
     }
 
-    public List<Book> findAllByKeyWords(String keyWords) {
-        try (BookDao bookDao = daoFactory.createBookDao()) {
-            String[] keyWordList = keyWords.split("[^a-zA-ZА-Яа-я0-9]+");
-            Map<Book, Integer> bookMap = new HashMap<>();
-            for (String keyWord: keyWordList) {
-                List<Book> bookList1 = bookDao.findByKeyWordInTitle(keyWord);
-                List<Book> bookList2 = bookDao.findByKeyWordInAuthors(keyWord);
-                addBooksToMapFromList(bookList1, bookMap);
-                addBooksToMapFromList(bookList2, bookMap);
-            }
-            Comparator<Book> comparator = Comparator.comparing(bookMap::get);
-            List<Book> books = new ArrayList<>(bookMap.keySet());
-            books.sort(comparator);
-            return books;
-        }
-    }
-
-    private void addBooksToMapFromList(List<Book> bookList, Map<Book, Integer> bookMap) {
-        try (AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            for (Book book: bookList) {
+    public List<Book> findAllByKeyWords(String keyWords, String sortBy, String sortType, int page) {
+        try (BookDao bookDao = daoFactory.createBookDao();
+             AuthorDao authorDao = daoFactory.createAuthorDao()) {
+            List<Book> bookList = bookDao.findByKeyWord(keyWords, sortBy, sortType, page);
+            for (Book book : bookList) {
                 List<Author> authorList = authorDao.getAuthorsByBookId(book.getId());
                 book.setAuthors(authorList);
-                if (!bookMap.containsKey(book)) {
-                    bookMap.put(book, 1);
-                } else {
-                    bookMap.put(book, bookMap.get(book)+1);
-                }
             }
+            return bookList;
         }
     }
 
@@ -175,6 +157,12 @@ public class BookService {
                 }
             }
             return author;
+        }
+    }
+
+    public long getBookCounter() {
+        try (BookDao bookDao = daoFactory.createBookDao()) {
+            return bookDao.getAmountOfBooks();
         }
     }
 }

@@ -37,64 +37,71 @@
     </div>
 </header>
 <body>
-    <h2>Catalog</h2>
-    <div>
-        <form method="post" action="${pageContext.request.contextPath}/app/search">
-            <label>
-                <input type="text" name="keyWords" placeholder="Пошук">
-            </label>
-            <input type="submit" value="Знайти">
-        </form>
-    </div>
-    <c:if test="${requestScope.bookList != null}">
-        <table>
+<h2>Catalog</h2>
+<div>
+    <form method="post" action="${pageContext.request.contextPath}/app/search">
+        <label>
+            <input type="text" name="keyWords" placeholder="Пошук">
+        </label>
+        <input type="submit" value="Знайти">
+    </form>
+</div>
+<c:if test="${requestScope.bookList != null}">
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Authors</th>
+        </tr>
+        <a href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=title&sortType=<c:if test="${param.sortType == 'dec'}">asc</c:if><c:if test="${param.sortType != 'dec'}">dec</c:if>">За назвою</a>
+        <a href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=author&sortType=<c:if test="${param.sortType == 'dec'}">asc</c:if><c:if test="${param.sortType != 'dec'}">dec</c:if>">За автором</a>
+        <a href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=edition&sortType=<c:if test="${param.sortType == 'dec'}">asc</c:if><c:if test="${param.sortType != 'dec'}">dec</c:if>">За виданням</a>
+        <a href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=date&sortType=<c:if test="${param.sortType == 'dec'}">asc</c:if><c:if test="${param.sortType != 'dec'}">dec</c:if>">За датою видання</a>
+        <c:forEach items="${requestScope.bookList}" var="book">
             <tr>
-                <th>Title</th>
-                <th>Authors</th>
+                <td><c:out value="${book.title}"/></td>
+                <td>
+                    <%
+                        Book book = (Book) pageContext.getAttribute("book");
+                        StringBuilder authorsString = new StringBuilder();
+                        for (Author author : book.getAuthors()) {
+                            authorsString.append(author.getName()).append(",").append(" ");
+                        }
+                        authorsString.deleteCharAt(authorsString.length() - 1);
+                        authorsString.deleteCharAt(authorsString.length() - 1);
+                        out.print(authorsString.toString());
+                    %>
+                </td>
+                <td>
+                    <button id="showLessMoreButton${book.id}" onclick="showDescription(${book.id})">Show more</button>
+                </td>
+                <c:if test="${sessionScope.role == 'READER'}">
+                    <td>
+                        <a href="${pageContext.request.contextPath}/app/reader/orderBook?bookId=${book.id}&userLogin=${sessionScope.userLogin}">Замовити</a>
+                    </td>
+                </c:if>
             </tr>
-            <c:forEach items="${requestScope.bookList}" var="book" >
-                <tr>
-                    <td><c:out value="${book.title}"/></td>
-                    <td>
-                        <%
-                            Book book = (Book) pageContext.getAttribute("book");
-                            StringBuilder authorsString = new StringBuilder();
-                            for (Author author : book.getAuthors()) {
-                                authorsString.append(author.getName()).append(",").append(" ");
-                            }
-                            authorsString.deleteCharAt(authorsString.length() - 1);
-                            authorsString.deleteCharAt(authorsString.length() - 1);
-                            out.print(authorsString.toString());
-                        %>
-                    </td>
-                    <td>
-                        <button id="showLessMoreButton${book.id}" onclick="showDescription(${book.id})">Show more</button>
-                    </td>
-                    <c:if test="${sessionScope.role == 'READER'}">
-                        <td>
-                            <a href="${pageContext.request.contextPath}/app/reader/orderBook?bookId=${book.id}&userLogin=${sessionScope.userLogin}">Замовити</a>
-                        </td>
-                    </c:if>
-                </tr>
-                <tr id="additionalInfo${book.id}" hidden>
-                    <td>
-                        Language: <c:out value="${book.language}"/><br/>
-                        Edition: <c:out value="${book.edition.name}"/><br/>
-                        Date of publish: <br/> <c:out value="${book.publicationDate}"/>
-                    </td>
-                    <td>
-                        Description:<br/><c:out value="${book.description}"/><br/>
-                    </td>
-                </tr>
-            </c:forEach>
-        </table>
-    </c:if>
-    <c:if test="${requestScope.bookList == null}">
-        <p>Пусто</p>
-    </c:if>
-    <div>
-        <a href="${pageContext.request.contextPath}/index.jsp"><fmt:message key="global.to.home.page"/></a>
-    </div>
+            <tr id="additionalInfo${book.id}" hidden>
+                <td>
+                    Language: <c:out value="${book.language}"/><br/>
+                    Edition: <c:out value="${book.edition.name}"/><br/>
+                    Date of publish: <br/> <c:out value="${book.publicationDate}"/>
+                </td>
+                <td>
+                    Description:<br/><c:out value="${book.description}"/><br/>
+                </td>
+            </tr>
+        </c:forEach>
+    </table>
+</c:if>
+<c:if test="${requestScope.bookList == null}">
+    <p>Пусто</p>
+</c:if>
+<c:forEach begin="1" end="${param.amountOfPages}" var="numberOfPage">
+    <a href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&sortBy=${param.sortBy}&sortType=${param.sortType}&page=${numberOfPage}">${numberOfPage}</a>
+</c:forEach>
+<div>
+    <a href="${pageContext.request.contextPath}/index.jsp"><fmt:message key="global.to.home.page"/></a>
+</div>
 </body>
-<script type="text/javascript" src="${pageContext.request.contextPath}/public/js/seach.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/public/js/search.js"></script>
 </html>
