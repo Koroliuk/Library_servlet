@@ -1,4 +1,3 @@
-<%@ page import="java.util.List" %>
 <%@ page import="ua.training.model.entity.Author" %>
 <%@ page import="ua.training.model.entity.Book" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
@@ -46,6 +45,12 @@
                         <td><c:out value="${user.id}"/></td>
                         <td><c:out value="${user.login}"/></td>
                         <td><c:out value="${user.role}"/></td>
+                        <c:if test="${user.blocked == true}">
+                            <td><a href="${pageContext.request.contextPath}/app/admin/unblockUser?id=${user.id}">Розблокувати</a></td>
+                        </c:if>
+                        <c:if test="${user.blocked == false}">
+                            <td><a href="${pageContext.request.contextPath}/app/admin/blockUser?id=${user.id}">Заблокувати</a></td>
+                        </c:if>
                         <c:if test="${user.role == 'LIBRARIAN'}">
                             <td><a href="${pageContext.request.contextPath}/app/admin/deleteLibrarian?id=${user.id}">Видалити</a></td>
                         </c:if>

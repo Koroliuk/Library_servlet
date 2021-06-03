@@ -87,11 +87,16 @@ public class JDBCBookDao implements BookDao {
     }
 
     @Override
-    public List<Book> findByKeyWordInTitle(String keyWord) {
+    public List<Book> findByKeyWord(String keyWord, String sortBy, String sortType, int page) {
         List<Book> bookList = new ArrayList<>();
+        String query = chooseSortingQuery(sortBy, sortType);
         try (PreparedStatement statement =
-                     connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_KEYWORD_IN_TITLE)) {
+                     connection.prepareStatement(query)) {
             statement.setString(1, keyWord);
+            statement.setString(2, keyWord);
+            int offsetPosition = (page-1)*4;
+            statement.setInt(3, 4);
+            statement.setInt(4, offsetPosition);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     BookMapper mapper = new BookMapper();
@@ -106,22 +111,19 @@ public class JDBCBookDao implements BookDao {
     }
 
     @Override
-    public List<Book> findByKeyWordInAuthors(String keyWord) {
-        List<Book> bookList = new ArrayList<>();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_KEYWORD_IN_AUTHORS)) {
-            statement.setString(1, keyWord);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    BookMapper mapper = new BookMapper();
-                    Book book = mapper.extractFromResultSet(resultSet);
-                    bookList.add(book);
+    public long getAmountOfBooks() {
+        String query = "SELECT COUNT(*) FROM book";
+        try (Statement statement = connection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(query)) {
+                if (resultSet.next()) {
+                    return resultSet.getLong(1);
                 }
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return bookList;
+        return 0;
     }
 
     @Override
@@ -196,5 +198,35 @@ public class JDBCBookDao implements BookDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private String chooseSortingQuery(String sortBy, String sortType) {
+        String query;
+        if (sortType.equals("dec")) {
+            if (sortBy.equals("title")) {
+                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_TITLE_DEC;
+            } else if (sortBy.equals("author")) {
+                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_AUTHOR_DEC;
+            } else if (sortBy.equals("edition")) {
+                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_DEC;
+            } else if (sortBy.equals("date")) {
+                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_DATE_DEC;
+            } else {
+                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_ID_DEC;
+            }
+        } else {
+            if (sortBy.equals("title")) {
+                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_TITLE_INC;
+            } else if (sortBy.equals("author")) {
+                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_AUTHOR_INC;
+            } else if (sortBy.equals("edition")) {
+                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_INC;
+            } else if (sortBy.equals("date")) {
+                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_DATE_INC;
+            } else {
+                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_ID_INC;
+            }
+        }
+        return query;
     }
 }
