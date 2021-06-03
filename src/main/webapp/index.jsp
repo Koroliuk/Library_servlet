@@ -29,7 +29,12 @@
 <body>
     <h2><fmt:message key="index.welcome"/></h2>
     <div>
-        <p><a href="${pageContext.request.contextPath}/search.jsp"><fmt:message key="index.search"/></a></p>
+        <form method="post" action="${pageContext.request.contextPath}/app/search">
+            <label>
+                <input type="text" name="keyWords" placeholder="Пошук">
+            </label>
+            <input type="submit" value="Знайти">
+        </form>
     </div>
 </body>
 <footer>
