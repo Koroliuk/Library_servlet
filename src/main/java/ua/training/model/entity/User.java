@@ -1,5 +1,7 @@
 package ua.training.model.entity;
 
+import ua.training.model.entity.enums.Role;
+
 public class User {
 
     private long id;
@@ -8,11 +10,49 @@ public class User {
     private Role role;
     private boolean isBlocked;
 
-    public User(String login, String password_hash, Role role, boolean isBlocked) {
-        this.login = login;
-        this.password_hash = password_hash;
-        this.role = role;
-        this.isBlocked = isBlocked;
+    public static class Builder {
+        private long id;
+        private String login;
+        private String password_hash;
+        private Role role;
+        private boolean isBlocked;
+
+        public Builder id(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder login(String login) {
+            this.login = login;
+            return this;
+        }
+
+        public Builder password_hash(String password_hash) {
+            this.password_hash = password_hash;
+            return this;
+        }
+
+        public Builder role(Role role) {
+            this.role = role;
+            return this;
+        }
+
+        public Builder isBlocked(boolean blocked) {
+            isBlocked = blocked;
+            return this;
+        }
+
+        public User build() {
+            return new User(this);
+        }
+    }
+
+    private User(Builder builder) {
+        this.id = builder.id;
+        this.login = builder.login;
+        this.password_hash = builder.password_hash;
+        this.role = builder.role;
+        this.isBlocked = builder.isBlocked;
     }
 
     public String getLogin() {
