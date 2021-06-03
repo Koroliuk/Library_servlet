@@ -1,6 +1,6 @@
 package ua.training.controller.filters;
 
-import ua.training.model.entity.Role;
+import ua.training.model.entity.enums.Role;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
