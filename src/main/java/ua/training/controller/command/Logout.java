@@ -8,8 +8,12 @@ public class Logout implements Command {
     public String execute(HttpServletRequest request) {
         HashSet<String> loggedUsers = (HashSet<String>) request.getSession().getServletContext().getAttribute("loggedUsers");
         String login = (String) request.getSession().getAttribute("userLogin");
-        loggedUsers.remove(login);
-        request.getSession().setAttribute("loggedUsers", loggedUsers);
+        if (loggedUsers != null) {
+            loggedUsers.remove(login);
+        }
+        request.getSession().getServletContext().setAttribute("loggedUsers", loggedUsers);
+        request.getSession().setAttribute("userLogin", null);
+        request.getSession().setAttribute("role", null);
         return "redirect:/index.jsp";
     }
 }

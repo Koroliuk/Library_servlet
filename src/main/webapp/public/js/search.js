@@ -9,3 +9,5 @@ function showDescription(bookId) {
         document.getElementById("showLessMoreButton"+bookId).textContent = "Show less";
     }
 }
+
+
