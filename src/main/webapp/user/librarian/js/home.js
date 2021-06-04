@@ -9,3 +9,15 @@ function showDescription(orderId) {
         document.getElementById("showLessMoreButton"+orderId).textContent = "Show less";
     }
 }
+
+function showOrders(userId) {
+    const hidden = document.getElementById("userOrders"+userId).hidden;
+    if (!hidden) {
+        document.getElementById("userOrders"+userId).hidden = true;
+        document.getElementById("showLessMoreButtonAbon"+userId).textContent = "Show more";
+    } else {
+
+        document.getElementById("userOrders"+userId).hidden = false;
+        document.getElementById("showLessMoreButtonAbon"+userId).textContent = "Show less";
+    }
+}

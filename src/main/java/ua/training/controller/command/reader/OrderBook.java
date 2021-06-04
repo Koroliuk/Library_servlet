@@ -49,6 +49,9 @@ public class OrderBook implements Command {
         if (bookId.equals("") || userLogin == null || userLogin.equals("")) {
             return "/user/reader/orderBook.jsp";
         }
+        if (book.getCount() == 0) {
+            return "user/reader/orderBook.jsp";
+        }
         if (orderType == null || orderType.equals("") || startDate == null || startDate.equals("") || endDate == null || endDate.equals("")) {
             return "/user/reader/orderBook.jsp";
         }
@@ -67,7 +70,7 @@ public class OrderBook implements Command {
                 .endDate(LocalDate.parse(endDate))
                 .orderStatus(status)
                 .build();
-        orderService.orderBook(order, book);
+        orderService.orderBook(order);
         return "/user/reader/orderBook.jsp?success=true";
     }
 }

@@ -9,7 +9,6 @@ import java.util.*;
 
 public class BookService {
     private final DaoFactory daoFactory = DaoFactory.getInstance();
-    private long bookCounter;
 
     public void createBook(Book book) {
         try (BookDao bookDao = daoFactory.createBookDao()) {

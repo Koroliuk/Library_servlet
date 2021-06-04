@@ -27,7 +27,7 @@
     </div>
 </header>
 <body>
-    <h1>Hello <%= session.getAttribute("userLogin") %>!</h1>
+    <h1>Кабінет користувача: <%= session.getAttribute("userLogin") %>!</h1>
     <div>
         <a href="${pageContext.request.contextPath}/app/admin/addBook">Add book</a>
         <a href="${pageContext.request.contextPath}/app/admin/addLibrarian">Add Librarian</a>
