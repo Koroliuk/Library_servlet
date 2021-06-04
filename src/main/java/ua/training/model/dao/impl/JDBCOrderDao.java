@@ -98,4 +98,23 @@ public class JDBCOrderDao implements OrderDao {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public List<Order> findUserOrdersById(long userId) {
+        List<Order> orderList = new ArrayList<>();
+        String query = "SELECT * FROM orders WHERE user_id = ?;";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setLong(1, userId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    OrderMapper orderMapper = new OrderMapper();
+                    Order order = orderMapper.extractFromResultSet(resultSet);
+                    orderList.add(order);
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return orderList;
+    }
 }
