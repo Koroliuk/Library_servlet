@@ -11,5 +11,5 @@ public interface BookDao extends GenericDao<Book> {
     void setAuthorship(Book book, Author author);
     void unSetAuthorship(Book book, Author author);
     List<Book> findByKeyWord(String keyWord, String sortBy, String sortType, int page);
-    long getAmountOfBooks();
+    long getBookAmountWithKeyWord(String keyWord);
 }

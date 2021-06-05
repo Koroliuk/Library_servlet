@@ -4,6 +4,7 @@ import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.UserDao;
 import ua.training.model.entity.User;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,8 @@ public class UserService {
     public void delete(long id) {
         try (UserDao userDao = daoFactory.createUserDao()) {
             userDao.delete(id);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 

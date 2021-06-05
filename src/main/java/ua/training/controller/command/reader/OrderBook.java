@@ -49,14 +49,18 @@ public class OrderBook implements Command {
         if (bookId.equals("") || userLogin == null || userLogin.equals("")) {
             return "/user/reader/orderBook.jsp";
         }
-        if (book.getCount() == 0) {
-            return "user/reader/orderBook.jsp";
-        }
         if (orderType == null || orderType.equals("") || startDate == null || startDate.equals("") || endDate == null || endDate.equals("")) {
             return "/user/reader/orderBook.jsp";
         }
-
-        //TODO: date server validation
+        if (book.getCount() == 0) {
+            return "/user/reader/orderBook.jsp?amountError=true";
+        }
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        LocalDate now = LocalDate.now();
+        if ((now.isAfter(start)) || (now.isAfter(end)) || end.isBefore(start)) {
+            return "/user/reader/orderBook.jsp?validError=true";
+        }
         OrderStatus status;
         if (orderType.equals("subscription")) {
             status = OrderStatus.RECEIVED;
@@ -71,6 +75,6 @@ public class OrderBook implements Command {
                 .orderStatus(status)
                 .build();
         orderService.orderBook(order);
-        return "/user/reader/orderBook.jsp?success=true";
+        return "redirect:/reader/home?successOrder=true";
     }
 }

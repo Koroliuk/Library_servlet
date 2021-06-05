@@ -5,6 +5,7 @@ import ua.training.model.entity.Author;
 import ua.training.model.entity.Book;
 import ua.training.model.entity.Edition;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class BookService {
@@ -66,11 +67,10 @@ public class BookService {
                 Book book = optionalBook.get();
                 List<Author> authors = authorDao.getAuthorsByBookId(id);
                 book.setAuthors(authors);
-                for (Author author: book.getAuthors()) {
-                    bookDao.unSetAuthorship(book, author);
-                }
                 bookDao.delete(book.getId());
             }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 
@@ -115,10 +115,10 @@ public class BookService {
         }
     }
 
-    public List<Book> findAllByKeyWords(String keyWords, String sortBy, String sortType, int page) {
+    public List<Book> findAllByKeyWord(String keyWord, String sortBy, String sortType, int page) {
         try (BookDao bookDao = daoFactory.createBookDao();
              AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            List<Book> bookList = bookDao.findByKeyWord(keyWords, sortBy, sortType, page);
+            List<Book> bookList = bookDao.findByKeyWord(keyWord, sortBy, sortType, page);
             for (Book book : bookList) {
                 List<Author> authorList = authorDao.getAuthorsByBookId(book.getId());
                 book.setAuthors(authorList);
@@ -159,9 +159,9 @@ public class BookService {
         }
     }
 
-    public long getBookCounter() {
+    public long getBookAmountWithKeyWord(String keyWord) {
         try (BookDao bookDao = daoFactory.createBookDao()) {
-            return bookDao.getAmountOfBooks();
+            return bookDao.getBookAmountWithKeyWord(keyWord);
         }
     }
 }

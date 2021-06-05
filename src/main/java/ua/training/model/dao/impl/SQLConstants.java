@@ -82,6 +82,7 @@ public abstract class SQLConstants {
     public static final String DELETE_BOOK = "DELETE FROM book WHERE id = ?";
     public static final String SET_AUTHORSHIP = "INSERT INTO authorship (author_id, book_id) VALUES (?, ?)";
     public static final String UNSET_AUTHORSHIP = "DELETE FROM authorship WHERE book_id = ? AND author_id = ?";
+    public static final String UNSET_AUTHORSHIP_BY_BOOK_ID = "DELETE FROM authorship WHERE book_id = ?";
 
     public static final String CREATE_ORDER = "INSERT INTO orders (user_id, book_id, start_date, end_date, status) " +
             "VALUES (?, ?, ?, ?, ?::\"order_status\")";

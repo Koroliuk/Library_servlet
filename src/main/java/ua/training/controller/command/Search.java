@@ -19,22 +19,22 @@ public class Search implements Command {
         String pageString = request.getParameter("page");
         String sortBy = request.getParameter("sortBy");
         String sortType = request.getParameter("sortType");
-        long amountOfPages = (bookService.getBookCounter()-1)/4+1;
         List<Book> bookList;
         if (pageString == null || pageString.equals("")) {
-            return "/app/search?page=1&amountOfPages="+amountOfPages;
+            return "/search?page=1";
         }
         int page = Integer.parseInt(pageString.trim());
         if ((sortBy != null && !sortBy.equals("")) && (sortType == null || sortType.equals(""))) {
-            return "/search.jsp?page=1&sortBy=id&sortType=inc&amountOfPages="+amountOfPages+"&keyWords="+keyWords;
+            return "/search?page=1&sortBy=id&sortType=inc&keyWords="+keyWords;
         }
         if (sortBy == null) {
-            sortBy = "";
+            sortBy = "id";
         }
         if (sortType == null) {
-            sortType = "";
+            sortType = "free";
         }
-        bookList = bookService.findAllByKeyWords(keyWords, sortBy, sortType, page);
+        bookList = bookService.findAllByKeyWord(keyWords, sortBy, sortType, page);
+        long amountOfPages = (bookService.getBookAmountWithKeyWord(keyWords)-1)/4+1;
         request.setAttribute("bookList", bookList);
         return "/search.jsp?page="+pageString+"&sortBy="+sortBy+"&sortType="+sortType+"&keyWords="+keyWords+"&amountOfPages="+amountOfPages;
     }
