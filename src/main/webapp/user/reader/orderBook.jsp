@@ -171,7 +171,7 @@
         warning1.hidden = end >= now;    });
 
     form.addEventListener('submit', (event) => {
-        const now = new Date();
+        const now = new Date().withoutTime();
         const start = Date.parse(startDate.value);
         const end = Date.parse(endDate.value);
         if (start < now || end < now || start > end) {
