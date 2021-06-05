@@ -3,6 +3,7 @@ package ua.training.model.dao.impl;
 import ua.training.model.dao.OrderDao;
 import ua.training.model.dao.mapper.OrderMapper;
 import ua.training.model.entity.Order;
+import ua.training.model.entity.enums.OrderStatus;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -105,6 +106,25 @@ public class JDBCOrderDao implements OrderDao {
         String query = "SELECT * FROM orders WHERE user_id = ?;";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, userId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    OrderMapper orderMapper = new OrderMapper();
+                    Order order = orderMapper.extractFromResultSet(resultSet);
+                    orderList.add(order);
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return orderList;
+    }
+
+    @Override
+    public List<Order> findOrdersWithOrderStatus(OrderStatus orderStatus) {
+        List<Order> orderList = new ArrayList<>();
+        String query = "SELECT * FROM orders WHERE status = ?::\"order_status\";";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, orderStatus.name());
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     OrderMapper orderMapper = new OrderMapper();

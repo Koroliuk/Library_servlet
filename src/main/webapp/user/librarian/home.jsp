@@ -83,12 +83,9 @@
                                     %>
                                     <span>${requestScope.authorsString}</span>
                                 </td>
-                                <td><c:if test="${order.orderStatus == 'RECEIVED'}">
-                                    <a  class="btn btn-outline-success" href="${pageContext.request.contextPath}/app/librarian/home?id=${order.id}">Видати</a>
-                                </c:if>
-                                    <c:if test="${order.orderStatus == 'APPROVED'}">
-                                        <span class="font-weight-bold text-secondary">Підтверджено</span>
-                                    </c:if>
+                                <td>
+                                    <a  class="btn btn-outline-info" href="${pageContext.request.contextPath}/app/librarian/home?id=${order.id}&action=add">Видати</a>
+                                    <a  class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/librarian/home?id=${order.id}&action=delete">Скасувати</a>
                                 </td>
                             </tr>
                             <tr id="additionalInfo${order.id}" hidden>
