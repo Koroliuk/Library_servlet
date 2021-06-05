@@ -10,62 +10,83 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Registration Page</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/public/css/signup.css"/>
+<%--    <link rel="stylesheet" href="${pageContext.request.contextPath}/public/css/signup.css"/>--%>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
 </head>
-<header>
-    <div class="header_name">
-        <p><fmt:message key="header.library.name"/></p>
-    </div>
-    <div class="header_buttons">
-        <form>
-            <select id="language" name="language" onchange="submit()">
-                <option value="en" ${language == 'en' ? 'selected' : ''}><fmt:message key="header.language.english"/></option>
-                <option value="ua" ${language == 'ua' ? 'selected' : ''}><fmt:message key="header.language.ukrainian"/></option>
+<header class="d-flex align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+    <span class="d-flex align-items-center col-md-3 mb-md-0 text-dark text-decoration-none h3"><fmt:message
+            key="header.library.name"/></span>
+    <div class="d-flex flex-row mr-3">
+        <form class="mr-2">
+            <select class="custom-select" id="language" name="language" onchange="submit()">
+                <option value="en" ${language == 'en' ? 'selected' : ''}><fmt:message
+                        key="header.language.english"/></option>
+                <option value="ua" ${language == 'ua' ? 'selected' : ''}><fmt:message
+                        key="header.language.ukrainian"/></option>
             </select>
         </form>
+        <a class="btn btn-outline-dark mr-2 overflow-hidden" data-mdb-ripple-color="dark"
+           href="${pageContext.request.contextPath}/app/signup"><fmt:message key="header.signup"/></a>
+        <a class="btn btn-dark" href="${pageContext.request.contextPath}/app/login"><fmt:message key="header.login"/></a>
     </div>
 </header>
 <body>
-    <h1><fmt:message key="signup.caption"/></h1>
-    <div>
-        <form id="signupForm" method="post" action="${pageContext.request.contextPath}/app/signup">
-            <table>
-                <c:if test="${param.validError == true}">
-                    <span><fmt:message key="signup.message.check.input.data"/></span>
-                </c:if>
-                <c:if test="${param.loginError == true}">
-                    <span><fmt:message key="signup.message.login.in.use"/></span>
-                </c:if>
-                <c:if test="${param.successEvent == true}">
-                    <span><fmt:message key="signup.success.registration"/></span>
-                </c:if>
-                <tr>
-                    <td>
-                        <label>
-                            <input type="text" id="login" name="login" class="login" placeholder="<fmt:message key="global.login"/>">
-                        </label>
-                        <span id="loginMessage"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label>
-                            <input type="password" id="password" name="password" placeholder="<fmt:message key="global.password"/>">
-                        </label>
-                        <span id="passwordMessage"></span>
-                    </td>
-                </tr>
-            </table>
-            <div>
-                <input type="submit" value="<fmt:message key="signup.button.name"/>">
-            </div>
-            <div>
-                <a href="${pageContext.request.contextPath}/app/login"><fmt:message key="signup.already.registered"/></a>
-            </div>
-        </form>
-    </div>
-    <div>
-        <a href="${pageContext.request.contextPath}/index.jsp"><fmt:message key="global.to.home.page"/></a>
+    <div class="container text-center">
+        <h1><fmt:message key="signup.caption"/></h1>
+        <div>
+            <form id="signupForm" method="post" action="${pageContext.request.contextPath}/app/signup">
+                <table>
+                    <c:if test="${param.validError == true}">
+                        <span><fmt:message key="signup.message.check.input.data"/></span>
+                    </c:if>
+                    <c:if test="${param.loginError == true}">
+                        <span><fmt:message key="signup.message.login.in.use"/></span>
+                    </c:if>
+                    <c:if test="${param.successEvent == true}">
+                        <span><fmt:message key="signup.success.registration"/></span>
+                    </c:if>
+                    <tr>
+                        <td>
+                            <label>
+                                <input type="text" id="login" name="login" class="login"
+                                       placeholder="<fmt:message key="global.login"/>">
+                            </label>
+                            <span id="loginMessage"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>
+                                <input type="password" id="password" name="password"
+                                       placeholder="<fmt:message key="global.password"/>">
+                            </label>
+                            <span id="passwordMessage"></span>
+                        </td>
+                    </tr>
+                </table>
+                <div>
+                    <input type="submit" value="<fmt:message key="signup.button.name"/>">
+                </div>
+                <div>
+                    <a href="${pageContext.request.contextPath}/app/login"><fmt:message
+                            key="signup.already.registered"/></a>
+                </div>
+            </form>
+        </div>
+        <div>
+            <a href="${pageContext.request.contextPath}/index.jsp"><fmt:message key="global.to.home.page"/></a>
+        </div>
     </div>
 </body>
 <script type="text/javascript">

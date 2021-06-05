@@ -111,10 +111,13 @@ public class JDBCBookDao implements BookDao {
     }
 
     @Override
-    public long getAmountOfBooks() {
-        String query = "SELECT COUNT(*) FROM book";
-        try (Statement statement = connection.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery(query)) {
+    public long getBookAmountWithKeyWord(String keyWord) {
+        String query = "SELECT COUNT(*) FROM book INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
+                "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%' ;";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, keyWord);
+            statement.setString(2, keyWord);
+            try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getLong(1);
                 }
@@ -160,11 +163,19 @@ public class JDBCBookDao implements BookDao {
     }
 
     @Override
-    public void delete(long id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.DELETE_BOOK)) {
-            statement.setLong(1, id);
-            statement.executeUpdate();
+    public void delete(long id) throws SQLException {
+        try (PreparedStatement deleteAuthorship = connection.prepareStatement(SQLConstants.UNSET_AUTHORSHIP_BY_BOOK_ID);
+             PreparedStatement deleteBook = connection.prepareStatement(SQLConstants.DELETE_BOOK)) {
+            connection.setAutoCommit(false);
+            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            deleteAuthorship.setLong(1, id);
+            deleteAuthorship.executeUpdate();
+            deleteBook.setLong(1, id);
+            deleteBook.executeUpdate();
+            connection.commit();
+            connection.setAutoCommit(true);
         } catch (SQLException e) {
+            connection.rollback();
             e.printStackTrace();
         }
     }
