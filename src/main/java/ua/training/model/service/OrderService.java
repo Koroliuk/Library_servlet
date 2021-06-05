@@ -18,12 +18,12 @@ public class OrderService {
         }
     }
 
-    public List<Order> findAll() {
+    public List<Order> findAllWithStatus(OrderStatus orderStatus) {
         try (OrderDao orderDao = daoFactory.createOrderDao();
             UserDao userDao = daoFactory.createUserDao();
             AuthorDao authorDao = daoFactory.createAuthorDao();
             BookDao bookDao = daoFactory.createBookDao()) {
-            List<Order> orderList = orderDao.findAll();
+            List<Order> orderList = orderDao.findOrdersWithOrderStatus(orderStatus);
             for (Order order: orderList) {
                 Optional<User> optionalUser = userDao.findById(order.getUser().getId());
                 Optional<Book> optionalBook = bookDao.findById(order.getBook().getId());
@@ -75,5 +75,16 @@ public class OrderService {
             }
         }
         return null;
+    }
+
+    public void cancelOrder(long id) {
+        try (OrderDao orderDao = daoFactory.createOrderDao()) {
+            Optional<Order> optionalOrder = orderDao.findById(id);
+            if (optionalOrder.isPresent()) {
+                Order order = optionalOrder.get();
+                order.setOrderStatus(OrderStatus.CANCELED);
+                orderDao.update(order);
+            }
+        }
     }
 }

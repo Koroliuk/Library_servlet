@@ -3,6 +3,7 @@ package ua.training.controller.command.librarian;
 import ua.training.controller.command.Command;
 import ua.training.model.entity.Order;
 import ua.training.model.entity.User;
+import ua.training.model.entity.enums.OrderStatus;
 import ua.training.model.service.OrderService;
 import ua.training.model.service.UserService;
 
@@ -21,16 +22,22 @@ public class LibrarianHome implements Command {
     @Override
     public String execute(HttpServletRequest request) {
         String orderId = request.getParameter("id");
-        if (orderId == null || orderId.equals("")) {
+        String action = request.getParameter("action");
+        if (orderId == null || orderId.equals("") || action == null || action.equals("")) {
             List<User> userList = userService.findAll();
-            List<Order> orderList = orderService.findAll();
+            List<Order> orderList = orderService.findAllWithStatus(OrderStatus.RECEIVED);
             request.setAttribute("orderList", orderList);
             request.setAttribute("userList", userList);
             return "/user/librarian/home.jsp";
         }
+        if (action.equals("add")) {
+            orderService.approveOrder(Long.parseLong(orderId));
+        }
+        if (action.equals("delete")) {
+            orderService.cancelOrder(Long.parseLong(orderId));
+        }
         List<User> userList = userService.findAll();
-        orderService.approveOrder(Long.parseLong(orderId));
-        List<Order> orderList = orderService.findAll();
+        List<Order> orderList = orderService.findAllWithStatus(OrderStatus.RECEIVED);
         request.setAttribute("orderList", orderList);
         request.setAttribute("userList", userList);
         return "/user/librarian/home.jsp";
