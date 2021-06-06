@@ -88,7 +88,13 @@ public class JDBCOrderDao implements OrderDao {
 
     @Override
     public void delete(long id) {
-
+        String query = "DELETE FROM orders WHERE id = ? ;";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setLong(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
