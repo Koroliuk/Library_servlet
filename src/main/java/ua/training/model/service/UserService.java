@@ -48,4 +48,10 @@ public class UserService {
             userDao.update(user);
         }
     }
+
+    public Optional<User> findById(long id) {
+        try (UserDao userDao = daoFactory.createUserDao()) {
+            return userDao.findById(id);
+        }
+    }
 }

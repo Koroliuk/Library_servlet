@@ -2,6 +2,7 @@ package ua.training.controller;
 
 import ua.training.controller.command.*;
 import ua.training.controller.command.admin.*;
+import ua.training.controller.command.librarian.GetReaderBooks;
 import ua.training.controller.command.librarian.LibrarianHome;
 import ua.training.controller.command.reader.OrderBook;
 import ua.training.controller.command.reader.ReaderHome;
@@ -28,6 +29,7 @@ public class Servlet extends HttpServlet {
         commandMap.put("reader/home", new ReaderHome(new OrderService()));
         commandMap.put("reader/orderBook", new OrderBook(new UserService(), new BookService(), new OrderService()));
         commandMap.put("librarian/home", new LibrarianHome(new OrderService(), new UserService()));
+        commandMap.put("librarian/getReaderBooks", new GetReaderBooks(new OrderService(), new UserService()));
         commandMap.put("admin/home", new AdminHome(new UserService(), new BookService()));
         commandMap.put("admin/addBook", new AddBook(new BookService()));
         commandMap.put("admin/editBook", new EditBook(new BookService()));
