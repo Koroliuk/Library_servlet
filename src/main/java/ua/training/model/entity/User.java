@@ -6,14 +6,14 @@ public class User {
 
     private long id;
     private String login;
-    private String password_hash;
+    private String passwordHash;
     private Role role;
     private boolean isBlocked;
 
     public static class Builder {
         private long id;
         private String login;
-        private String password_hash;
+        private String passwordHash;
         private Role role;
         private boolean isBlocked;
 
@@ -28,7 +28,7 @@ public class User {
         }
 
         public Builder password_hash(String password_hash) {
-            this.password_hash = password_hash;
+            this.passwordHash = password_hash;
             return this;
         }
 
@@ -50,7 +50,7 @@ public class User {
     private User(Builder builder) {
         this.id = builder.id;
         this.login = builder.login;
-        this.password_hash = builder.password_hash;
+        this.passwordHash = builder.passwordHash;
         this.role = builder.role;
         this.isBlocked = builder.isBlocked;
     }
@@ -63,12 +63,12 @@ public class User {
         this.login = login;
     }
 
-    public String getPassword_hash() {
-        return password_hash;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword_hash(String password_hash) {
-        this.password_hash = password_hash;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public long getId() {
