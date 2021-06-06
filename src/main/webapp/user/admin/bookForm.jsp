@@ -53,9 +53,21 @@
     <form id="form" method="post"
           action="${pageContext.request.contextPath}/app/admin/${requestScope.action}Book?id=${param.id != null ? param.id : ""}">
         <div class="form-group">
+            <c:if test="${param.validError == true}">
+                <span class="text-danger">Перевірте правильність введених даних</span>
+                <br/>
+            </c:if>
+            <c:if test="${param.createError == true}">
+                <span class="text-danger">Така книга вже існує</span>
+                <br/>
+            </c:if>
+            <c:if test="${param.successCreation == true}">
+                <span class="text-success">Книгу успішно додано</span>
+                <br/>
+            </c:if>
             <div>
                 <label style="width: 75%;">
-                    <input class="form-control  input-sm" type="text" id="title" name="title" placeholder="Title"
+                    <input class="form-control" type="text" id="title" name="title" placeholder="Title"
                            value="${requestScope.book.title != null ? requestScope.book.title : ""}">
                 </label>
                 <br/>
@@ -139,10 +151,8 @@
             <input type="submit" class="btn btn-outline-info" value="Зберегти">
         </div>
     </form>
-</div>
-<div class="container">
     <div>
-        <a style="padding-left: 75%;" href="${pageContext.request.contextPath}/app/admin/home"><fmt:message key="global.to.home.page"/></a>
+        <a style="padding-left: 400px;" href="${pageContext.request.contextPath}/app/admin/home"><fmt:message key="global.to.home.page"/></a>
     </div>
 </div>
 </body>
