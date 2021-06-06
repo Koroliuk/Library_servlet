@@ -90,20 +90,21 @@
                                     ${requestScope.authorsString}
                             </td>
                             <td>${order.orderStatus}</td>
-                            <%
-                                LocalDate now = LocalDate.now();
-                                LocalDate end = order.getEndDate();
-                                boolean flag = now.isAfter(end);
-                                request.setAttribute("flag", flag);
-                            %>
-                            <c:if test="${requestScope.flag == true}">
+                            <c:if test="${order.orderStatus == 'APPROVED'}">
+                                <td>
+                                    <a class="text-info" href="${pageContext.request.contextPath}/app/reader/returnBook?orderId=${order.id}">Повернути книгу</a>
+                                </td>
+                            </c:if>
+                            <c:if test="${order.orderStatus == 'OVERDUE'}">
                                 <%
+                                    LocalDate now = LocalDate.now();
+                                    LocalDate end = order.getEndDate();
                                     int amountOfDays = Period.between(end, now).getDays();
                                     float fine = (float) (amountOfDays * book.getPrice() * 0.01);
                                     request.setAttribute("fine", fine);
                                 %>
                                 <td>
-                                    <a href="${pageContext.request.contextPath}/app/reader/payFine?orderId=${order.id}">${fine}</a>
+                                    <a class="text-warning" href="${pageContext.request.contextPath}/app/reader/returnBook?orderId=${order.id}">Pay fine ${fine}<br/>and return book</a>
                                 </td>
                             </c:if>
                             <c:if test="${requestScope.flag == false}">
