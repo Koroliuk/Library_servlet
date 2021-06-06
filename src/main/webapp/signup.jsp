@@ -6,11 +6,11 @@
        scope="session"/>
 <fmt:setLocale value="${language}"/>
 <fmt:setBundle basename="messages"/>
+<!DOCTYPE HTML>
 <html lang="${language}">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Registration Page</title>
-<%--    <link rel="stylesheet" href="${pageContext.request.contextPath}/public/css/signup.css"/>--%>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -38,56 +38,54 @@
         </form>
         <a class="btn btn-outline-dark mr-2 overflow-hidden" data-mdb-ripple-color="dark"
            href="${pageContext.request.contextPath}/app/signup"><fmt:message key="header.signup"/></a>
-        <a class="btn btn-dark" href="${pageContext.request.contextPath}/app/login"><fmt:message key="header.login"/></a>
+        <a class="btn btn-dark" href="${pageContext.request.contextPath}/app/login"><fmt:message
+                key="header.login"/></a>
     </div>
 </header>
 <body>
-    <div class="container text-center">
-        <h1><fmt:message key="signup.caption"/></h1>
-        <div>
-            <form id="signupForm" method="post" action="${pageContext.request.contextPath}/app/signup">
-                <table>
-                    <c:if test="${param.validError == true}">
-                        <span><fmt:message key="signup.message.check.input.data"/></span>
-                    </c:if>
-                    <c:if test="${param.loginError == true}">
-                        <span><fmt:message key="signup.message.login.in.use"/></span>
-                    </c:if>
-                    <c:if test="${param.successEvent == true}">
-                        <span><fmt:message key="signup.success.registration"/></span>
-                    </c:if>
-                    <tr>
-                        <td>
-                            <label>
-                                <input type="text" id="login" name="login" class="login"
-                                       placeholder="<fmt:message key="global.login"/>">
-                            </label>
-                            <span id="loginMessage"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>
-                                <input type="password" id="password" name="password"
-                                       placeholder="<fmt:message key="global.password"/>">
-                            </label>
-                            <span id="passwordMessage"></span>
-                        </td>
-                    </tr>
-                </table>
-                <div>
-                    <input type="submit" value="<fmt:message key="signup.button.name"/>">
-                </div>
-                <div>
-                    <a href="${pageContext.request.contextPath}/app/login"><fmt:message
-                            key="signup.already.registered"/></a>
-                </div>
-            </form>
+<div class="container text-center" style="margin-top: 10%;">
+    <h3><fmt:message key="signup.caption"/></h3>
+    <form id="signupForm" method="post" action="${pageContext.request.contextPath}/app/signup">
+        <div class="form-group">
+            <c:if test="${param.validError == true}">
+                <span class="text-danger"><fmt:message key="signup.message.check.input.data"/></span>
+                <br/>
+            </c:if>
+            <c:if test="${param.loginError == true}">
+                <span class="text-danger"><fmt:message key="signup.message.login.in.use"/></span>
+                <br/>
+            </c:if>
+            <c:if test="${param.successEvent == true}">
+                <span class="text-success"><fmt:message key="signup.success.registration"/></span>
+                <br/>
+            </c:if>
+            <div>
+                <label style="width: 230px;">
+                    <input class="form-control" type="text" id="login" name="login"
+                       placeholder="<fmt:message key="global.login"/>">
+                    <span class="text-danger" style="text-align: justify;" id="loginMessage"></span>
+                </label>
+            </div>
+            <div>
+                <label style="width: 230px;">
+                    <input  class="form-control" type="password" id="password" name="password"
+                           placeholder="<fmt:message key="global.password"/>">
+                    <span class="text-danger" style="text-align: justify;" id="passwordMessage"></span>
+                </label>
+            </div>
+            <div>
+                <input type="submit" class="btn btn-outline-info" value="<fmt:message key="signup.button.name"/>">
+            </div>
         </div>
-        <div>
-            <a href="${pageContext.request.contextPath}/index.jsp"><fmt:message key="global.to.home.page"/></a>
-        </div>
+    </form>
+    <div style="padding-left: 100px;">
+        <a href="${pageContext.request.contextPath}/app/login"><fmt:message
+                key="signup.already.registered"/></a>
     </div>
+    <div style="padding-left: 110px;">
+        <a href="${pageContext.request.contextPath}/index.jsp"><fmt:message key="global.to.home.page"/></a>
+    </div>
+</div>
 </body>
 <script type="text/javascript">
     const loginValidateMessage1 = '<fmt:message key="signup.login.validation.message1"/>';
