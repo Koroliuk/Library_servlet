@@ -13,119 +13,158 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Add book page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
 </head>
-<header>
-    <div class="header_name">
-        <p><fmt:message key="header.library.name"/></p>
-    </div>
-    <div class="header_buttons">
-        <p><a href="${pageContext.request.contextPath}/app/logout"><fmt:message key="header.logout"/></a></p>
-        <form>
-            <select id="language" name="language" onchange="submit()">
-                <option value="en" ${language == 'en' ? 'selected' : ''}><fmt:message key="header.language.english"/></option>
-                <option value="ua" ${language == 'ua' ? 'selected' : ''}><fmt:message key="header.language.ukrainian"/></option>
+<header class="d-flex align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+    <span class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none h3"><fmt:message
+            key="header.library.name"/></span>
+    <div class="d-flex flex-row mr-3">
+        <form class="mr-2">
+            <select class="custom-select" id="language" name="language" onchange="submit()">
+                <option value="en" ${language == 'en' ? 'selected' : ''}><fmt:message
+                        key="header.language.english"/></option>
+                <option value="ua" ${language == 'ua' ? 'selected' : ''}><fmt:message
+                        key="header.language.ukrainian"/></option>
             </select>
         </form>
+        <a class="btn btn-dark" href="${pageContext.request.contextPath}/app/logout"><fmt:message
+                key="header.logout"/></a>
     </div>
 </header>
 <body>
-    <c:if test="${requestScope.action} == 'add'">
-        <h1>Додати книгу</h1>
+<div class="container text-center">
+    <c:if test="${requestScope.action == 'add'}">
+        <h3>Додати книгу</h3>
     </c:if>
-    <c:if test="${requestScope.action} == 'edit'">
-        <h1>Редагувати книгу</h1>
+    <c:if test="${requestScope.action == 'edit'}">
+        <h3>Редагувати книгу</h3>
     </c:if>
-    <div>
-        <form id="form" method="post" action="${pageContext.request.contextPath}/app/admin/${requestScope.action}Book?id=${param.id != null ? param.id : ""}">
-            <table>
-                <tr>
-                    <td>
-                        <label>
-                            <input type="text" id="title" name="title" placeholder="Title" value="${requestScope.book.title != null ? requestScope.book.title : ""}">
-                        </label>
-                        <span id="titleMessage"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label>
-                            <%
-                                Book book = (Book) request.getAttribute("book");
-                                String authors = "";
-                                if (book != null) {
-                                    StringBuilder authorsString = new StringBuilder();
-                                    for (Author author : book.getAuthors()) {
-                                        authorsString.append(author.getName()).append(",");
-                                    }
-                                    authorsString.deleteCharAt(authorsString.length() - 1);
-                                    authorsString.deleteCharAt(authorsString.length() - 1);
-                                    authors = authorsString.toString();
-                                }
-                                request.setAttribute("authorsString", authors);
-                            %>
-                            <input type="text" id="authors" name="authors" placeholder="Author" value="${requestScope.authorsString != null ? requestScope.authorsString : ""}">
-                        </label>
-                        <span id="authorsMessage"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label>
-                            <textarea id="description" name="description" placeholder="Description" wrap="soft">${requestScope.book.description != null ? requestScope.book.description : ""}</textarea>
-                        </label>
-                        <span id="descriptionMessage"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label>
-                            <input type="text" id="bookLanguage" name="bookLanguage" placeholder="Language" value="${requestScope.book.language != null ? requestScope.book.language : ""}">
-                        </label>
-                        <span id="bookLanguageMessage"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label>
-                            <input type="text" id="edition" name="edition" placeholder="Edition" value="${requestScope.book.edition.name != null ? requestScope.book.edition.name : ""}">
-                        </label>
-                        <span id="editionMessage"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label>
-                            <input type="date" id="publicationDate" name="publicationDate" placeholder="Date of publication" value="${requestScope.book.publicationDate != null ? requestScope.book.publicationDate : ""}">
-                        </label>
-                        <span id="publicationDateMessage"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label>
-                            <input type="text" id="price" name="price" placeholder="Price" value="${requestScope.book.price != null ? requestScope.book.price : ""}">
-                        </label>
-                        <span id="priceMessage"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label>
-                            <input type="text" id="count" name="count" placeholder="Count" value="${requestScope.book.count != null ? requestScope.book.count : ""}">
-                        </label>
-                        <span id="countMessage"></span>
-                    </td>
-                </tr>
-            </table>
+    <form id="form" method="post"
+          action="${pageContext.request.contextPath}/app/admin/${requestScope.action}Book?id=${param.id != null ? param.id : ""}">
+        <div class="form-group">
             <div>
-                <input type="submit" value="Зберегти">
+                <label style="width: 75%;">
+                    <input class="form-control  input-sm" type="text" id="title" name="title" placeholder="Title"
+                           value="${requestScope.book.title != null ? requestScope.book.title : ""}">
+                </label>
+                <br/>
+                <span class="text-danger" id="titleMessage"></span>
             </div>
-        </form>
+            <div>
+                <label style="width: 75%;">
+                    <%
+                        Book book = (Book) request.getAttribute("book");
+                        String authors = "";
+                        if (book != null) {
+                            StringBuilder authorsString = new StringBuilder();
+                            for (Author author : book.getAuthors()) {
+                                authorsString.append(author.getName()).append(",");
+                            }
+                            authorsString.deleteCharAt(authorsString.length() - 1);
+                            authorsString.deleteCharAt(authorsString.length() - 1);
+                            authors = authorsString.toString();
+                        }
+                        request.setAttribute("authorsString", authors);
+                    %>
+                    <input class="form-control" type="text" id="authors" name="authors" placeholder="Authors"
+                           value="${requestScope.authorsString != null ? requestScope.authorsString : ""}">
+                </label>
+                <br/>
+                <span class="text-danger" id="authorsMessage"></span>
+            </div>
+            <div>
+                <label style="width: 75%;">
+                    <textarea class="form-control" id="description" name="description" placeholder="Description"
+                                              wrap="soft">${requestScope.book.description != null ? requestScope.book.description : ""}</textarea>
+                </label>
+                <br/>
+                <span class="text-danger" id="descriptionMessage"></span>
+            </div>
+            <div>
+                <label style="width: 75%;">
+                    <input class="form-control" type="text" id="bookLanguage" name="bookLanguage" placeholder="Language"
+                           value="${requestScope.book.language != null ? requestScope.book.language : ""}">
+                </label>
+                <br/>
+                <span class="text-danger" id="bookLanguageMessage"></span>
+            </div>
+            <div>
+                <label style="width: 75%;"v>
+                    <input class="form-control" type="text" id="edition" name="edition" placeholder="Edition"
+                           value="${requestScope.book.edition.name != null ? requestScope.book.edition.name : ""}">
+                </label>
+                <br/>
+                <span class="text-danger" id="editionMessage"></span>
+            </div>
+            <div>
+                <span class="text-dark h5">Дата видання:</span>
+                <br/>
+                <label style="width: 75%;">
+                    <input class="form-control" type="date" id="publicationDate" name="publicationDate"
+                           placeholder="Date of publication"
+                           value="${requestScope.book.publicationDate != null ? requestScope.book.publicationDate : ""}">
+                </label>
+                <br/>
+                <span class="text-danger" id="publicationDateMessage"></span>
+            </div>
+            <div>
+                <label style="width: 75%;">
+                    <input class="form-control" type="text" id="price" name="price" placeholder="Price"
+                           value="${requestScope.book.price != null ? requestScope.book.price : ""}">
+                </label>
+                <br/>
+                <span class="text-danger" id="priceMessage"></span>
+            </div>
+            <div>
+                <label style="width: 75%;">
+                    <input class="form-control" type="text" id="count" name="count" placeholder="Count"
+                           value="${requestScope.book.count != null ? requestScope.book.count : ""}">
+                </label>
+                <br/>
+                <span class="text-danger" id="countMessage"></span>
+            </div>
+        </div>
+        <div>
+            <input type="submit" class="btn btn-outline-info" value="Зберегти">
+        </div>
+    </form>
+</div>
+<div class="container">
+    <div>
+        <a style="padding-left: 75%;" href="${pageContext.request.contextPath}/app/admin/home"><fmt:message key="global.to.home.page"/></a>
+    </div>
+</div>
+</body>
+<footer class="navbar fixed-bottom d-flex flex-row justify-content-sm-between align-items-center bg-light text-lg-start p-3">
+    <div>
+        <p>
+            <fmt:message key="footer.licence"/>
+            <a href="https://github.com/Koroliuk/Library_servlet/blob/main/LICENSE">
+                GNU GPLv3 License
+            </a>.
+            <br>
+            <a href="https://github.com/Koroliuk/Library_servlet"><fmt:message key="footer.project.github"/></a><br/>
+            <span>@2021</span>
+        </p>
     </div>
     <div>
-        <a href="${pageContext.request.contextPath}/app/admin/home"><fmt:message key="global.to.home.page"/></a>
+        <p>
+            <fmt:message key="footer.questions"/>
+            <a href="https://github.com/Koroliuk/Library_servlet/issues/new">GitHub</a>.
+        </p>
     </div>
-</body>
+</footer>
 <script>
     Date.prototype.withoutTime = function () {
         const date = new Date(this);
@@ -221,14 +260,14 @@
     });
 
     publicationDate.addEventListener('input', () => {
-       const now = new Date().withoutTime();
-       const date = new Date(publicationDate.value).withoutTime();
-       const dateTest = date > now;
-       if (dateTest) {
-           publicationDateMessage.innerText = publicationDateValidationMessage;
-       } else {
-           publicationDateMessage.innerText = "";
-       }
+        const now = new Date().withoutTime();
+        const date = new Date(publicationDate.value).withoutTime();
+        const dateTest = date > now;
+        if (dateTest) {
+            publicationDateMessage.innerText = publicationDateValidationMessage;
+        } else {
+            publicationDateMessage.innerText = "";
+        }
     });
 
     price.addEventListener('input', () => {
