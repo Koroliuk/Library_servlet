@@ -54,7 +54,7 @@
 </header>
 <body>
     <div class="container text-center">
-        <h2>Catalog</h2>
+        <h3>Catalog</h3>
         <div>
             <form method="post" action="${pageContext.request.contextPath}/app/search?page=1">
                 <label>
@@ -64,22 +64,25 @@
             </form>
         </div>
         <c:if test="${sessionScope.userLogin == null}">
-            <span class="text-info">Увійдйть для замовлення книги</span>
+            <span class="text-info mt-2 mb-2">Увійдйть для замовлення книги</span>
         </c:if>
-        <span id="warning" hidden>Немає доступних екземплярів, спробуйте пізніше</span>
+        <span class="text-danger mb-2 mt-2" id="warning" hidden>Немає доступних екземплярів, спробуйте пізніше</span>
         <div class="row justify-content-center">
             <div class="col-auto">
                 <c:if test="${requestScope.bookList != null}">
-                    <table class="table table-responsive">
-                        <tr>
-                            <th>Title</th>
-                            <th>Authors</th>
-                            <th>Language</th>
-                            <th>Edition</th>
-                            <th>Date of publish</th>
-                            <th>Description</th>
-                        </tr>
-                        <div class="mr-3">
+                    <table class="table table-responsive table-bordered table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Authors</th>
+                                <th>Language</th>
+                                <th>Edition</th>
+                                <th>Date of publish</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                        <div class="mr-3 mt-2 mb-2">
                             <span>Сортувати за: </span>
                             <%
                                 String sortBy = request.getParameter("sortBy");
@@ -94,10 +97,10 @@
                                 }
                                 request.setAttribute("sortTypes", sortTypes);
                             %>
-                            <a class="btn btn-outline-primary btn-rounded" data-mdb-ripple-color="dark" href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=title&sortType=<c:if test="${requestScope.sortTypes.containsKey('title')}">${requestScope.sortTypes.get('title')}</c:if><c:if test="${!requestScope.sortTypes.containsKey('title')}">asc</c:if>">назвою</a>
-                            <a class="btn btn-outline-primary btn-rounded" data-mdb-ripple-color="dark" href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=author&sortType=<c:if test="${requestScope.sortTypes.containsKey('author')}">${requestScope.sortTypes.get('author')}</c:if><c:if test="${!requestScope.sortTypes.containsKey('author')}">asc</c:if>">автором</a>
-                            <a class="btn btn-outline-primary btn-rounded" data-mdb-ripple-color="dark" href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=edition&sortType=<c:if test="${requestScope.sortTypes.containsKey('edition')}">${requestScope.sortTypes.get('edition')}</c:if><c:if test="${!requestScope.sortTypes.containsKey('edition')}">asc</c:if>">виданням</a>
-                            <a class="btn btn-outline-primary btn-rounded" data-mdb-ripple-color="dark" href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=date&sortType=<c:if test="${requestScope.sortTypes.containsKey('date')}">${requestScope.sortTypes.get('date')}</c:if><c:if test="${!requestScope.sortTypes.containsKey('date')}">asc</c:if>">датою видання</a>
+                            <a type="button" class="btn btn-outline-primary btn-sm" href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=title&sortType=<c:if test="${requestScope.sortTypes.containsKey('title')}">${requestScope.sortTypes.get('title')}</c:if><c:if test="${!requestScope.sortTypes.containsKey('title')}">asc</c:if>">назвою</a>
+                            <a type="button" class="btn btn-outline-primary btn-sm" href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=author&sortType=<c:if test="${requestScope.sortTypes.containsKey('author')}">${requestScope.sortTypes.get('author')}</c:if><c:if test="${!requestScope.sortTypes.containsKey('author')}">asc</c:if>">автором</a>
+                            <a type="button" class="btn btn-outline-primary btn-sm" href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=edition&sortType=<c:if test="${requestScope.sortTypes.containsKey('edition')}">${requestScope.sortTypes.get('edition')}</c:if><c:if test="${!requestScope.sortTypes.containsKey('edition')}">asc</c:if>">виданням</a>
+                            <a type="button" class="btn btn-outline-primary btn-sm" href="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page.trim()}&sortBy=date&sortType=<c:if test="${requestScope.sortTypes.containsKey('date')}">${requestScope.sortTypes.get('date')}</c:if><c:if test="${!requestScope.sortTypes.containsKey('date')}">asc</c:if>">датою видання</a>
                         </div>
                         <c:forEach items="${requestScope.bookList}" var="book">
                             <tr>
@@ -114,9 +117,6 @@
                                         out.print(authorsString.toString());
                                     %>
                                 </td>
-                                    <%--                    <td>--%>
-                                    <%--                        <button id="showLessMoreButton${book.id}" onclick="showDescription(${book.id})">Show more</button>--%>
-                                    <%--                    </td>--%>
                                 <td>${book.language}</td>
                                 <td>${book.edition.name}</td>
                                 <td>${book.publicationDate}</td>
@@ -170,25 +170,6 @@
         </div>
     </div>
 </body>
-<footer class="navbar fixed-bottom d-flex flex-row justify-content-sm-between align-items-center bg-light text-lg-start p-3">
-    <div>
-        <p>
-            <fmt:message key="footer.licence"/>
-            <a href="https://github.com/Koroliuk/Library_servlet/blob/main/LICENSE">
-                GNU GPLv3 License
-            </a>.
-            <br>
-            <a href="https://github.com/Koroliuk/Library_servlet"><fmt:message key="footer.project.github"/></a><br/>
-            <span>@2021</span>
-        </p>
-    </div>
-    <div>
-        <p>
-            <fmt:message key="footer.questions"/>
-            <a href="https://github.com/Koroliuk/Library_servlet/issues/new">GitHub</a>.
-        </p>
-    </div>
-</footer>
 <script type="text/javascript" src="${pageContext.request.contextPath}/public/js/search.js"></script>
 <script type="text/javascript">
     function checkAmountOfBook(bookAmount, bookId) {
