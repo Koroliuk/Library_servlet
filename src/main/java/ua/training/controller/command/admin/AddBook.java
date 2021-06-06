@@ -46,12 +46,12 @@ public class AddBook implements Command {
         boolean condition5 = publicationData.isAfter(LocalDate.now()) || publicationData.isEqual(LocalDate.now());
         boolean condition6 = price <= 0 || count <= 0;
         if (condition5 || condition6) {
-            return "/user/admin/bookForm.jsp?validError";
+            return "/user/admin/bookForm.jsp?validError=true";
         }
         List<String> authorNames = Arrays.asList(authorsString.split(","));
         Optional<Book> optionalBook = bookService.findByTitleAndAuthorsNames(title, authorNames);
         if (optionalBook.isPresent()) {
-            return "/user/admin/bookForm.jsp?createError";
+            return "/user/admin/bookForm.jsp?createError=true";
         }
 
         Edition edition = new Edition.Builder()
@@ -78,6 +78,6 @@ public class AddBook implements Command {
                 .build();
 
         bookService.createBook(book);
-        return "/user/admin/bookForm.jsp?successCreation";
+        return "/user/admin/bookForm.jsp?successCreation=true";
     }
 }

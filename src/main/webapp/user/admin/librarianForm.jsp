@@ -40,7 +40,7 @@
     </div>
 </header>
 <body>
-<div class="container text-center">
+<div class="container text-center" style="margin-top: 10%;">
     <h3>Створення бібліотекаря</h3>
     <form id="form" method="post" action="${pageContext.request.contextPath}/app/admin/addLibrarian">
         <div class="form-group">
