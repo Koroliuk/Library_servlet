@@ -50,7 +50,7 @@
     </div>
 </header>
 <body>
-    <div class="container text-center align-items-center justify-content-center">
+    <div class="container text-center align-items-center justify-content-center" style="margin-top: 10%;">
         <h1 class="col-md-12"><fmt:message key="index.welcome"/></h1>
         <a class="lead" href="${pageContext.request.contextPath}/app/search?page=1&keyWords=">Перейти до пошуку</a>
         <div class="justify-content-sm-between">
