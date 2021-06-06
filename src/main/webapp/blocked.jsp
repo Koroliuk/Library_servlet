@@ -50,6 +50,27 @@
     </div>
 </header>
 <body>
-    <h3>ОБліковий запис заблоковано, зверністься до адміністратора</h3>
+    <div class="container text-center" style="margin-top: 10%;">
+        <h3>Обліковий запис заблоковано!<br/>Зверністься до адміністратора</h3>
+    </div>
 </body>
+<footer class="navbar fixed-bottom d-flex flex-row justify-content-sm-between align-items-center bg-light text-lg-start p-3">
+    <div>
+        <p>
+            <fmt:message key="footer.licence"/>
+            <a href="https://github.com/Koroliuk/Library_servlet/blob/main/LICENSE">
+                GNU GPLv3 License
+            </a>.
+            <br>
+            <a href="https://github.com/Koroliuk/Library_servlet"><fmt:message key="footer.project.github"/></a><br/>
+            <span>@2021</span>
+        </p>
+    </div>
+    <div>
+        <p>
+            <fmt:message key="footer.questions"/>
+            <a href="https://github.com/Koroliuk/Library_servlet/issues/new">GitHub</a>.
+        </p>
+    </div>
+</footer>
 </html>
