@@ -68,26 +68,31 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <c:forEach items="${requestScope.userList}" var="user">
-                                <tr>
-                                    <td><c:out value="${user.id}"/></td>
-                                    <td><c:out value="${user.login}"/></td>
-                                    <td><c:out value="${user.role}"/></td>
-                                    <td>
-                                        <c:if test="${user.blocked == true}">
+                            <c:if test="${requestScope.userList.size() > 0}">
+                                <c:forEach items="${requestScope.userList}" var="user">
+                                    <tr>
+                                        <td><c:out value="${user.id}"/></td>
+                                        <td><c:out value="${user.login}"/></td>
+                                        <td><c:out value="${user.role}"/></td>
+                                        <td>
+                                            <c:if test="${user.blocked == true}">
 
-                                            <a type="button" class="btn btn-outline-success" href="${pageContext.request.contextPath}/app/admin/unblockUser?id=${user.id}">Розблокувати</a>
-                                        </c:if>
-                                        <c:if test="${user.blocked == false}">
-                                            <a type="button" class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/admin/blockUser?id=${user.id}">Заблокувати</a>
-                                        </c:if>
-                                        <c:if test="${user.role == 'LIBRARIAN'}">
-                                            <a type="button" class="btn btn-outline-danger"
-                                               href="${pageContext.request.contextPath}/app/admin/deleteLibrarian?id=${user.id}">Видалити</a>
-                                        </c:if>
-                                    </td>
-                                </tr>
-                            </c:forEach>
+                                                <a type="button" class="btn btn-outline-success" href="${pageContext.request.contextPath}/app/admin/unblockUser?id=${user.id}">Розблокувати</a>
+                                            </c:if>
+                                            <c:if test="${user.blocked == false}">
+                                                <a type="button" class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/admin/blockUser?id=${user.id}">Заблокувати</a>
+                                            </c:if>
+                                            <c:if test="${user.role == 'LIBRARIAN'}">
+                                                <a type="button" class="btn btn-outline-danger"
+                                                   href="${pageContext.request.contextPath}/app/admin/deleteLibrarian?id=${user.id}">Видалити</a>
+                                            </c:if>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:if>
+                            <c:if test="${requestScope.userList.size() == 0}">
+                                <p>Пусто</p>
+                            </c:if>
                         </table>
                     </c:if>
                     <c:if test="${requestScope.userList == null}">
@@ -107,6 +112,7 @@
                         <table class="table table-responsive table-bordered table-hover">
                             <thead class="thead-light">
                                 <tr>
+                                    <th>№</th>
                                     <th>Title</th>
                                     <th>Authors</th>
                                     <th>Language</th>
@@ -118,33 +124,39 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <c:forEach items="${requestScope.bookList}" var="book">
-                                <tr>
-                                    <td><c:out value="${book.title}"/></td>
-                                    <td>
-                                        <%
-                                            Book book = (Book) pageContext.getAttribute("book");
-                                            StringBuilder authorsString = new StringBuilder();
-                                            for (Author author : book.getAuthors()) {
-                                                authorsString.append(author.getName()).append(",").append(" ");
-                                            }
-                                            authorsString.deleteCharAt(authorsString.length() - 1);
-                                            authorsString.deleteCharAt(authorsString.length() - 1);
-                                            out.print(authorsString.toString());
-                                        %>
-                                    </td>
-                                    <td>${book.language}</td>
-                                    <td>${book.edition.name}</td>
-                                    <td>${book.publicationDate}</td>
-                                    <td>${book.description}</td>
-                                    <td>${book.price}</td>
-                                    <td>${book.count}</td>
-                                    <td class="justify-content-sm-between" style="width: 200px;">
-                                        <a type="button" class="btn btn-outline-warning" href="${pageContext.request.contextPath}/app/admin/editBook?id=${book.id}">Edit</a>
-                                        <a type="button" class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/admin/deleteBook?id=${book.id}">Delete</a>
-                                    </td>
-                                </tr>
-                            </c:forEach>
+                            <c:if test="${requestScope.bookList.size() > 0}">
+                                <c:forEach items="${requestScope.bookList}" var="book">
+                                    <tr>
+                                        <td>${book.id}</td>
+                                        <td><c:out value="${book.title}"/></td>
+                                        <td>
+                                            <%
+                                                Book book = (Book) pageContext.getAttribute("book");
+                                                StringBuilder authorsString = new StringBuilder();
+                                                for (Author author : book.getAuthors()) {
+                                                    authorsString.append(author.getName()).append(",").append(" ");
+                                                }
+                                                authorsString.deleteCharAt(authorsString.length() - 1);
+                                                authorsString.deleteCharAt(authorsString.length() - 1);
+                                                out.print(authorsString.toString());
+                                            %>
+                                        </td>
+                                        <td>${book.language}</td>
+                                        <td>${book.edition.name}</td>
+                                        <td>${book.publicationDate}</td>
+                                        <td>${book.description}</td>
+                                        <td>${book.price}</td>
+                                        <td>${book.count}</td>
+                                        <td class="justify-content-sm-between" style="width: 200px;">
+                                            <a type="button" class="btn btn-outline-warning" href="${pageContext.request.contextPath}/app/admin/editBook?id=${book.id}">Edit</a>
+                                            <a type="button" class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/admin/deleteBook?id=${book.id}">Delete</a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:if>
+                            <c:if test="${requestScope.bookList.size() == 0}">
+                                <p>Пусто</p>
+                            </c:if>
                         </table>
                     </c:if>
                     <c:if test="${requestScope.bookList == null}">

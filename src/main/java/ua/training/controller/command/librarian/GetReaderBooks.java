@@ -25,7 +25,7 @@ public class GetReaderBooks implements Command {
     public String execute(HttpServletRequest request) {
         String userId = request.getParameter("userId");
         if (userId == null || userId.equals("")) {
-            return "redirect:/librarian/home?tab=2";
+            return "/user/librarian/readerBooks.jsp";
         }
         Optional<User> optionalUser = userService.findById(Long.parseLong(userId));
         if (optionalUser.isPresent()) {
@@ -37,6 +37,6 @@ public class GetReaderBooks implements Command {
             request.setAttribute("user", user);
             return "/user/librarian/readerBooks.jsp";
         }
-        return "/error/error,jsp";
+        return "/error/error.jsp";
     }
 }
