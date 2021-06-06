@@ -1,5 +1,6 @@
 package ua.training.model.service;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import ua.training.model.dao.*;
 import ua.training.model.entity.Book;
 import ua.training.model.entity.Order;
@@ -69,8 +70,13 @@ public class OrderService {
                     Book book = order.getBook();
                     book.setAuthors(authorDao.getAuthorsByBookId(book.getId()));
                     if (LocalDate.now().isAfter(order.getEndDate())) {
-                        order.setOrderStatus(OrderStatus.OVERDUE);
-                        orderDao.update(order);
+                        if (order.getOrderStatus() == OrderStatus.APPROVED) {
+                            order.setOrderStatus(OrderStatus.OVERDUE);
+                            orderDao.update(order);
+                        }
+                        if (order.getOrderStatus() == OrderStatus.READER_HOLE) {
+                            orderDao.delete(order.getId());
+                        }
                     }
                 }
                 return orderList;
@@ -95,5 +101,10 @@ public class OrderService {
         }
     }
 
+    public void deleteOrder(long id) {
+        try (OrderDao orderDao = daoFactory.createOrderDao()) {
+            orderDao.delete(id);
+        }
+    }
 
 }

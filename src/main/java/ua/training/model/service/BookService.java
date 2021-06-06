@@ -5,7 +5,6 @@ import ua.training.model.entity.Author;
 import ua.training.model.entity.Book;
 import ua.training.model.entity.Edition;
 
-import java.sql.SQLException;
 import java.util.*;
 
 public class BookService {
@@ -69,8 +68,6 @@ public class BookService {
                 book.setAuthors(authors);
                 bookDao.delete(book.getId());
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
         }
     }
 

@@ -32,8 +32,6 @@ public class UserService {
     public void delete(long id) {
         try (UserDao userDao = daoFactory.createUserDao()) {
             userDao.delete(id);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
         }
     }
 

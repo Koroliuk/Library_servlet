@@ -163,19 +163,23 @@ public class JDBCBookDao implements BookDao {
     }
 
     @Override
-    public void delete(long id) throws SQLException {
-        try (PreparedStatement deleteAuthorship = connection.prepareStatement(SQLConstants.UNSET_AUTHORSHIP_BY_BOOK_ID);
-             PreparedStatement deleteBook = connection.prepareStatement(SQLConstants.DELETE_BOOK)) {
-            connection.setAutoCommit(false);
-            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-            deleteAuthorship.setLong(1, id);
-            deleteAuthorship.executeUpdate();
-            deleteBook.setLong(1, id);
-            deleteBook.executeUpdate();
-            connection.commit();
-            connection.setAutoCommit(true);
+    public void delete(long id) {
+        try {
+            try (PreparedStatement deleteAuthorship = connection.prepareStatement(SQLConstants.UNSET_AUTHORSHIP_BY_BOOK_ID);
+                 PreparedStatement deleteBook = connection.prepareStatement(SQLConstants.DELETE_BOOK)) {
+                connection.setAutoCommit(false);
+                connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+                deleteAuthorship.setLong(1, id);
+                deleteAuthorship.executeUpdate();
+                deleteBook.setLong(1, id);
+                deleteBook.executeUpdate();
+                connection.commit();
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                connection.rollback();
+                e.printStackTrace();
+            }
         } catch (SQLException e) {
-            connection.rollback();
             e.printStackTrace();
         }
     }
