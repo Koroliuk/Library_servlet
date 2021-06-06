@@ -35,11 +35,14 @@ public class Login implements Command {
             return "/login.jsp?loginError=true";
         }
         User user = optionalUser.get();
-        if (!password.equals(user.getPassword_hash())) {
+        if (!password.equals(user.getPasswordHash())) {
             return "/login.jsp?passwordError=true";
         }
         if (CommandUtility.checkUserIsLogged(request, login)) {
             return "/error/error.jsp";
+        }
+        if (user.isBlocked()) {
+            return "/blocked.jsp";
         }
         if (user.getRole().equals(Role.READER)) {
             CommandUtility.setUserRole(request, Role.READER, login);
