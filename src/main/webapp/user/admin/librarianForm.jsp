@@ -45,15 +45,15 @@
     <form id="form" method="post" action="${pageContext.request.contextPath}/app/admin/addLibrarian">
         <div class="form-group">
             <c:if test="${param.validError == true}">
-                <span><fmt:message key="signup.message.check.input.data"/></span>
+                <span class="text-danger"><fmt:message key="signup.message.check.input.data"/></span>
                 <br/>
             </c:if>
             <c:if test="${param.loginError == true}">
-                <span><fmt:message key="signup.message.login.in.use"/></span>
+                <span class="text-danger"><fmt:message key="signup.message.login.in.use"/></span>
                 <br/>
             </c:if>
             <c:if test="${param.successEvent == true}">
-                <span><fmt:message key="signup.success.registration"/></span>
+                <span class="text-success"><fmt:message key="signup.success.registration"/></span>
                 <br/>
             </c:if>
             <div>
