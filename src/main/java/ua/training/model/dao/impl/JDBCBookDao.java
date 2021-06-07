@@ -22,9 +22,7 @@ public class JDBCBookDao implements BookDao {
     @Override
     public void create(Book entity) {
         try (PreparedStatement statement =
-                     connection.prepareStatement("INSERT INTO book (title_ua, description_ua, edition_id," +
-                             " language_ua, publication_date, price_uan, count, title_en, description_en, language_en)" +
-                             " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+                     connection.prepareStatement(SQLConstants.CREATE_BOOK, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, entity.getTitle());
             statement.setString(2, entity.getDescription());
             statement.setLong(3, entity.getEdition().getId());
@@ -119,9 +117,7 @@ public class JDBCBookDao implements BookDao {
 
     @Override
     public long getBookAmountWithKeyWord(String keyWord) {
-        String query = "SELECT COUNT(*) FROM book INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-                "ON author_id = author.id WHERE author.full_name_ua LIKE '%' || ? || '%' OR book.title_ua LIKE '%' || ? || '%' ;";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_AMOUNT_OF_BOOKS_WITH_KEY_WORD)) {
             statement.setString(1, keyWord);
             statement.setString(2, keyWord);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -140,24 +136,10 @@ public class JDBCBookDao implements BookDao {
     public List<Book> findAllUa() {
         List<Book> bookList = new ArrayList<>();
         try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM book INNER JOIN edition ON edition_id = edition.id");
+            ResultSet resultSet = statement.executeQuery(SQLConstants.GET_ALL_BOOKS);
             while (resultSet.next()) {
-                Edition edition = new Edition.Builder()
-                        .id(resultSet.getLong("edition_id"))
-                        .name(resultSet.getString("edition_name_ua"))
-                        .build();
-                Book book = new Book.Builder()
-                        .id(resultSet.getLong("id"))
-                        .title(resultSet.getString("title_ua"))
-                        .description(resultSet.getString("description_ua"))
-                        .language(resultSet.getString("language_ua"))
-                        .edition(edition)
-                        .publicationDate(LocalDate.parse(resultSet.getString("publication_date")))
-                        .price(resultSet.getFloat("price_uan"))
-                        .count(resultSet.getInt("count"))
-                        .build();
-//                BookMapper mapper = new BookMapper();
-//                Book book = mapper.extractFromResultSet(resultSet);
+                BookMapper mapper = new BookMapper();
+                Book book = mapper.extractFromResultSetLocal(resultSet);
                 bookList.add(book);
             }
         } catch (SQLException e) {
@@ -170,24 +152,10 @@ public class JDBCBookDao implements BookDao {
     public List<Book> findAllEn() {
         List<Book> bookList = new ArrayList<>();
         try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM book INNER JOIN edition ON edition_id = edition.id");
+            ResultSet resultSet = statement.executeQuery(SQLConstants.GET_ALL_BOOKS);
             while (resultSet.next()) {
-                Edition edition = new Edition.Builder()
-                        .id(resultSet.getLong("edition_id"))
-                        .name(resultSet.getString("edition_name_en"))
-                        .build();
-                Book book = new Book.Builder()
-                        .id(resultSet.getLong("id"))
-                        .title(resultSet.getString("title_en"))
-                        .description(resultSet.getString("description_en"))
-                        .language(resultSet.getString("language_en"))
-                        .edition(edition)
-                        .publicationDate(LocalDate.parse(resultSet.getString("publication_date")))
-                        .price(resultSet.getFloat("price_uan")/30)
-                        .count(resultSet.getInt("count"))
-                        .build();
-//                BookMapper mapper = new BookMapper();
-//                Book book = mapper.extractFromResultSet(resultSet);
+                BookMapper mapper = new BookMapper();
+                Book book = mapper.extractFromResultSetLocal(resultSet);
                 bookList.add(book);
             }
         } catch (SQLException e) {
@@ -202,20 +170,8 @@ public class JDBCBookDao implements BookDao {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    Edition edition = new Edition.Builder()
-                            .id(resultSet.getLong("edition_id"))
-                            .name(resultSet.getString("edition_name_ua"))
-                            .build();
-                    Book book = new Book.Builder()
-                            .id(resultSet.getLong("id"))
-                            .title(resultSet.getString("title_ua"))
-                            .description(resultSet.getString("description_ua"))
-                            .language(resultSet.getString("language_ua"))
-                            .edition(edition)
-                            .publicationDate(LocalDate.parse(resultSet.getString("publication_date")))
-                            .price(resultSet.getFloat("price_uan"))
-                            .count(resultSet.getInt("count"))
-                            .build();
+                    BookMapper mapper = new BookMapper();
+                    Book book = mapper.extractFromResultSetLocal(resultSet);
                     return Optional.of(book);
                 }
             }
@@ -230,20 +186,8 @@ public class JDBCBookDao implements BookDao {
             statement.setLong(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    Edition edition = new Edition.Builder()
-                            .id(resultSet.getLong("edition_id"))
-                            .name(resultSet.getString("edition_name_en"))
-                            .build();
-                    Book book = new Book.Builder()
-                            .id(resultSet.getLong("id"))
-                            .title(resultSet.getString("title_en"))
-                            .description(resultSet.getString("description_en"))
-                            .language(resultSet.getString("language_en"))
-                            .edition(edition)
-                            .publicationDate(LocalDate.parse(resultSet.getString("publication_date")))
-                            .price(resultSet.getFloat("price_uan")/30)
-                            .count(resultSet.getInt("count"))
-                            .build();
+                    BookMapper mapper = new BookMapper();
+                    Book book = mapper.extractFromResultSetLocal(resultSet);
                     return Optional.of(book);
                 }
             }
@@ -265,20 +209,8 @@ public class JDBCBookDao implements BookDao {
             statement.setInt(4, offsetPosition);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    Edition edition = new Edition.Builder()
-                            .id(resultSet.getLong("edition_id"))
-                            .name(resultSet.getString("edition_name_ua"))
-                            .build();
-                    Book book = new Book.Builder()
-                            .id(resultSet.getLong("id"))
-                            .title(resultSet.getString("title_ua"))
-                            .description(resultSet.getString("description_ua"))
-                            .language(resultSet.getString("language_ua"))
-                            .edition(edition)
-                            .publicationDate(LocalDate.parse(resultSet.getString("publication_date")))
-                            .price(resultSet.getFloat("price_uan"))
-                            .count(resultSet.getInt("count"))
-                            .build();
+                    BookMapper mapper = new BookMapper();
+                    Book book = mapper.extractFromResultSetLocal(resultSet);
                     bookList.add(book);
                 }
             }
@@ -300,20 +232,8 @@ public class JDBCBookDao implements BookDao {
             statement.setInt(4, offsetPosition);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    Edition edition = new Edition.Builder()
-                            .id(resultSet.getLong("edition_id"))
-                            .name(resultSet.getString("edition_name_en"))
-                            .build();
-                    Book book = new Book.Builder()
-                            .id(resultSet.getLong("id"))
-                            .title(resultSet.getString("title_en"))
-                            .description(resultSet.getString("description_en"))
-                            .language(resultSet.getString("language_en"))
-                            .edition(edition)
-                            .publicationDate(LocalDate.parse(resultSet.getString("publication_date")))
-                            .price(resultSet.getFloat("price_uan")/30)
-                            .count(resultSet.getInt("count"))
-                            .build();
+                    BookMapper mapper = new BookMapper();
+                    Book book = mapper.extractFromResultSetLocal(resultSet);
                     bookList.add(book);
                 }
             }
@@ -323,10 +243,21 @@ public class JDBCBookDao implements BookDao {
         return bookList;    }
 
     @Override
+    public void updateAmount(Book entity) {
+        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.UPDATE_AMOUNT_OF_BOOK)) {
+            statement.setInt(1, entity.getCount());
+            statement.setLong(2, entity.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public List<Book> findAll() {
         List<Book> bookList = new ArrayList<>();
         try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM book INNER JOIN edition ON edition_id = edition.id");
+            ResultSet resultSet = statement.executeQuery(SQLConstants.GET_ALL_BOOKS);
             while (resultSet.next()) {
                 BookMapper mapper = new BookMapper();
                 Book book = mapper.extractFromResultSet(resultSet);
@@ -340,9 +271,7 @@ public class JDBCBookDao implements BookDao {
 
     @Override
     public void update(Book entity) {
-        try (PreparedStatement statement = connection.prepareStatement("UPDATE book SET (title_ua, description_ua," +
-                " language_ua, edition_id," +
-                " publication_date, price_uan, count, title_en, description_en, language_en) = (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) WHERE id = ?")) {
+        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.UPDATE_PARTIAL_BOOK)) {
             statement.setString(1, entity.getTitle());
             statement.setString(2, entity.getDescription());
             statement.setString(3, entity.getLanguage());
