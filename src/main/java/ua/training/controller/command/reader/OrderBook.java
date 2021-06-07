@@ -80,8 +80,8 @@ public class OrderBook implements Command {
             Order order = new Order.Builder()
                     .book(book)
                     .user(user)
-                    .startDate(LocalDate.now())
-                    .endDate(LocalDate.now())
+                    .startDate(LocalDate.parse(startDate))
+                    .endDate(LocalDate.parse(startDate))
                     .orderStatus(status)
                     .build();
             orderService.orderBook(order);
