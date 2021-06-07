@@ -10,7 +10,7 @@
 <html lang="${language}">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Error Page</title>
+    <title>No access page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -51,10 +51,10 @@
     </div>
 </header>
 <body>
-<div class="container text-center" style="margin-top: 10%;">
-    <p>Виникла помилка</p>
-    <p><a href="${pageContext.request.contextPath}/index.jsp">To home page</a></p>
-</div>
+    <div class="container text-center" style="margin-top: 10%;">
+        <h3>Немає доступу</h3>
+        <p><a href="${pageContext.request.contextPath}/index.jsp">To home page</a></p>
+    </div>
 </body>
 <footer class="navbar fixed-bottom d-flex flex-row justify-content-sm-between align-items-center bg-light text-lg-start p-3">
     <div>

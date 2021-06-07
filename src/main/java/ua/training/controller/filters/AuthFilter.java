@@ -43,7 +43,7 @@ public class AuthFilter implements Filter {
                     response.sendRedirect("/error/error.jsp");
                 }
             } else {
-                response.sendRedirect("/error/error.jsp");
+                response.sendRedirect("/error/noAccess.jsp");
             }
         }
     }
