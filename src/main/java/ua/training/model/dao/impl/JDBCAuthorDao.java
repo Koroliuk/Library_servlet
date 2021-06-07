@@ -17,15 +17,15 @@ public class JDBCAuthorDao implements AuthorDao {
     }
 
     @Override
-    public void create(Author entity) {
+    public void create(Author author) {
         try (PreparedStatement statement =
                      connection.prepareStatement(SQLConstants.CREATE_AUTHOR, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, entity.getName());
-            statement.setString(2, entity.getAnotherName());
+            statement.setString(2, author.getAnotherName());
+            statement.setString(1, author.getName());
             if (statement.executeUpdate() > 0) {
                 try (ResultSet resultSet = statement.getGeneratedKeys()) {
                     if (resultSet.next()) {
-                        entity.setId(resultSet.getInt("id"));
+                        author.setId(resultSet.getInt("id"));
                     }
                 }
             }
@@ -103,39 +103,22 @@ public class JDBCAuthorDao implements AuthorDao {
     }
 
     @Override
-    public List<Author> getAuthorsByBookIdUa(long id) {
+    public List<Author> getAuthorsByBookIdLocaled(long id) {
         List<Author> authors = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQLConstants.GET_AUTHORS_BY_BOOK_ID)) {
             preparedStatement.setLong(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     AuthorMapper mapper = new AuthorMapper();
-                    Author author = mapper.extractFromResultSetWithIdLocale(resultSet, "author_id");
+                    Author author = mapper.extractFromResultSetWithIdLocaled(resultSet, "author_id");
                     authors.add(author);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return authors;    }
-
-    @Override
-    public List<Author> getAuthorsByBookIdEn(long id) {
-        List<Author> authors = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQLConstants.GET_AUTHORS_BY_BOOK_ID)) {
-            preparedStatement.setLong(1, id);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    AuthorMapper mapper = new AuthorMapper();
-                    Author author = mapper.extractFromResultSetWithIdLocale(resultSet, "author_id");
-                    authors.add(author);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return authors;    }
-
+        return authors;
+    }
 
     @Override
     public void close() {

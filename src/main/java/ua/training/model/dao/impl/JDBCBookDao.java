@@ -1,13 +1,12 @@
 package ua.training.model.dao.impl;
 
+import ua.training.controller.filters.LocalizationFilter;
 import ua.training.model.dao.BookDao;
 import ua.training.model.dao.mapper.BookMapper;
 import ua.training.model.entity.Author;
 import ua.training.model.entity.Book;
-import ua.training.model.entity.Edition;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,6 +62,23 @@ public class JDBCBookDao implements BookDao {
     }
 
     @Override
+    public Optional<Book> findByIdWithLocaled(long id) {
+        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_ID)) {
+            statement.setLong(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    BookMapper mapper = new BookMapper();
+                    Book book = mapper.extractFromResultSetLocaled(resultSet);
+                    return Optional.of(book);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<Book> findByTitleAndAuthorsNames(String title, List<Author> authors) {
         StringBuilder stringNamesArray = new StringBuilder();
         stringNamesArray.append("{");
@@ -105,7 +121,7 @@ public class JDBCBookDao implements BookDao {
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     BookMapper mapper = new BookMapper();
-                    Book book = mapper.extractFromResultSet(resultSet);
+                    Book book = mapper.extractFromResultSetLocaled(resultSet);
                     bookList.add(book);
                 }
             }
@@ -133,116 +149,6 @@ public class JDBCBookDao implements BookDao {
     }
 
     @Override
-    public List<Book> findAllUa() {
-        List<Book> bookList = new ArrayList<>();
-        try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(SQLConstants.GET_ALL_BOOKS);
-            while (resultSet.next()) {
-                BookMapper mapper = new BookMapper();
-                Book book = mapper.extractFromResultSetLocal(resultSet);
-                bookList.add(book);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return bookList;
-    }
-
-    @Override
-    public List<Book> findAllEn() {
-        List<Book> bookList = new ArrayList<>();
-        try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(SQLConstants.GET_ALL_BOOKS);
-            while (resultSet.next()) {
-                BookMapper mapper = new BookMapper();
-                Book book = mapper.extractFromResultSetLocal(resultSet);
-                bookList.add(book);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return bookList;
-    }
-
-    @Override
-    public Optional<Book> findByIdUa(long id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_ID)) {
-            statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    BookMapper mapper = new BookMapper();
-                    Book book = mapper.extractFromResultSetLocal(resultSet);
-                    return Optional.of(book);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();    }
-
-    @Override
-    public Optional<Book> findByIdEn(long id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_ID)) {
-            statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    BookMapper mapper = new BookMapper();
-                    Book book = mapper.extractFromResultSetLocal(resultSet);
-                    return Optional.of(book);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();    }
-
-    @Override
-    public List<Book> findByKeyWordUa(String keyWord, String sortBy, String sortType, int page) {
-        List<Book> bookList = new ArrayList<>();
-        String query = chooseSortingQueryUa(sortBy, sortType);
-        try (PreparedStatement statement =
-                     connection.prepareStatement(query)) {
-            statement.setString(1, keyWord);
-            statement.setString(2, keyWord);
-            int offsetPosition = (page-1)*4;
-            statement.setInt(3, 4);
-            statement.setInt(4, offsetPosition);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    BookMapper mapper = new BookMapper();
-                    Book book = mapper.extractFromResultSetLocal(resultSet);
-                    bookList.add(book);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return bookList;    }
-
-    @Override
-    public List<Book> findByKeyWordEn(String keyWord, String sortBy, String sortType, int page) {
-        List<Book> bookList = new ArrayList<>();
-        String query = chooseSortingQueryEn(sortBy, sortType);
-        try (PreparedStatement statement =
-                     connection.prepareStatement(query)) {
-            statement.setString(1, keyWord);
-            statement.setString(2, keyWord);
-            int offsetPosition = (page-1)*4;
-            statement.setInt(3, 4);
-            statement.setInt(4, offsetPosition);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    BookMapper mapper = new BookMapper();
-                    Book book = mapper.extractFromResultSetLocal(resultSet);
-                    bookList.add(book);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return bookList;    }
-
-    @Override
     public void updateAmount(Book entity) {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.UPDATE_AMOUNT_OF_BOOK)) {
             statement.setInt(1, entity.getCount());
@@ -260,7 +166,7 @@ public class JDBCBookDao implements BookDao {
             ResultSet resultSet = statement.executeQuery(SQLConstants.GET_ALL_BOOKS);
             while (resultSet.next()) {
                 BookMapper mapper = new BookMapper();
-                Book book = mapper.extractFromResultSet(resultSet);
+                Book book = mapper.extractFromResultSetLocaled(resultSet);
                 bookList.add(book);
             }
         } catch (SQLException e) {
@@ -343,33 +249,11 @@ public class JDBCBookDao implements BookDao {
     }
 
     private String chooseSortingQuery(String sortBy, String sortType) {
-        String query;
-        if (sortType.equals("dec")) {
-            if (sortBy.equals("title")) {
-                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_TITLE_DEC;
-            } else if (sortBy.equals("author")) {
-                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_AUTHOR_DEC;
-            } else if (sortBy.equals("edition")) {
-                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_DEC;
-            } else if (sortBy.equals("date")) {
-                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_DATE_DEC;
-            } else {
-                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_ID_DEC;
-            }
+        if (LocalizationFilter.locale.toString().equals("ua")) {
+            return chooseSortingQueryUa(sortBy, sortType);
         } else {
-            if (sortBy.equals("title")) {
-                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_TITLE_INC;
-            } else if (sortBy.equals("author")) {
-                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_AUTHOR_INC;
-            } else if (sortBy.equals("edition")) {
-                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_INC;
-            } else if (sortBy.equals("date")) {
-                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_DATE_INC;
-            } else {
-                query = SQLConstants.GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_ID_INC;
-            }
+            return chooseSortingQueryEn(sortBy, sortType);
         }
-        return query;
     }
 
     private String chooseSortingQueryUa(String sortBy, String sortType) {
