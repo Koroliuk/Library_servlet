@@ -50,49 +50,56 @@
     </nav>
     <br/>
     <div class="tab-content text-center">
-        <h2>Кабінет бібліотекаря: <%= session.getAttribute("userLogin") %></h2>
+        <h3>Кабінет бібліотекаря: <%= session.getAttribute("userLogin") %></h3>
         <div class="tab-pane fade <c:if test="${param.tab == null || param.tab.equals('') || param.tab.equals('1')}">show active</c:if> text-center" id="orders">
             <div class="row justify-content-center">
                 <div class="col-auto">
-                    <h3>Перелік замовлень</h3>
+                    <h5 class="mb-2 mt-2">Перелік замовлень</h5>
                     <c:if test="${requestScope.orderList != null}">
-                        <table class="table table-responsive">
-                            <tr>
-                                <th>Id</th>
-                                <th>User login</th>
-                                <th>Title</th>
-                                <th>Authors</th>
-                                <th>Action</th>
-                            </tr>
-                            <c:forEach items="${requestScope.orderList}" var="order">
+                        <table class="table table-responsive table-bordered table-hover">
+                            <thead class="thead-light">
                                 <tr>
-                                    <td><c:out value="${order.id}"/></td>
-                                    <td><c:out value="${order.user.login}"/></td>
-                                    <td>
-                                        <c:out value="${order.book.title}"/>
-                                    </td>
-                                    <td>
-                                        <%
-                                            Order order = (Order) pageContext.getAttribute("order");;
-                                            Book book = order.getBook();
-                                            String authors = "";
-                                            StringBuilder authorsString = new StringBuilder();
-                                            for (Author author : book.getAuthors()) {
-                                                authorsString.append(author.getName()).append(",").append(" ");
-                                            }
-                                            authorsString.deleteCharAt(authorsString.length() - 1);
-                                            authorsString.deleteCharAt(authorsString.length() - 1);
-                                            authors = authorsString.toString();
-                                            request.setAttribute("authorsString", authors);
-                                        %>
-                                        <span>${requestScope.authorsString}</span>
-                                    </td>
-                                    <td>
-                                        <a  class="btn btn-outline-info" href="${pageContext.request.contextPath}/app/librarian/home?id=${order.id}&action=add">Видати</a>
-                                        <a  class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/librarian/home?id=${order.id}&action=delete">Скасувати</a>
-                                    </td>
+                                    <th>№</th>
+                                    <th>User login</th>
+                                    <th>Title</th>
+                                    <th>Authors</th>
+                                    <th>Action</th>
                                 </tr>
-                            </c:forEach>
+                            </thead>
+                            <c:if test="${requestScope.orderList.size() > 0}">
+                                <c:forEach items="${requestScope.orderList}" var="order">
+                                    <tr>
+                                        <td><c:out value="${order.id}"/></td>
+                                        <td><c:out value="${order.user.login}"/></td>
+                                        <td>
+                                            <c:out value="${order.book.title}"/>
+                                        </td>
+                                        <td>
+                                            <%
+                                                Order order = (Order) pageContext.getAttribute("order");;
+                                                Book book = order.getBook();
+                                                String authors = "";
+                                                StringBuilder authorsString = new StringBuilder();
+                                                for (Author author : book.getAuthors()) {
+                                                    authorsString.append(author.getName()).append(",").append(" ");
+                                                }
+                                                authorsString.deleteCharAt(authorsString.length() - 1);
+                                                authorsString.deleteCharAt(authorsString.length() - 1);
+                                                authors = authorsString.toString();
+                                                request.setAttribute("authorsString", authors);
+                                            %>
+                                            <span>${requestScope.authorsString}</span>
+                                        </td>
+                                        <td>
+                                            <a  class="btn btn-outline-info" href="${pageContext.request.contextPath}/app/librarian/home?id=${order.id}&action=add">Видати</a>
+                                            <a  class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/librarian/home?id=${order.id}&action=delete">Скасувати</a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:if>
+                            <c:if test="${requestScope.orderList.size() == 0}">
+                                <p>Пусто</p>
+                            </c:if>
                         </table>
                     </c:if>
                 </div>
@@ -101,25 +108,36 @@
         <div class="tab-pane fade <c:if test="${param.tab.equals('3')}">show active</c:if> text-center" id="subscriptions">
             <div class="row justify-content-center">
                 <div class="col-auto">
-                    <h3>Абонементи читачів</h3>
+                    <h5>Абонементи читачів</h5>
                     <c:if test="${requestScope.userList != null}">
-                        <table class="table table-responsive">
-                            <tr>
-                                <th>Login</th>
-                                <th>Абонемент</th>
-                            </tr>
-                            <c:forEach items="${requestScope.userList}" var="user">
-                                <c:if test="${user.role == 'READER'}">
-                                    <tr>
-                                        <td>
-                                                ${user.login}
-                                        </td>
-                                        <td>
-                                            <a href="${pageContext.request.contextPath}/app/librarian/getReaderBooks?userId=${user.id}">Переглянути абонемент</a>
-                                        </td>
-                                    </tr>
-                                </c:if>
-                            </c:forEach>
+                        <table class="table table-responsive table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>№</th>
+                                    <th>Login</th>
+                                    <th>Абонемент</th>
+                                </tr>
+                            </thead>
+                            <c:if test="${requestScope.userList.size() > 0}">
+                                <c:forEach items="${requestScope.userList}" var="user">
+                                    <c:if test="${user.role == 'READER'}">
+                                        <tr>
+                                            <td>
+                                                    ${user.id}
+                                            </td>
+                                            <td>
+                                                    ${user.login}
+                                            </td>
+                                            <td>
+                                                <a href="${pageContext.request.contextPath}/app/librarian/getReaderBooks?userId=${user.id}">Переглянути абонемент</a>
+                                            </td>
+                                        </tr>
+                                    </c:if>
+                                </c:forEach>
+                            </c:if>
+                            <c:if test="${requestScope.userList.size() == 0}">
+                                <p>Пусто</p>
+                            </c:if>
                         </table>
                     </c:if>
                 </div>
@@ -127,24 +145,5 @@
         </div>
     </div>
 </body>
-<footer class="navbar fixed-bottom d-flex flex-row justify-content-sm-between align-items-center bg-light text-lg-start p-3">
-    <div>
-        <p>
-            <fmt:message key="footer.licence"/>
-            <a href="https://github.com/Koroliuk/Library_servlet/blob/main/LICENSE">
-                GNU GPLv3 License
-            </a>.
-            <br>
-            <a href="https://github.com/Koroliuk/Library_servlet"><fmt:message key="footer.project.github"/></a><br/>
-            <span>@2021</span>
-        </p>
-    </div>
-    <div>
-        <p>
-            <fmt:message key="footer.questions"/>
-            <a href="https://github.com/Koroliuk/Library_servlet/issues/new">GitHub</a>.
-        </p>
-    </div>
-</footer>
 <script type="text/javascript" src="${pageContext.request.contextPath}/user/librarian/js/home.js"></script>
 </html>
