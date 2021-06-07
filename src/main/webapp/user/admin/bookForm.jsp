@@ -66,8 +66,12 @@
                 <span class="text-danger">Така книга вже існує</span>
                 <br/>
             </c:if>
-            <c:if test="${param.successCreation == true}">
+            <c:if test="${param.successCreation == true && requestScope.action == 'add'}">
                 <span class="text-success">Книгу успішно додано</span>
+                <br/>
+            </c:if>
+            <c:if test="${param.successCreation == true && requestScope.action == 'edit'}">
+                <span class="text-success">Книгу успішно оновлено</span>
                 <br/>
             </c:if>
             <div>
@@ -77,7 +81,7 @@
                 </label>
                 <label style="width: 37%;">
                     <input class="form-control" type="text" id="titleEn" name="titleEn" placeholder="Title"
-                           value="${requestScope.book.title != null ? requestScope.book.title : ""}">
+                           value="${requestScope.book.anotherTitle != null ? requestScope.book.anotherTitle : ""}">
                 </label>
                 <br/>
                 <span class="text-danger" id="titleMessage"></span>
@@ -103,12 +107,10 @@
                 </label>
                 <label style="width: 37%;">
                     <%
-//                        Book book = (Book) request.getAttribute("book");
-//                        String authors = "";
                         if (book != null) {
                             StringBuilder authorsString = new StringBuilder();
                             for (Author author : book.getAuthors()) {
-                                authorsString.append(author.getName()).append(",");
+                                authorsString.append(author.getAnotherName()).append(",");
                             }
                             authorsString.deleteCharAt(authorsString.length() - 1);
                             authorsString.deleteCharAt(authorsString.length() - 1);
@@ -129,7 +131,7 @@
                 </label>
                 <label style="width: 75%;">
                     <textarea class="form-control" id="descriptionEn" name="descriptionEn" placeholder="Description"
-                              wrap="soft">${requestScope.book.description != null ? requestScope.book.description : ""}</textarea>
+                              wrap="soft">${requestScope.book.anotherDescription != null ? requestScope.book.anotherDescription : ""}</textarea>
                 </label>
                 <br/>
                 <span class="text-danger" id="descriptionMessage"></span>
@@ -141,7 +143,7 @@
                 </label>
                 <label style="width: 37%;">
                     <input class="form-control" type="text" id="bookLanguageEn" name="bookLanguageEn" placeholder="Language"
-                           value="${requestScope.book.language != null ? requestScope.book.language : ""}">
+                           value="${requestScope.book.anotherLanguage != null ? requestScope.book.anotherLanguage : ""}">
                 </label>
                 <br/>
                 <span class="text-danger" id="bookLanguageMessage"></span>
@@ -153,7 +155,7 @@
                 </label>
                 <label style="width: 37%;">
                     <input class="form-control" type="text" id="editionEn" name="editionEn" placeholder="Edition"
-                           value="${requestScope.book.edition.name != null ? requestScope.book.edition.name : ""}">
+                           value="${requestScope.book.edition.anotherName != null ? requestScope.book.edition.anotherName : ""}">
                 </label>
                 <br/>
                 <span class="text-danger" id="editionMessage"></span>

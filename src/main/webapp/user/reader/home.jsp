@@ -210,7 +210,7 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <c:if test="${requestScope.orderList > 0}">
+                        <c:if test="${requestScope.orderList.size() > 0}">
                             <c:forEach items="${requestScope.orderList}" var="order">
                                 <c:if test="${order.orderStatus == 'CANCELED' || order.orderStatus == 'RECEIVED'}">
                                     <tr>

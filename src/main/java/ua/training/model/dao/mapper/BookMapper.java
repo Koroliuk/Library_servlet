@@ -16,7 +16,7 @@ public class BookMapper implements ObjectMapper<Book> {
         return new Book.Builder()
                 .id(resultSet.getInt("id"))
                 .title(resultSet.getString("title_ua"))
-                .anotherLanguage(resultSet.getString("title_en"))
+                .anotherTitle(resultSet.getString("title_en"))
                 .description(resultSet.getString("description_ua"))
                 .anotherDescription(resultSet.getString("description_en"))
                 .language(resultSet.getString("language_ua"))
