@@ -10,7 +10,7 @@
 <html lang="${language}">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Main Page</title>
+    <title>No access page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -37,7 +37,8 @@
             </select>
         </form>
         <c:if test="${sessionScope.userLogin == null}">
-            <a class="btn btn-outline-dark mr-2" data-mdb-ripple-color="dark" href="${pageContext.request.contextPath}/app/signup">
+            <a class="btn btn-outline-dark mr-2" data-mdb-ripple-color="dark"
+               href="${pageContext.request.contextPath}/app/signup">
                 <fmt:message key="header.signup"/>
             </a>
             <a class="btn btn-dark" href="${pageContext.request.contextPath}/app/login">
@@ -50,17 +51,9 @@
     </div>
 </header>
 <body>
-    <div class="container text-center align-items-center justify-content-center" style="margin-top: 10%;">
-        <h1 class="col-md-12"><fmt:message key="index.welcome"/></h1>
-        <a class="lead" href="${pageContext.request.contextPath}/app/search?page=1&keyWords=">Перейти до пошуку</a>
-        <div class="justify-content-sm-between">
-            <form method="post" action="${pageContext.request.contextPath}/app/search?page=1">
-                <label>
-                    <input class="form-control me-2 mr-2" type="text" name="keyWords" placeholder="Пошук">
-                </label>
-                <input class="btn btn-outline-success p-1" type="submit" value="Знайти">
-            </form>
-        </div>
+    <div class="container text-center" style="margin-top: 10%;">
+        <h3>Немає доступу</h3>
+        <p><a href="${pageContext.request.contextPath}/index.jsp">To home page</a></p>
     </div>
 </body>
 <footer class="navbar fixed-bottom d-flex flex-row justify-content-sm-between align-items-center bg-light text-lg-start p-3">

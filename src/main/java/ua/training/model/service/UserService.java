@@ -32,8 +32,6 @@ public class UserService {
     public void delete(long id) {
         try (UserDao userDao = daoFactory.createUserDao()) {
             userDao.delete(id);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
         }
     }
 
@@ -48,6 +46,12 @@ public class UserService {
         try (UserDao userDao = daoFactory.createUserDao()) {
             user.setBlocked(false);
             userDao.update(user);
+        }
+    }
+
+    public Optional<User> findById(long id) {
+        try (UserDao userDao = daoFactory.createUserDao()) {
+            return userDao.findById(id);
         }
     }
 }

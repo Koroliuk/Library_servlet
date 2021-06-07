@@ -20,7 +20,7 @@ public class JDBCUserDao implements UserDao {
         try (PreparedStatement statement =
                      connection.prepareStatement(SQLConstants.CREATE_USER, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, entity.getLogin());
-            statement.setString(2, entity.getPassword_hash());
+            statement.setString(2, entity.getPasswordHash());
             statement.setString(3, entity.getRole().name());
             statement.setBoolean(4, entity.isBlocked());
             if (statement.executeUpdate() > 0) {
@@ -88,7 +88,16 @@ public class JDBCUserDao implements UserDao {
 
     @Override
     public void update(User entity) {
-
+        String query = "UPDATE users SET (login, password_hash, is_blocked) = (?, ?, ?) WHERE  id = ? ;";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, entity.getLogin());
+            statement.setString(2, entity.getPasswordHash());
+            statement.setBoolean(3, entity.isBlocked());
+            statement.setLong(4, entity.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

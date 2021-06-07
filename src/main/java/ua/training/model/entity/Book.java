@@ -7,9 +7,12 @@ import java.util.Objects;
 public class Book {
     private long id;
     private String title;
+    private String anotherTitle;
     private List<Author> authors;
     private String description;
+    private String anotherDescription;
     private String language;
+    private String anotherLanguage;
     private Edition edition;
     private LocalDate publicationDate;
     private float price;
@@ -18,9 +21,12 @@ public class Book {
     public static class Builder {
         private long id;
         private String title;
+        private String anotherTitle;
         private List<Author> authors;
         private String description;
+        private String anotherDescription;
         private String language;
+        private String anotherLanguage;
         private Edition edition;
         private LocalDate publicationDate;
         private float price;
@@ -36,6 +42,11 @@ public class Book {
             return this;
         }
 
+        public Builder anotherTitle(String anotherTitle) {
+            this.anotherTitle = anotherTitle;
+            return this;
+        }
+
         public Builder authors(List<Author> authors) {
             this.authors = authors;
             return this;
@@ -46,8 +57,18 @@ public class Book {
             return this;
         }
 
+        public Builder anotherDescription(String anotherDescription) {
+            this.anotherDescription = anotherDescription;
+            return this;
+        }
+
         public Builder language(String language) {
             this.language = language;
+            return this;
+        }
+
+        public Builder anotherLanguage(String anotherLanguage) {
+            this.anotherLanguage = anotherLanguage;
             return this;
         }
 
@@ -79,9 +100,12 @@ public class Book {
     public Book(Builder builder) {
         this.id = builder.id;
         this.title = builder.title;
+        this.anotherTitle = builder.anotherTitle;
         this.authors = builder.authors;
         this.description = builder.description;
+        this.anotherDescription = builder.anotherDescription;
         this.language = builder.language;
+        this.anotherLanguage = builder.anotherLanguage;
         this.edition = builder.edition;
         this.publicationDate = builder.publicationDate;
         this.price = builder.price;
@@ -158,6 +182,30 @@ public class Book {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public String getAnotherTitle() {
+        return anotherTitle;
+    }
+
+    public void setAnotherTitle(String anotherTitle) {
+        this.anotherTitle = anotherTitle;
+    }
+
+    public String getAnotherDescription() {
+        return anotherDescription;
+    }
+
+    public void setAnotherDescription(String anotherDescription) {
+        this.anotherDescription = anotherDescription;
+    }
+
+    public String getAnotherLanguage() {
+        return anotherLanguage;
+    }
+
+    public void setAnotherLanguage(String anotherLanguage) {
+        this.anotherLanguage = anotherLanguage;
     }
 
     @Override

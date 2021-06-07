@@ -5,5 +5,6 @@ public enum OrderStatus {
     RECEIVED,
     APPROVED,
     RETURNED,
-    OVERDUE
+    OVERDUE,
+    CANCELED
 }

@@ -10,18 +10,14 @@ const passwordRegExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,30}$/;
 login.addEventListener("input", () => {
     const loginTest = loginRegExp.test(login.value);
     if (loginTest) {
-        login.className = "valid";
         loginMessage.innerText = "";
-        loginMessage.className = "error";
     } else {
-        login.className = "invalid";
         const loginLength = login.value.length
         if (loginLength < 5 || loginLength > 20) {
             loginMessage.innerText = loginValidateMessage1;
         } else {
             loginMessage.innerText = loginValidateMessage2;
         }
-        loginMessage.className = "error active";
     }
 });
 

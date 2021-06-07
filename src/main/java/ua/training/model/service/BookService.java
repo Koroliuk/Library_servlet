@@ -1,11 +1,11 @@
 package ua.training.model.service;
 
+import ua.training.controller.filters.LocalizationFilter;
 import ua.training.model.dao.*;
 import ua.training.model.entity.Author;
 import ua.training.model.entity.Book;
 import ua.training.model.entity.Edition;
 
-import java.sql.SQLException;
 import java.util.*;
 
 public class BookService {
@@ -69,17 +69,15 @@ public class BookService {
                 book.setAuthors(authors);
                 bookDao.delete(book.getId());
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
         }
     }
 
-    public Optional<Book> findByTitleAndAuthorsNames(String title, List<String> authorNames) {
+    public Optional<Book> findByTitleAndAuthorsNames(String title, List<String> authorNames1, List<String> authorNames2) {
         try (AuthorDao authorDao = daoFactory.createAuthorDao();
             BookDao bookDao = daoFactory.createBookDao()) {
             List<Author> authors = new ArrayList<>();
-            for (String authorName: authorNames) {
-                Optional<Author> optionalAuthor = authorDao.findByName(authorName);
+            for (int i = 0; i < authorNames1.size(); i++) {
+                Optional<Author> optionalAuthor = authorDao.findByNames(authorNames1.get(i), authorNames2.get(i));
                 if (!optionalAuthor.isPresent()) {
                     return Optional.empty();
                 } else {
@@ -93,10 +91,19 @@ public class BookService {
     public Optional<Book> findById(long id) {
         try (BookDao bookDao = daoFactory.createBookDao();
             AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            Optional<Book> optionalBook = bookDao.findById(id);
+            Optional<Book> optionalBook;
+            if (String.valueOf(LocalizationFilter.locale).equals("ua")) {
+                optionalBook = bookDao.findByIdUa(id);
+            } else {
+                optionalBook = bookDao.findByIdEn(id);
+            }
             if (optionalBook.isPresent()) {
                 Book book = optionalBook.get();
-                book.setAuthors(authorDao.getAuthorsByBookId(id));
+                if (String.valueOf(LocalizationFilter.locale).equals("ua")) {
+                    book.setAuthors(authorDao.getAuthorsByBookIdUa(id));
+                } else {
+                    book.setAuthors(authorDao.getAuthorsByBookIdEn(id));
+                }
                 return Optional.of(book);
             }
             return Optional.empty();
@@ -106,10 +113,19 @@ public class BookService {
     public List<Book> findAll() {
         try (BookDao bookDao = daoFactory.createBookDao();
             AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            List<Book> bookList = bookDao.findAll();
-            for (Book book : bookList) {
-                List<Author> authors = authorDao.getAuthorsByBookId(book.getId());
-                book.setAuthors(authors);
+            List<Book> bookList;
+            if (LocalizationFilter.locale.toString().equals("ua")) {
+                bookList =  bookDao.findAllUa();
+                for (Book book : bookList) {
+                    List<Author> authors = authorDao.getAuthorsByBookIdUa(book.getId());
+                    book.setAuthors(authors);
+                }
+            } else {
+                bookList = bookDao.findAllEn();
+                for (Book book : bookList) {
+                    List<Author> authors = authorDao.getAuthorsByBookIdEn(book.getId());
+                    book.setAuthors(authors);
+                }
             }
             return bookList;
         }
@@ -118,9 +134,19 @@ public class BookService {
     public List<Book> findAllByKeyWord(String keyWord, String sortBy, String sortType, int page) {
         try (BookDao bookDao = daoFactory.createBookDao();
              AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            List<Book> bookList = bookDao.findByKeyWord(keyWord, sortBy, sortType, page);
+            List<Book> bookList;
+            if (String.valueOf(LocalizationFilter.locale).equals("ua")) {
+                bookList = bookDao.findByKeyWordUa(keyWord, sortBy, sortType, page);
+            } else {
+                bookList = bookDao.findByKeyWordEn(keyWord, sortBy, sortType, page);
+            }
             for (Book book : bookList) {
-                List<Author> authorList = authorDao.getAuthorsByBookId(book.getId());
+                List<Author> authorList;
+                if (String.valueOf(LocalizationFilter.locale).equals("ua")) {
+                    authorList = authorDao.getAuthorsByBookIdUa(book.getId());
+                } else {
+                    authorList = authorDao.getAuthorsByBookIdEn(book.getId());
+                }
                 book.setAuthors(authorList);
             }
             return bookList;
@@ -129,12 +155,12 @@ public class BookService {
 
     public Edition getEditionOrNew(Edition edition) {
         try (EditionDao editionDao = daoFactory.createEditionDao()) {
-            Optional<Edition> optionalEdition = editionDao.findByName(edition.getName());
+            Optional<Edition> optionalEdition = editionDao.findByNames(edition.getName(), edition.getAnotherName());
             if (optionalEdition.isPresent()) {
                 edition = optionalEdition.get();
             } else {
                 editionDao.create(edition);
-                optionalEdition = editionDao.findByName(edition.getName());
+                optionalEdition = editionDao.findByNames(edition.getName(), edition.getAnotherName());
                 if (optionalEdition.isPresent()) {
                     edition = optionalEdition.get();
                 }
@@ -145,12 +171,12 @@ public class BookService {
 
     public Author getAuthorOrNew(Author author) {
         try (AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            Optional<Author> optionalAuthor = authorDao.findByName(author.getName());
+            Optional<Author> optionalAuthor = authorDao.findByNames(author.getName(), author.getAnotherName());
             if (optionalAuthor.isPresent()) {
                 author = optionalAuthor.get();
             } else {
                 authorDao.create(author);
-                optionalAuthor = authorDao.findByName(author.getName());
+                optionalAuthor = authorDao.findByNames(author.getName(), author.getAnotherName());
                 if (optionalAuthor.isPresent()) {
                     author = optionalAuthor.get();
                 }

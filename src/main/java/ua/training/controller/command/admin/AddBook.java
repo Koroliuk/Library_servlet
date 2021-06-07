@@ -7,6 +7,7 @@ import ua.training.model.entity.Edition;
 import ua.training.model.service.BookService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,21 +25,27 @@ public class AddBook implements Command {
     public String execute(HttpServletRequest request) {
         request.setAttribute("action", "add");
 
-        String title = request.getParameter("title");
-        String authorsString = request.getParameter("authors");
-        String description = request.getParameter("description");
-        String language = request.getParameter("bookLanguage");
-        String editionName = request.getParameter("edition");
+        String titleUa = request.getParameter("titleUa");
+        String authorsStringUa = request.getParameter("authorsUa");
+        String descriptionUa = request.getParameter("descriptionUa");
+        String languageUa = request.getParameter("bookLanguageUa");
+        String editionNameUa = request.getParameter("editionUa");
+        String titleEn = request.getParameter("titleEn");
+        String authorsStringEn = request.getParameter("authorsEn");
+        String descriptionEn = request.getParameter("descriptionEn");
+        String languageEn = request.getParameter("bookLanguageEn");
+        String editionNameEn = request.getParameter("editionEn");
         String publicationDateString = request.getParameter("publicationDate");
         String stringPrice = request.getParameter("price");
+        String currency = request.getParameter("currency");
         String stringCount = request.getParameter("count");
 
-        boolean condition1 = title == null || description == null || title.equals("") || description.equals("");
-        boolean condition2 = language == null || editionName == null || language.equals("") || editionName.equals("");
-        boolean condition3 = stringPrice == null || stringPrice.equals("") || stringCount == null || stringCount.equals("");
-        boolean condition4 = authorsString == null || authorsString.equals("") || publicationDateString == null || publicationDateString.equals("");
-        if (condition1 || condition2 || condition3 || condition4) {
-            return "/user/admin/bookForm.jsp";
+        List<String> params = Arrays.asList(titleUa, titleEn, authorsStringUa, authorsStringEn, descriptionUa, descriptionEn,
+                languageUa, languageEn, editionNameUa, editionNameEn, currency, stringPrice, stringCount, publicationDateString);
+        for (String param : params) {
+            if (param == null || param.equals("")) {
+                return "/user/admin/bookForm.jsp";
+            }
         }
         LocalDate publicationData = LocalDate.parse(publicationDateString);
         float price = Float.parseFloat(stringPrice);
@@ -46,38 +53,53 @@ public class AddBook implements Command {
         boolean condition5 = publicationData.isAfter(LocalDate.now()) || publicationData.isEqual(LocalDate.now());
         boolean condition6 = price <= 0 || count <= 0;
         if (condition5 || condition6) {
-            return "/user/admin/bookForm.jsp?validError";
+            return "/user/admin/bookForm.jsp?validError=true";
         }
-        List<String> authorNames = Arrays.asList(authorsString.split(","));
-        Optional<Book> optionalBook = bookService.findByTitleAndAuthorsNames(title, authorNames);
+        List<String> authorNamesUa = Arrays.asList(authorsStringUa.split(","));
+        List<String> authorNamesEn = Arrays.asList(authorsStringEn.split(","));
+        float priceUa;
+        float priceEn;
+        if (currency.equals("uan")) {
+            priceUa = price;
+            priceEn = price/30;
+        } else {
+            priceUa = price*30;
+            priceEn = price;
+        }
+        Optional<Book> optionalBook = bookService.findByTitleAndAuthorsNames(titleUa, authorNamesUa, authorNamesEn);
         if (optionalBook.isPresent()) {
-            return "/user/admin/bookForm.jsp?createError";
+            return "/user/admin/bookForm.jsp?createError=true";
         }
 
         Edition edition = new Edition.Builder()
-                .name(editionName)
+                .name(editionNameUa)
+                .anotherName(editionNameEn)
                 .build();
 
         List<Author> authors = new ArrayList<>();
-        for (String authorName: authorNames) {
+        for (int i = 0; i < authorNamesUa.size(); i++) {
             Author author = new Author.Builder()
-                    .name(authorName)
+                    .name(authorNamesUa.get(i))
+                    .anotherName(authorNamesEn.get(i))
                     .build();
             authors.add(author);
         }
 
         Book book = new Book.Builder()
-                .title(title)
-                .description(description)
-                .language(language)
+                .title(titleUa)
+                .anotherTitle(titleEn)
+                .description(descriptionUa)
+                .anotherDescription(descriptionEn)
+                .language(languageUa)
+                .anotherLanguage(languageEn)
                 .edition(edition)
                 .publicationDate(publicationData)
-                .price(price)
+                .price(priceUa)
                 .count(count)
                 .authors(authors)
                 .build();
 
         bookService.createBook(book);
-        return "/user/admin/bookForm.jsp?successCreation";
+        return "/user/admin/bookForm.jsp?successCreation=true";
     }
 }

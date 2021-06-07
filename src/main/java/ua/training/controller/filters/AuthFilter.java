@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashSet;
 
 public class AuthFilter implements Filter {
     @Override
@@ -25,6 +26,12 @@ public class AuthFilter implements Filter {
         } else {
             boolean loggedIn = session != null && session.getAttribute("userLogin") != null && session.getAttribute("role") != null;
             if (loggedIn) {
+                HashSet<String> loggedUsers = (HashSet<String>) request.getSession().getServletContext().getAttribute("loggedUsers");
+                if (!loggedUsers.contains((String) session.getAttribute("userLogin"))) {
+                    request.getSession().setAttribute("userLogin", null);
+                    request.getSession().setAttribute("role", null);
+                    response.sendRedirect("/error/error.jsp");
+                }
                 Role userRole = (Role) session.getAttribute("role");
                 if (userRole == Role.READER && path.contains("reader")) {
                     filterChain.doFilter(servletRequest, servletResponse);
@@ -36,7 +43,7 @@ public class AuthFilter implements Filter {
                     response.sendRedirect("/error/error.jsp");
                 }
             } else {
-                response.sendRedirect("/error/error.jsp");
+                response.sendRedirect("/error/noAccess.jsp");
             }
         }
     }

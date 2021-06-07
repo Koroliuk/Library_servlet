@@ -21,6 +21,7 @@ public class JDBCAuthorDao implements AuthorDao {
         try (PreparedStatement statement =
                      connection.prepareStatement(SQLConstants.CREATE_AUTHOR, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, entity.getName());
+            statement.setString(2, entity.getAnotherName());
             if (statement.executeUpdate() > 0) {
                 try (ResultSet resultSet = statement.getGeneratedKeys()) {
                     if (resultSet.next()) {
@@ -51,13 +52,19 @@ public class JDBCAuthorDao implements AuthorDao {
     }
 
     @Override
-    public Optional<Author> findByName(String name) {
+    public Optional<Author> findByNames(String name1, String name2) {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_AUTHOR_BY_NAME)) {
-            statement.setString(1, name);
+            statement.setString(1, name1);
+            statement.setString(2, name2);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    AuthorMapper mapper = new AuthorMapper();
-                    Author author = mapper.extractFromResultSet(resultSet);
+                    Author author = new Author.Builder()
+                            .id(resultSet.getLong("id"))
+                            .name(resultSet.getString("full_name_ua"))
+                            .anotherName(resultSet.getString("full_name_en"))
+                            .build();
+//                    AuthorMapper mapper = new AuthorMapper();
+//                    Author author = mapper.extractFromResultSet(resultSet);
                     return Optional.of(author);
                 }
             }
@@ -99,6 +106,44 @@ public class JDBCAuthorDao implements AuthorDao {
         }
         return authors;
     }
+
+    @Override
+    public List<Author> getAuthorsByBookIdUa(long id) {
+        List<Author> authors = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQLConstants.GET_AUTHORS_BY_BOOK_ID)) {
+            preparedStatement.setLong(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Author author = new Author.Builder()
+                            .id(resultSet.getLong("author_id"))
+                            .name(resultSet.getString("full_name_ua"))
+                            .build();
+                    authors.add(author);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return authors;    }
+
+    @Override
+    public List<Author> getAuthorsByBookIdEn(long id) {
+        List<Author> authors = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQLConstants.GET_AUTHORS_BY_BOOK_ID)) {
+            preparedStatement.setLong(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Author author = new Author.Builder()
+                            .id(resultSet.getLong("author_id"))
+                            .name(resultSet.getString("full_name_en"))
+                            .build();
+                    authors.add(author);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return authors;    }
 
 
     @Override

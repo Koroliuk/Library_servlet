@@ -20,6 +20,7 @@ public class JDBCEditionDao implements EditionDao {
         try (PreparedStatement statement =
                      connection.prepareStatement(SQLConstants.CREATE_EDITION, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, entity.getName());
+            statement.setString(2, entity.getAnotherName());
             if (statement.executeUpdate() > 0) {
                 try (ResultSet resultSet = statement.getGeneratedKeys()) {
                     if (resultSet.next()) {
@@ -38,9 +39,10 @@ public class JDBCEditionDao implements EditionDao {
     }
 
     @Override
-    public Optional<Edition> findByName(String name) {
+    public Optional<Edition> findByNames(String name1, String name2) {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_EDITION_BY_NAME)) {
-            statement.setString(1, name);
+            statement.setString(1, name1);
+            statement.setString(2, name2);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     EditionMapper mapper = new EditionMapper();
