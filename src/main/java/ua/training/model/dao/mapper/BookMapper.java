@@ -29,7 +29,7 @@ public class BookMapper implements ObjectMapper<Book> {
                 .build();
     }
 
-    public Book extractFromResultSetLocal(ResultSet resultSet) throws SQLException {
+    public Book extractFromResultSetLocaled(ResultSet resultSet) throws SQLException {
         String local = LocalizationFilter.locale.toString();
         Edition edition = new Edition.Builder()
                 .id(resultSet.getLong("edition_id"))

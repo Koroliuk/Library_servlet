@@ -25,7 +25,7 @@ public class AuthorMapper implements ObjectMapper<Author> {
                 .build();
     }
 
-    public Author extractFromResultSetWithIdLocale(ResultSet resultSet, String id) throws SQLException {
+    public Author extractFromResultSetWithIdLocaled(ResultSet resultSet, String id) throws SQLException {
         String local = LocalizationFilter.locale.toString();
         return new Author.Builder()
                 .id(resultSet.getInt(id))
