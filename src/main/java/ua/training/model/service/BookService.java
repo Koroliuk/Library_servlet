@@ -6,6 +6,7 @@ import ua.training.model.entity.Author;
 import ua.training.model.entity.Book;
 import ua.training.model.entity.Edition;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class BookService {
@@ -29,6 +30,8 @@ public class BookService {
             for (Author author : book.getAuthors()) {
                 bookDao.setAuthorship(book, author);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -69,6 +72,8 @@ public class BookService {
                 book.setAuthors(authors);
                 bookDao.delete(book.getId());
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -151,7 +156,10 @@ public class BookService {
                 }
             }
             return edition;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     public Author getAuthorOrNew(Author author) {
@@ -167,7 +175,10 @@ public class BookService {
                 }
             }
             return author;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     public long getBookAmountWithKeyWord(String keyWord) {

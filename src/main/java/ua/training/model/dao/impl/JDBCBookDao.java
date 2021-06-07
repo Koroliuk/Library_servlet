@@ -45,6 +45,25 @@ public class JDBCBookDao implements BookDao {
     }
 
     @Override
+    public void delete(long id) throws SQLException {
+        try (PreparedStatement deleteAuthorship = connection.prepareStatement(SQLConstants.UNSET_AUTHORSHIP_BY_BOOK_ID);
+             PreparedStatement deleteBook = connection.prepareStatement(SQLConstants.DELETE_BOOK)) {
+            connection.setAutoCommit(false);
+            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            deleteAuthorship.setLong(1, id);
+            deleteAuthorship.executeUpdate();
+            deleteBook.setLong(1, id);
+            deleteBook.executeUpdate();
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            connection.rollback();
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
     public Optional<Book> findById(long id) {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_ID)) {
             statement.setLong(1, id);
@@ -182,36 +201,14 @@ public class JDBCBookDao implements BookDao {
             statement.setString(2, entity.getDescription());
             statement.setString(3, entity.getLanguage());
             statement.setLong(4, entity.getEdition().getId());
-            statement.setObject(5, entity.getPublicationDate());
             statement.setFloat(6, entity.getPrice());
+            statement.setObject(5, entity.getPublicationDate());
             statement.setInt(7, entity.getCount());
             statement.setString(8, entity.getAnotherTitle());
             statement.setString(9, entity.getAnotherDescription());
             statement.setString(10, entity.getAnotherLanguage());
             statement.setLong(11, entity.getId());
             statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void delete(long id) {
-        try {
-            try (PreparedStatement deleteAuthorship = connection.prepareStatement(SQLConstants.UNSET_AUTHORSHIP_BY_BOOK_ID);
-                 PreparedStatement deleteBook = connection.prepareStatement(SQLConstants.DELETE_BOOK)) {
-                connection.setAutoCommit(false);
-                connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-                deleteAuthorship.setLong(1, id);
-                deleteAuthorship.executeUpdate();
-                deleteBook.setLong(1, id);
-                deleteBook.executeUpdate();
-                connection.commit();
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                connection.rollback();
-                e.printStackTrace();
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -8,6 +8,7 @@ import ua.training.model.entity.Order;
 import ua.training.model.entity.User;
 import ua.training.model.entity.enums.OrderStatus;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -16,12 +17,10 @@ public class OrderService {
     DaoFactory daoFactory = DaoFactory.getInstance();
 
     public void orderBook(Order order) {
-        try (OrderDao orderDao = daoFactory.createOrderDao();
-            BookDao bookDao = daoFactory.createBookDao()) {
+        try (OrderDao orderDao = daoFactory.createOrderDao()) {
             orderDao.create(order);
-            Book book = order.getBook();
-            book.setCount(book.getCount()-1);
-            bookDao.updateAmount(book);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -82,6 +81,8 @@ public class OrderService {
                 }
                 return orderList;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -105,6 +106,8 @@ public class OrderService {
     public void deleteOrder(long id) {
         try (OrderDao orderDao = daoFactory.createOrderDao()) {
             orderDao.delete(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
