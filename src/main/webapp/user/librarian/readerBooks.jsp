@@ -1,4 +1,3 @@
-<%@ page import="ua.training.model.entity.User" %>
 <%@ page import="ua.training.model.entity.Order" %>
 <%@ page import="ua.training.model.entity.Book" %>
 <%@ page import="ua.training.model.entity.Author" %>
@@ -33,11 +32,13 @@
             key="header.library.name"/></span>
     <div class="d-flex flex-row mr-3">
         <form class="mr-2">
-            <select class="custom-select" id="language" name="language" onchange="submit()">
-                <option value="en" ${language == 'en' ? 'selected' : ''}><fmt:message
-                        key="header.language.english"/></option>
-                <option value="ua" ${language == 'ua' ? 'selected' : ''}><fmt:message
-                        key="header.language.ukrainian"/></option>
+            <select class="custom-select" id="language" name="language" onChange="window.document.location.href=this.options[this.selectedIndex].value;">
+                <option value="${pageContext.request.contextPath}/app/librarian/getReaderBooks?userId=${param.userId}&language=en"
+                ${language == 'en' ? 'selected' : ''}>
+                    <fmt:message key="header.language.english"/></option>
+                <option value="${pageContext.request.contextPath}/app/librarian/getReaderBooks?userId=${param.userId}&language=ua"
+                ${language == 'ua' ? 'selected' : ''}>
+                    <fmt:message key="header.language.ukrainian"/></option>
             </select>
         </form>
         <a class="btn btn-dark" href="${pageContext.request.contextPath}/app/logout"><fmt:message key="header.logout"/></a>
@@ -45,18 +46,22 @@
 </header>
 <body>
 <div class="container text-center">
-    <h2>Абонемент користувача: ${requestScope.user.login}</h2>
+    <h3 class="mb-2">Абонемент користувача: ${requestScope.user.login}</h3>
     <div class="row justify-content-center">
         <div class="col-auto">
             <c:if test="${requestScope.orderList != null}">
-                <table class="table table-responsive">
-                    <tr>
-                        <th>Id</th>
-                        <th>User login</th>
-                        <th>Title</th>
-                        <th>Authors</th>
-                        <th>Action</th>
-                    </tr>
+                <table class="table table-responsive table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Id</th>
+                            <th>User login</th>
+                            <th>Title</th>
+                            <th>Authors</th>
+                            <th>Edition</th>
+                            <th>Publication date</th>
+                            <th>Language</th>
+                        </tr>
+                    </thead>
                     <c:forEach items="${requestScope.orderList}" var="order">
                         <tr>
                             <td><c:out value="${order.id}"/></td>
@@ -81,6 +86,9 @@
                                 %>
                                 <span>${requestScope.authorsString}</span>
                             </td>
+                            <td>${order.book.edition.name}</td>
+                            <td>${order.book.publicationDate}</td>
+                            <td>${order.book.language}</td>
                         </tr>
                     </c:forEach>
                 </table>
@@ -89,23 +97,4 @@
     </div>
 </div>
 </body>
-<footer class="navbar fixed-bottom d-flex flex-row justify-content-sm-between align-items-center bg-light text-lg-start p-3">
-    <div>
-        <p>
-            <fmt:message key="footer.licence"/>
-            <a href="https://github.com/Koroliuk/Library_servlet/blob/main/LICENSE">
-                GNU GPLv3 License
-            </a>.
-            <br>
-            <a href="https://github.com/Koroliuk/Library_servlet"><fmt:message key="footer.project.github"/></a><br/>
-            <span>@2021</span>
-        </p>
-    </div>
-    <div>
-        <p>
-            <fmt:message key="footer.questions"/>
-            <a href="https://github.com/Koroliuk/Library_servlet/issues/new">GitHub</a>.
-        </p>
-    </div>
-</footer>
 </html>

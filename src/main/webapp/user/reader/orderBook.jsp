@@ -32,11 +32,13 @@
             key="header.library.name"/></span>
     <div class="d-flex flex-row mr-3">
         <form class="mr-2">
-            <select class="custom-select" id="language" name="language" onchange="submit()">
-                <option value="en" ${language == 'en' ? 'selected' : ''}><fmt:message
-                        key="header.language.english"/></option>
-                <option value="ua" ${language == 'ua' ? 'selected' : ''}><fmt:message
-                        key="header.language.ukrainian"/></option>
+            <select class="custom-select" id="language" name="language" onChange="window.document.location.href=this.options[this.selectedIndex].value;">
+                <option value="${pageContext.request.contextPath}/app/reader/orderBook?bookId=${param.bookId}&userLogin=${param.userLogin}&language=en"
+                ${language == 'en' ? 'selected' : ''}>
+                    <fmt:message key="header.language.english"/></option>
+                <option value="${pageContext.request.contextPath}/app/reader/orderBook?bookId=${param.bookId}&userLogin=${param.userLogin}&language=ua"
+                ${language == 'ua' ? 'selected' : ''}>
+                    <fmt:message key="header.language.ukrainian"/></option>
             </select>
         </form>
         <a class="btn btn-dark" href="${pageContext.request.contextPath}/app/logout"><fmt:message key="header.logout"/></a>
@@ -44,7 +46,7 @@
 </header>
 <body>
 <div class="container text-center">
-    <h2>Замовити книгу</h2>
+    <h3>Замовити книгу</h3>
     <div class="row justify-content-center">
         <div class="col-auto">
             <table class="table table-responsive">
@@ -95,31 +97,43 @@
     </div>
     <form id="orderForm" method="post" action="${pageContext.request.contextPath}/app/reader/orderBook?bookId=${requestScope.book.id}&userLogin=${requestScope.user.login}">
         <div class="form-group">
-            <label for="orderType">Тип замовлення</label>
-            <select id="orderType" name="orderType" onchange="chooseType()">
-                <option value="subscription">Абонемент</option>
-                <option value="readingHole">Читальний зал</option>
-            </select>
-            <br/>
-            <c:if test="${param.validError == true}">
-                <span>Перевірте правильність вибору дат</span>
-            </c:if>
-            <c:if test="${param.amountError == true}">
-                <span>Немає екземплярів спробуйте пізніше</span>
-            </c:if>
-            <span id="warning3" class="text-warning" hidden>Дата початку має буте не пізніше дати кінця</span>
-            <span id="warning1" class="text-warning" hidden>Оберіть дату не раніше сьогодні</span>
-            <label>Start date: <input id="startDate" type="date" name="startDate" value="<%= LocalDate.now() %>">
-            </label>
-            <br/>
-            <span id="warning2" class="text-warning" hidden>Оберіть дату не раніше сьогодні</span>
-            <label>End date: <input id="endDate" type="date" name="endDate" value="<%= LocalDate.now() %>">
-            </label>
+            <div>
+                <label for="orderType">Тип замовлення:</label><br/>
+                <select class="custom-select-sm" style="width: 200px;" id="orderType" name="orderType" onchange="chooseType()">
+                    <option value="subscription">Абонемент</option>
+                    <option value="readingHole">Читальний зал</option>
+                </select>
+            </div>
+            <div style="padding-left: 10px;">
+                <c:if test="${param.validError == true}">
+                    <span class="text-danger" style="text-align: justify;">Перевірте правильність вибору дат</span>
+                    <br/>
+                </c:if>
+                <c:if test="${param.amountError == true}">
+                    <span class="text-info" style="text-align: justify;">Немає екземплярів спробуйте пізніше</span>
+                    <br/>
+                </c:if>
+                <span class="text-danger" style="text-align: justify;" id="warning3" hidden>Дата початку має буте не пізніше дати кінця</span>
+                <span class="text-danger" style="text-align: justify;" id="warning1" hidden>Оберіть дату не раніше сьогодні</span>
+                <span class="text-danger" style="text-align: justify;" id="warning2" hidden>Оберіть дату не раніше сьогодні</span>
+            </div>
+            <div class="mb-2 mt-2">
+                <label>Start date: <input class="form-control" id="startDate" type="date" name="startDate" value="<%= LocalDate.now() %>">
+                </label>
+            </div>
+            <div class="mb-2 mt-2">
+                <label>End date: <input class="form-control" id="endDate" type="date" name="endDate" value="<%= LocalDate.now() %>">
+                </label>
+            </div>
+            <div>
+                <input class="btn btn-outline-info" type="submit" value="Замовити">
+            </div>
         </div>
-        <input class="btn btn-outline-info" type="submit" value="Замовити">
     </form>
-    <div>
+    <br/>
+    <div style="padding-left: 200px;">
         <a href="${pageContext.request.contextPath}/app/search?page=1&keyWords=">To search</a>
+        <br/>
         <a href="${pageContext.request.contextPath}/app/reader/home">To cabinet</a>
     </div>
 </div>

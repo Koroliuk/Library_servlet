@@ -52,7 +52,7 @@
     </nav>
     <br/>
     <div class="tab-content text-center">
-        <h3>Кабінет користувача: <%= session.getAttribute("userLogin") %></h3>
+        <h4>Кабінет користувача: <%= session.getAttribute("userLogin") %></h4>
         <div>
             <form method="post" action="${pageContext.request.contextPath}/app/search?page=1">
                 <label>
@@ -66,62 +66,77 @@
         </c:if>
         <br/>
         <div class="tab-pane fade <c:if test="${param.tab == null || param.tab.equals('') || param.tab.equals('1')}">show active</c:if> text-center" id="subscription">
-            <h3>Абонемент</h3>
+            <h5>Абонемент</h5>
             <div class="row justify-content-center">
                 <div class="col-auto">
-                    <table class="table table-responsive">
-                        <th>Id</th>
-                        <th>Book</th>
-                        <th>Authors</th>
-                        <th>Status</th>
-                        <th>End date/Fine</th>
-                        <c:forEach items="${requestScope.orderList}" var="order">
-                            <c:if test="${order.orderStatus == 'APPROVED' || order.orderStatus == 'OVERDUE'}">
+                    <table class="table table-responsive table-bordered table-hover">
+                        <thead class="thead-light">
                             <tr>
-                                <td>${order.id}</td>
-                                <td>${order.book.title}</td>
-                                <td>
-                                    <%
-                                        Order order = (Order) pageContext.getAttribute("order");
-                                        ;
-                                        Book book = order.getBook();
-                                        String authors = "";
-                                        StringBuilder authorsString = new StringBuilder();
-                                        for (Author author : book.getAuthors()) {
-                                            authorsString.append(author.getName()).append(",").append(" ");
-                                        }
-                                        authorsString.deleteCharAt(authorsString.length() - 1);
-                                        authorsString.deleteCharAt(authorsString.length() - 1);
-                                        authors = authorsString.toString();
-                                        request.setAttribute("authorsString", authors);
-                                    %>
-                                        ${requestScope.authorsString}
-                                </td>
-                                <td>${order.orderStatus}</td>
-                                <c:if test="${order.orderStatus == 'APPROVED'}">
-                                    <td>
-                                        <a class="text-info"
-                                           href="${pageContext.request.contextPath}/app/reader/home?orderId=${order.id}&tab=1">Повернути
-                                            книгу</a>
-                                    </td>
-                                </c:if>
-                                <c:if test="${order.orderStatus == 'OVERDUE'}">
-                                    <%
-                                        LocalDate now = LocalDate.now();
-                                        LocalDate end = order.getEndDate();
-                                        int amountOfDays = Period.between(end, now).getDays();
-                                        float fine = (float) (amountOfDays * book.getPrice() * 0.01);
-                                        request.setAttribute("fine", fine);
-                                    %>
-                                    <td>
-                                        <a class="text-warning"
-                                           href="${pageContext.request.contextPath}/app/reader/home?orderId=${order.id}&tab=1">Pay
-                                            fine ${fine}<br/>and return book</a>
-                                    </td>
-                                </c:if>
+                                <th>№</th>
+                                <th>Title</th>
+                                <th>Authors</th>
+                                <th>Edition</th>
+                                <th>Language</th>
+                                <th>Start date</th>
+                                <th>End date</th>
+                                <th>Action</th>
                             </tr>
-                            </c:if>
-                        </c:forEach>
+                        </thead>
+                        <c:if test="${requestScope.orderList.size() > 0}">
+                            <c:forEach items="${requestScope.orderList}" var="order">
+                                <c:if test="${order.orderStatus == 'APPROVED' || order.orderStatus == 'OVERDUE'}">
+                                    <tr>
+                                        <td>${order.id}</td>
+                                        <td>${order.book.title}</td>
+                                        <td>
+                                            <%
+                                                Order order = (Order) pageContext.getAttribute("order");
+                                                ;
+                                                Book book = order.getBook();
+                                                String authors = "";
+                                                StringBuilder authorsString = new StringBuilder();
+                                                for (Author author : book.getAuthors()) {
+                                                    authorsString.append(author.getName()).append(",").append(" ");
+                                                }
+                                                authorsString.deleteCharAt(authorsString.length() - 1);
+                                                authorsString.deleteCharAt(authorsString.length() - 1);
+                                                authors = authorsString.toString();
+                                                request.setAttribute("authorsString", authors);
+                                            %>
+                                                ${requestScope.authorsString}
+                                        </td>
+                                        <td>${order.book.edition.name}</td>
+                                        <td>${order.book.language}</td>
+                                        <td>${order.startDate}</td>
+                                        <td>${order.endDate}</td>
+                                        <c:if test="${order.orderStatus == 'APPROVED'}">
+                                            <td>
+                                                <a type="button" class="btn btn-outline-info"
+                                                   href="${pageContext.request.contextPath}/app/reader/home?orderId=${order.id}&tab=1">Повернути
+                                                    книгу</a>
+                                            </td>
+                                        </c:if>
+                                        <c:if test="${order.orderStatus == 'OVERDUE'}">
+                                            <%
+                                                LocalDate now = LocalDate.now();
+                                                LocalDate end = order.getEndDate();
+                                                int amountOfDays = Period.between(end, now).getDays();
+                                                float fine = (float) (amountOfDays * book.getPrice() * 0.01);
+                                                request.setAttribute("fine", fine);
+                                            %>
+                                            <td>
+                                                <a type="button" class="btn btn-outline-warning"
+                                                   href="${pageContext.request.contextPath}/app/reader/home?orderId=${order.id}&tab=1">Pay
+                                                    fine ${fine}<br/>and return book</a>
+                                            </td>
+                                        </c:if>
+                                    </tr>
+                                </c:if>
+                            </c:forEach>
+                        </c:if>
+                        <c:if test="${requestScope.orderList.size() == 0}">
+                            <p>Пусто</p>
+                        </c:if>
                     </table>
                 </div>
             </div>
@@ -130,37 +145,50 @@
             <h3>Читальний зал</h3>
             <div class="row justify-content-center">
                 <div class="col-auto">
-                    <table class="table table-responsive">
-                        <th>Id</th>
-                        <th>Book</th>
-                        <th>Authors</th>
-                        <th>Date</th>
-                        <c:forEach items="${requestScope.orderList}" var="order">
-                            <c:if test="${order.orderStatus == 'READER_HOLE'}">
+                    <table class="table table-responsive table-bordered table-hover">
+                        <thead class="thead-light">
                             <tr>
-                                <td>${order.id}</td>
-                                <td>${order.book.title}</td>
-                                <td>
-                                    <%
-                                        Order order = (Order) pageContext.getAttribute("order");
-                                        ;
-                                        Book book = order.getBook();
-                                        String authors = "";
-                                        StringBuilder authorsString = new StringBuilder();
-                                        for (Author author : book.getAuthors()) {
-                                            authorsString.append(author.getName()).append(",").append(" ");
-                                        }
-                                        authorsString.deleteCharAt(authorsString.length() - 1);
-                                        authorsString.deleteCharAt(authorsString.length() - 1);
-                                        authors = authorsString.toString();
-                                        request.setAttribute("authorsString", authors);
-                                    %>
-                                        ${requestScope.authorsString}
-                                </td>
-                                <td>${order.endDate}</td>
+                                <th>№</th>
+                                <th>Title</th>
+                                <th>Authors</th>
+                                <th>Edition</th>
+                                <th>Language</th>
+                                <th>Date</th>
                             </tr>
-                            </c:if>
-                        </c:forEach>
+                        </thead>
+                        <c:if test="${requestScope.orderList.size() > 0}">
+                            <c:forEach items="${requestScope.orderList}" var="order">
+                                <c:if test="${order.orderStatus == 'READER_HOLE'}">
+                                    <tr>
+                                        <td>${order.id}</td>
+                                        <td>${order.book.title}</td>
+                                        <td>
+                                            <%
+                                                Order order = (Order) pageContext.getAttribute("order");
+                                                ;
+                                                Book book = order.getBook();
+                                                String authors = "";
+                                                StringBuilder authorsString = new StringBuilder();
+                                                for (Author author : book.getAuthors()) {
+                                                    authorsString.append(author.getName()).append(",").append(" ");
+                                                }
+                                                authorsString.deleteCharAt(authorsString.length() - 1);
+                                                authorsString.deleteCharAt(authorsString.length() - 1);
+                                                authors = authorsString.toString();
+                                                request.setAttribute("authorsString", authors);
+                                            %>
+                                                ${requestScope.authorsString}
+                                        </td>
+                                        <td>${order.book.edition.name}</td>
+                                        <td>${order.book.language}</td>
+                                        <td>${order.endDate}</td>
+                                    </tr>
+                                </c:if>
+                            </c:forEach>
+                        </c:if>
+                        <c:if test="${requestScope.orderList.size() == 0}">
+                            <p>Empty</p>
+                        </c:if>
                     </table>
                 </div>
             </div>
@@ -169,13 +197,20 @@
             <h3>Замовлення</h3>
             <div class="row justify-content-center">
                 <div class="col-auto">
-                    <table class="table table-responsive">
-                        <th>Id</th>
-                        <th>Book</th>
-                        <th>Authors</th>
-                        <th>Status</th>
-                        <th>End date</th>
-                        <th>Action</th>
+                    <table class="table table-responsive table-bordered table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>№</th>
+                                <th>Title</th>
+                                <th>Authors</th>
+                                <th>Edition</th>
+                                <th>Language</th>
+                                <th>Start date</th>
+                                <th>End date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
                         <c:forEach items="${requestScope.orderList}" var="order">
                             <c:if test="${order.orderStatus == 'CANCELED' || order.orderStatus == 'RECEIVED'}">
                             <tr>
@@ -198,18 +233,21 @@
                                     %>
                                         ${requestScope.authorsString}
                                 </td>
-                                <td>${order.orderStatus}</td>
+                                <td>${order.book.edition.name}</td>
+                                <td>${order.book.language}</td>
+                                <td>${order.startDate}</td>
                                 <td>${order.endDate}</td>
+                                <td>${order.orderStatus}</td>
                                 <c:if test="${order.orderStatus == 'RECEIVED'}">
                                     <td>
-                                        <a class="text-warning"
+                                        <a type="button" class="btn btn-outline-danger"
                                            href="${pageContext.request.contextPath}/app/reader/home?orderId=${order.id}&tab=3">Скасувати
                                             <br/> замовлення</a>
                                     </td>
                                 </c:if>
                                 <c:if test="${order.orderStatus == 'CANCELED'}">
                                     <td>
-                                        <a class="text-danger"
+                                        <a type="button" class="btn btn-outline-dark"
                                            href="${pageContext.request.contextPath}/app/reader/home?orderId=${order.id}&tab=3">Видалити <br/> повідомлення</a>
                                     </td>
                                 </c:if>
@@ -222,23 +260,4 @@
         </div>
     </div>
 </body>
-<footer class="navbar fixed-bottom d-flex flex-row justify-content-sm-between align-items-center bg-light text-lg-start p-3">
-    <div>
-        <p>
-            <fmt:message key="footer.licence"/>
-            <a href="https://github.com/Koroliuk/Library_servlet/blob/main/LICENSE">
-                GNU GPLv3 License
-            </a>.
-            <br>
-            <a href="https://github.com/Koroliuk/Library_servlet"><fmt:message key="footer.project.github"/></a><br/>
-            <span>@2021</span>
-        </p>
-    </div>
-    <div>
-        <p>
-            <fmt:message key="footer.questions"/>
-            <a href="https://github.com/Koroliuk/Library_servlet/issues/new">GitHub</a>.
-        </p>
-    </div>
-</footer>
 </html>
