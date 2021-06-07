@@ -90,13 +90,7 @@
                                     </tr>
                                 </c:forEach>
                             </c:if>
-                            <c:if test="${requestScope.userList.size() == 0}">
-                                <p>Пусто</p>
-                            </c:if>
                         </table>
-                    </c:if>
-                    <c:if test="${requestScope.userList == null}">
-                        <p>Пусто</p>
                     </c:if>
                 </div>
             </div>
@@ -154,13 +148,7 @@
                                     </tr>
                                 </c:forEach>
                             </c:if>
-                            <c:if test="${requestScope.bookList.size() == 0}">
-                                <p>Пусто</p>
-                            </c:if>
                         </table>
-                    </c:if>
-                    <c:if test="${requestScope.bookList == null}">
-                        <p>Пусто</p>
                     </c:if>
                 </div>
             </div>
