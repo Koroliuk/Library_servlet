@@ -71,12 +71,12 @@ public class BookService {
         }
     }
 
-    public Optional<Book> findByTitleAndAuthorsNames(String title, List<String> authorNames) {
+    public Optional<Book> findByTitleAndAuthorsNames(String title, List<String> authorNames1, List<String> authorNames2) {
         try (AuthorDao authorDao = daoFactory.createAuthorDao();
             BookDao bookDao = daoFactory.createBookDao()) {
             List<Author> authors = new ArrayList<>();
-            for (String authorName: authorNames) {
-                Optional<Author> optionalAuthor = authorDao.findByName(authorName);
+            for (int i = 0; i < authorNames1.size(); i++) {
+                Optional<Author> optionalAuthor = authorDao.findByNames(authorNames1.get(i), authorNames2.get(i));
                 if (!optionalAuthor.isPresent()) {
                     return Optional.empty();
                 } else {
@@ -126,12 +126,12 @@ public class BookService {
 
     public Edition getEditionOrNew(Edition edition) {
         try (EditionDao editionDao = daoFactory.createEditionDao()) {
-            Optional<Edition> optionalEdition = editionDao.findByName(edition.getName());
+            Optional<Edition> optionalEdition = editionDao.findByNames(edition.getName(), edition.getAnotherName());
             if (optionalEdition.isPresent()) {
                 edition = optionalEdition.get();
             } else {
                 editionDao.create(edition);
-                optionalEdition = editionDao.findByName(edition.getName());
+                optionalEdition = editionDao.findByNames(edition.getName(), edition.getAnotherName());
                 if (optionalEdition.isPresent()) {
                     edition = optionalEdition.get();
                 }
@@ -142,12 +142,12 @@ public class BookService {
 
     public Author getAuthorOrNew(Author author) {
         try (AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            Optional<Author> optionalAuthor = authorDao.findByName(author.getName());
+            Optional<Author> optionalAuthor = authorDao.findByNames(author.getName(), author.getAnotherName());
             if (optionalAuthor.isPresent()) {
                 author = optionalAuthor.get();
             } else {
                 authorDao.create(author);
-                optionalAuthor = authorDao.findByName(author.getName());
+                optionalAuthor = authorDao.findByNames(author.getName(), author.getAnotherName());
                 if (optionalAuthor.isPresent()) {
                     author = optionalAuthor.get();
                 }

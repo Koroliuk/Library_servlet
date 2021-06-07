@@ -11,7 +11,8 @@ public class EditionMapper implements ObjectMapper<Edition> {
     public Edition extractFromResultSet(ResultSet resultSet) throws SQLException {
         return new Edition.Builder()
                 .id(resultSet.getInt("id"))
-                .name(resultSet.getString("edition_name"))
+                .name(resultSet.getString("edition_name_ua"))
+                .anotherName(resultSet.getString("edition_name_en"))
                 .build();
     }
 

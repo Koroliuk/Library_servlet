@@ -71,15 +71,19 @@
                 <br/>
             </c:if>
             <div>
-                <label style="width: 75%;">
-                    <input class="form-control" type="text" id="title" name="title" placeholder="Title"
+                <label style="width: 37%;">
+                    <input class="form-control" type="text" id="titleUa" name="titleUa" placeholder="Заголовок"
+                           value="${requestScope.book.title != null ? requestScope.book.title : ""}">
+                </label>
+                <label style="width: 37%;">
+                    <input class="form-control" type="text" id="titleEn" name="titleEn" placeholder="Title"
                            value="${requestScope.book.title != null ? requestScope.book.title : ""}">
                 </label>
                 <br/>
                 <span class="text-danger" id="titleMessage"></span>
             </div>
             <div>
-                <label style="width: 75%;">
+                <label style="width: 37%;">
                     <%
                         Book book = (Book) request.getAttribute("book");
                         String authors = "";
@@ -94,7 +98,25 @@
                         }
                         request.setAttribute("authorsString", authors);
                     %>
-                    <input class="form-control" type="text" id="authors" name="authors" placeholder="Authors"
+                    <input class="form-control" type="text" id="authorsUa" name="authorsUa" placeholder="Автори"
+                           value="${requestScope.authorsString != null ? requestScope.authorsString : ""}">
+                </label>
+                <label style="width: 37%;">
+                    <%
+//                        Book book = (Book) request.getAttribute("book");
+//                        String authors = "";
+                        if (book != null) {
+                            StringBuilder authorsString = new StringBuilder();
+                            for (Author author : book.getAuthors()) {
+                                authorsString.append(author.getName()).append(",");
+                            }
+                            authorsString.deleteCharAt(authorsString.length() - 1);
+                            authorsString.deleteCharAt(authorsString.length() - 1);
+                            authors = authorsString.toString();
+                        }
+                        request.setAttribute("authorsString", authors);
+                    %>
+                    <input class="form-control" type="text" id="authorsEn" name="authorsEn" placeholder="Authors"
                            value="${requestScope.authorsString != null ? requestScope.authorsString : ""}">
                 </label>
                 <br/>
@@ -102,23 +124,35 @@
             </div>
             <div>
                 <label style="width: 75%;">
-                    <textarea class="form-control" id="description" name="description" placeholder="Description"
+                    <textarea class="form-control" id="descriptionUa" name="descriptionUa" placeholder="Опис"
                                               wrap="soft">${requestScope.book.description != null ? requestScope.book.description : ""}</textarea>
+                </label>
+                <label style="width: 75%;">
+                    <textarea class="form-control" id="descriptionEn" name="descriptionEn" placeholder="Description"
+                              wrap="soft">${requestScope.book.description != null ? requestScope.book.description : ""}</textarea>
                 </label>
                 <br/>
                 <span class="text-danger" id="descriptionMessage"></span>
             </div>
             <div>
-                <label style="width: 75%;">
-                    <input class="form-control" type="text" id="bookLanguage" name="bookLanguage" placeholder="Language"
+                <label style="width: 37%;">
+                    <input class="form-control" type="text" id="bookLanguageUa" name="bookLanguageUa" placeholder="Мова"
+                           value="${requestScope.book.language != null ? requestScope.book.language : ""}">
+                </label>
+                <label style="width: 37%;">
+                    <input class="form-control" type="text" id="bookLanguageEn" name="bookLanguageEn" placeholder="Language"
                            value="${requestScope.book.language != null ? requestScope.book.language : ""}">
                 </label>
                 <br/>
                 <span class="text-danger" id="bookLanguageMessage"></span>
             </div>
             <div>
-                <label style="width: 75%;"v>
-                    <input class="form-control" type="text" id="edition" name="edition" placeholder="Edition"
+                <label style="width: 37%;">
+                    <input class="form-control" type="text" id="editionUa" name="editionUa" placeholder="Видання"
+                           value="${requestScope.book.edition.name != null ? requestScope.book.edition.name : ""}">
+                </label>
+                <label style="width: 37%;">
+                    <input class="form-control" type="text" id="editionEn" name="editionEn" placeholder="Edition"
                            value="${requestScope.book.edition.name != null ? requestScope.book.edition.name : ""}">
                 </label>
                 <br/>
@@ -136,20 +170,23 @@
                 <span class="text-danger" id="publicationDateMessage"></span>
             </div>
             <div>
-                <label style="width: 75%;">
+                <label style="width: 28%;">
                     <input class="form-control" type="text" id="price" name="price" placeholder="Price"
                            value="${requestScope.book.price != null ? requestScope.book.price : ""}">
                 </label>
-                <br/>
-                <span class="text-danger" id="priceMessage"></span>
-            </div>
-            <div>
-                <label style="width: 75%;">
+                <label for="currency">
+                    <select style="width: 75px;" class="custom-select-sm" id="currency" name="currency" onchange="chooseType()">
+                        <option value="uan">UAN</option>
+                        <option value="usd">USD</option>
+                    </select>
+                </label>
+                <label style="width: 35%;">
                     <input class="form-control" type="text" id="count" name="count" placeholder="Count"
                            value="${requestScope.book.count != null ? requestScope.book.count : ""}">
                 </label>
-                <br/>
                 <span class="text-danger" id="countMessage"></span>
+                <span class="text-danger" id="priceMessage"></span>
+                <br/>
             </div>
         </div>
         <div>

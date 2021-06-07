@@ -5,5 +5,5 @@ import ua.training.model.entity.Edition;
 import java.util.Optional;
 
 public interface EditionDao extends GenericDao<Edition> {
-    Optional<Edition> findByName(String name);
+    Optional<Edition> findByNames(String name1, String name2);
 }
