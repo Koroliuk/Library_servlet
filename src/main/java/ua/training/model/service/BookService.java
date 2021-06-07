@@ -110,6 +110,19 @@ public class BookService {
         }
     }
 
+    public Optional<Book> findByIdAll(long id) {
+        try (BookDao bookDao = daoFactory.createBookDao();
+             AuthorDao authorDao = daoFactory.createAuthorDao()) {
+            Optional<Book> optionalBook = bookDao.findById(id);
+            if (optionalBook.isPresent()) {
+                Book book = optionalBook.get();
+                book.setAuthors(authorDao.getAuthorsByBookId(id));
+                return Optional.of(book);
+            }
+            return Optional.empty();
+        }
+    }
+
     public List<Book> findAll() {
         try (BookDao bookDao = daoFactory.createBookDao();
             AuthorDao authorDao = daoFactory.createAuthorDao()) {

@@ -45,7 +45,7 @@ public class EditBook implements Command {
                 languageUa, languageEn, editionNameUa, editionNameEn, currency, stringPrice, stringCount, publicationDateString);
         for (String param : params) {
             if (param == null || param.equals("")) {
-                Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
+                Optional<Book> optionalBook1 = bookService.findByIdAll(Long.parseLong(id));
                 optionalBook1.ifPresent(value -> request.setAttribute("book", value));
                 return "/user/admin/bookForm.jsp";
             }
@@ -56,7 +56,7 @@ public class EditBook implements Command {
         boolean condition5 = publicationData.isAfter(LocalDate.now()) || publicationData.isEqual(LocalDate.now());
         boolean condition6 = price <= 0 || count <= 0;
         if (condition5 || condition6) {
-            Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
+            Optional<Book> optionalBook1 = bookService.findByIdAll(Long.parseLong(id));
             optionalBook1.ifPresent(value -> request.setAttribute("book", value));
             return "/user/admin/bookForm.jsp?validError=true";
         }
@@ -98,7 +98,7 @@ public class EditBook implements Command {
                 .build();
 
         bookService.updateBook(book);
-        Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
+        Optional<Book> optionalBook1 = bookService.findByIdAll(Long.parseLong(id));
         optionalBook1.ifPresent(value -> request.setAttribute("book", value));
         return "/user/admin/bookForm.jsp?id="+id+"&successCreation=true";
     }
