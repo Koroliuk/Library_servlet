@@ -18,15 +18,22 @@ public abstract class SQLConstants {
     public static final String CREATE_EDITION = "INSERT INTO edition (edition_name_ua, edition_name_en) VALUES (?, ?)";
     public static final String GET_EDITION_BY_NAME = "SELECT * FROM edition WHERE edition_name_ua = ? AND edition_name_en = ?";
 
-    public static final String CREATE_BOOK = "INSERT INTO book (title, description, edition_id, language, " +
-            "publication_date, price, count) values (?, ?, ?, ?, ?, ?, ?)";
-    public static final String UPDATE_PARTIAL_BOOK = "UPDATE book SET (title, description, language, edition_id," +
-            " publication_date, price, count) = (?, ?, ?, ?, ?, ?, ?) WHERE id = ?";
+    public static final String CREATE_BOOK = "INSERT INTO book (title_ua, description_ua, edition_id, language_ua, " +
+            "publication_date, price_uan, count, title_en, description_en, language_en) " +
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static final String UPDATE_PARTIAL_BOOK = "UPDATE book SET (title_ua, description_ua, language_ua, " +
+            "edition_id, publication_date, price_uan, count, title_en, description_en, language_en) = " +
+            "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) WHERE id = ?";
+    public static final String UPDATE_AMOUNT_OF_BOOK = "UPDATE book SET count=? WHERE id = ?";
+    public static final String GET_ALL_BOOKS = "SELECT * FROM book INNER JOIN edition ON edition_id = edition.id";
     public static final String GET_PARTIAL_BOOK_BY_ID = "SELECT * FROM book INNER JOIN edition ON " +
             "edition_id = edition.id WHERE book.id = ?;";
     public static final String GET_PARTIAL_BOOK_BY_TITLE_AND_AUTHORS = "SELECT * FROM book INNER JOIN edition ON" +
             " edition_id = edition.id WHERE title = ? AND (SELECT CAST(ARRAY(SELECT full_name FROM authorship " +
             "INNER JOIN author ON author_id = author.id WHERE book_id = book.id) AS VARCHAR)) = ?;";
+    public static final String GET_AMOUNT_OF_BOOKS_WITH_KEY_WORD = "SELECT COUNT(*) FROM book INNER JOIN authorship ON " +
+            "book.id = authorship.book_id INNER JOIN author ON author_id = author.id WHERE author.full_name_ua LIKE '%' " +
+            "|| ? || '%' OR book.title_ua LIKE '%' || ? || '%' ;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_ID_INC_UA = "SELECT DISTINCT book.id, title_ua, description_ua, " +
             "language_ua, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
@@ -129,7 +136,6 @@ public abstract class SQLConstants {
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_en LIKE '%' || ? || '%' OR title_en LIKE '%' || ? || '%'" +
             "ORDER BY (CAST(ARRAY(SELECT full_name_en FROM author INNER JOIN authorship a ON author.id = a.author_id WHERE book_id = book.id ORDER BY full_name_en) AS VARCHAR)) DESC LIMIT ? OFFSET ?;";
-    public static final String GET_ALL_BOOKS = "SELECT * FROM book INNER JOIN edition ON edition_id = edition.id";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_ID_INC = "SELECT DISTINCT book.id, title, description, " +
             "language, edition_id, edition_name, publication_date, price, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
@@ -192,29 +198,4 @@ public abstract class SQLConstants {
             "(?, ?, ?, ?, ?::\"order_status\") WHERE id = ?";
     public static final String GET_ORDER_BY_ID = "SELECT * FROM orders WHERE id = ?";
     public static final String GET_ALL_ORDERS = "SELECT * FROM orders";
-
-    public static String crateGetBookByKeyWord(String inputQuery, String sort, String sortType, int page) {
-        StringBuilder result = new StringBuilder(inputQuery);
-        if (sort.equals("title")) {
-            result.append(" ").append("ORDER BY title");
-        } else if (sort.equals("author")) {
-            result.append(" ").append("ORDER BY ");
-        } else if (sort.equals("edition")) {
-            result.append(" ").append("ORDER BY edition_name");
-        } else if (sort.equals("date")) {
-            result.append(" ").append("ORDER BY publication_date");
-        } else {
-            result.append(" ").append("ORDER BY id");
-        }
-        if (sortType.equals("dec")) {
-            result.append(" ").append("DESC");
-        }
-        int offsetPosition = (page - 1) * 7;
-        result.append(" ")
-                .append("LIMIT").append(" ")
-                .append(7).append(" ")
-                .append("OFFSET").append(" ")
-                .append(offsetPosition);
-        return result.toString();
-    }
 }

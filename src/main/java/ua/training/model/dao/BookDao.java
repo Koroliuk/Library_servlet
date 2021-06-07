@@ -20,4 +20,6 @@ public interface BookDao extends GenericDao<Book> {
 
     List<Book> findByKeyWordUa(String keyWord, String sortBy, String sortType, int page);
     List<Book> findByKeyWordEn(String keyWord, String sortBy, String sortType, int page);
+
+    void updateAmount(Book book);
 }

@@ -21,7 +21,7 @@ public class OrderService {
             orderDao.create(order);
             Book book = order.getBook();
             book.setCount(book.getCount()-1);
-            bookDao.update(book);
+            bookDao.updateAmount(book);
         }
     }
 
@@ -113,7 +113,7 @@ public class OrderService {
                 Optional<Book> optionalBook = bookDao.findById(order.getBook().getId());
                 Book book = optionalBook.get();
                 book.setCount(book.getCount()+1);
-                bookDao.update(book);
+                bookDao.updateAmount(book);
             }
         }
     }

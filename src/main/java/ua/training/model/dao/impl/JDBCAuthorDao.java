@@ -58,13 +58,8 @@ public class JDBCAuthorDao implements AuthorDao {
             statement.setString(2, name2);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    Author author = new Author.Builder()
-                            .id(resultSet.getLong("id"))
-                            .name(resultSet.getString("full_name_ua"))
-                            .anotherName(resultSet.getString("full_name_en"))
-                            .build();
-//                    AuthorMapper mapper = new AuthorMapper();
-//                    Author author = mapper.extractFromResultSet(resultSet);
+                    AuthorMapper mapper = new AuthorMapper();
+                    Author author = mapper.extractFromResultSet(resultSet);
                     return Optional.of(author);
                 }
             }
@@ -114,10 +109,8 @@ public class JDBCAuthorDao implements AuthorDao {
             preparedStatement.setLong(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
-                    Author author = new Author.Builder()
-                            .id(resultSet.getLong("author_id"))
-                            .name(resultSet.getString("full_name_ua"))
-                            .build();
+                    AuthorMapper mapper = new AuthorMapper();
+                    Author author = mapper.extractFromResultSetWithIdLocale(resultSet, "author_id");
                     authors.add(author);
                 }
             }
@@ -133,10 +126,8 @@ public class JDBCAuthorDao implements AuthorDao {
             preparedStatement.setLong(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
-                    Author author = new Author.Builder()
-                            .id(resultSet.getLong("author_id"))
-                            .name(resultSet.getString("full_name_en"))
-                            .build();
+                    AuthorMapper mapper = new AuthorMapper();
+                    Author author = mapper.extractFromResultSetWithIdLocale(resultSet, "author_id");
                     authors.add(author);
                 }
             }
