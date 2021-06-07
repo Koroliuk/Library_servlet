@@ -15,32 +15,16 @@ public class BookMapper implements ObjectMapper<Book> {
         Edition edition = editionMapper.extractFromResultSetWithId(resultSet, "edition_id");
         return new Book.Builder()
                 .id(resultSet.getInt("id"))
-                .title(resultSet.getString("title"))
-                .description(resultSet.getString("description"))
-                .language(resultSet.getString("language"))
+                .title(resultSet.getString("title_ua"))
+                .anotherLanguage(resultSet.getString("title_en"))
+                .description(resultSet.getString("description_ua"))
+                .anotherDescription(resultSet.getString("description_en"))
+                .language(resultSet.getString("language_ua"))
+                .anotherLanguage(resultSet.getString("language_en"))
                 .edition(edition)
                 .publicationDate(LocalDate.parse(resultSet.getString("publication_date")))
-                .price(resultSet.getFloat("price"))
+                .price(resultSet.getFloat("price_uan"))
                 .count(resultSet.getInt("count"))
-                .build();
-    }
-
-    public Book extractFromResultSetSting(String string) {
-        String stringParams = string.substring(1, string.length()-1);
-        String[] params = stringParams.split(",");
-        Edition edition = new Edition.Builder()
-                .id(Long.parseLong(params[3]))
-                .name(params[4])
-                .build();
-        return new Book.Builder()
-                .id(Long.parseLong(params[0]))
-                .title(params[1])
-                .description(params[2])
-                .edition(edition)
-                .language(params[5])
-                .publicationDate(LocalDate.parse(params[6]))
-                .price(Float.parseFloat(params[7]))
-                .count(Integer.parseInt(params[8]))
                 .build();
     }
 }
