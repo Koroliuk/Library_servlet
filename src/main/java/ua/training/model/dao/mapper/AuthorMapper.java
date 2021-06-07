@@ -11,14 +11,16 @@ public class AuthorMapper implements ObjectMapper<Author> {
     public Author extractFromResultSet(ResultSet resultSet) throws SQLException {
         return new Author.Builder()
                 .id(resultSet.getInt("id"))
-                .name(resultSet.getString("full_name"))
+                .name(resultSet.getString("full_name_ua"))
+                .anotherName(resultSet.getString("full_name_en"))
                 .build();
     }
 
     public Author extractFromResultSetWithId(ResultSet resultSet, String id) throws SQLException {
         return new Author.Builder()
                 .id(resultSet.getInt(id))
-                .name(resultSet.getString("full_name"))
+                .name(resultSet.getString("full_name_ua"))
+                .anotherName(resultSet.getString("full_name_en"))
                 .build();
     }
 }

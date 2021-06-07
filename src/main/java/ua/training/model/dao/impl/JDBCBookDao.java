@@ -20,7 +20,9 @@ public class JDBCBookDao implements BookDao {
     @Override
     public void create(Book entity) {
         try (PreparedStatement statement =
-                     connection.prepareStatement(SQLConstants.CREATE_BOOK, Statement.RETURN_GENERATED_KEYS)) {
+                     connection.prepareStatement("INSERT INTO book (title_ua, description_ua, edition_id," +
+                             " language_ua, publication_date, price_uan, count, title_en, description_en, language_en)" +
+                             " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, entity.getTitle());
             statement.setString(2, entity.getDescription());
             statement.setLong(3, entity.getEdition().getId());
@@ -28,6 +30,9 @@ public class JDBCBookDao implements BookDao {
             statement.setObject(5, entity.getPublicationDate());
             statement.setFloat(6, entity.getPrice());
             statement.setInt(7, entity.getCount());
+            statement.setString(8, entity.getAnotherTitle());
+            statement.setString(9, entity.getAnotherDescription());
+            statement.setString(10, entity.getAnotherLanguage());
             if (statement.executeUpdate() > 0) {
                 try (ResultSet resultSet = statement.getGeneratedKeys()) {
                     if (resultSet.next()) {
@@ -113,7 +118,7 @@ public class JDBCBookDao implements BookDao {
     @Override
     public long getBookAmountWithKeyWord(String keyWord) {
         String query = "SELECT COUNT(*) FROM book INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-                "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%' ;";
+                "ON author_id = author.id WHERE author.full_name_ua LIKE '%' || ? || '%' OR book.title_ua LIKE '%' || ? || '%' ;";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, keyWord);
             statement.setString(2, keyWord);

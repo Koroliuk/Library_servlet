@@ -51,9 +51,10 @@ public class JDBCAuthorDao implements AuthorDao {
     }
 
     @Override
-    public Optional<Author> findByName(String name) {
+    public Optional<Author> findByNames(String name1, String name2) {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_AUTHOR_BY_NAME)) {
-            statement.setString(1, name);
+            statement.setString(1, name1);
+            statement.setString(2, name2);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     AuthorMapper mapper = new AuthorMapper();

@@ -5,10 +5,12 @@ import java.util.Objects;
 public class Author {
     private long id;
     private String name;
+    private String anotherName;
 
     public static class Builder {
         private long id;
         private String name;
+        private String anotherName;
 
         public Builder id(long id) {
             this.id = id;
@@ -20,6 +22,11 @@ public class Author {
             return this;
         }
 
+        public Builder anotherName(String anotherName) {
+            this.anotherName = anotherName;
+            return this;
+        }
+
         public Author build() {
             return new Author(this);
         }
@@ -28,6 +35,7 @@ public class Author {
     private Author(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
+        this.anotherName = builder.anotherName;
     }
 
     public long getId() {
@@ -44,6 +52,14 @@ public class Author {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAnotherName() {
+        return anotherName;
+    }
+
+    public void setAnotherName(String anotherName) {
+        this.anotherName = anotherName;
     }
 
     @Override
