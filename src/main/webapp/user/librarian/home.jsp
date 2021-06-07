@@ -97,9 +97,6 @@
                                     </tr>
                                 </c:forEach>
                             </c:if>
-                            <c:if test="${requestScope.orderList.size() == 0}">
-                                <p>Пусто</p>
-                            </c:if>
                         </table>
                     </c:if>
                 </div>
@@ -134,9 +131,6 @@
                                         </tr>
                                     </c:if>
                                 </c:forEach>
-                            </c:if>
-                            <c:if test="${requestScope.userList.size() == 0}">
-                                <p>Пусто</p>
                             </c:if>
                         </table>
                     </c:if>
