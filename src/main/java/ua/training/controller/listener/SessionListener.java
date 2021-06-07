@@ -16,7 +16,9 @@ public class SessionListener implements HttpSessionListener {
                 .getAttribute("loggedUsers");
         String login = (String) httpSessionEvent.getSession()
                 .getAttribute("userLogin");
-        loggedUsers.remove(login);
+        if (loggedUsers != null) {
+            loggedUsers.remove(login);
+        }
         httpSessionEvent.getSession().setAttribute("loggedUsers", loggedUsers);
     }
 }

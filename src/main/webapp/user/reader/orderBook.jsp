@@ -174,6 +174,10 @@
     const warning3 = document.getElementById('warning3');
 
     startDate.addEventListener('input', () => {
+        const orderType = document.getElementById("orderType").value;
+        if (orderType === 'readingHole') {
+            endDate.value = startDate.value;
+        }
         const now = new Date().withoutTime();
         const start = Date.parse(startDate.value);
         warning1.hidden = start >= now;

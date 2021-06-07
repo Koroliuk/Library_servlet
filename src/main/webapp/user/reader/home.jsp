@@ -47,7 +47,7 @@
 <body>
     <nav class="nav nav-tabs nav-justified">
         <a class="nav-item nav-link <c:if test="${param.tab == null || param.tab.equals('') || param.tab.equals('1')}">active</c:if>" data-toggle="tab" href="#subscription">Абонемент</a>
-        <a class="nav-item nav-link" data-toggle="tab" href="#readingHole">Читальний зал</a>
+        <a class="nav-item nav-link <c:if test="${param.tab.equals('2')}">active</c:if>" data-toggle="tab" href="#readingHole">Читальний зал</a>
         <a class="nav-item nav-link <c:if test="${param.tab.equals('3')}">active</c:if>" data-toggle="tab" href="#orders">Замовлення</a>
     </nav>
     <br/>
@@ -141,7 +141,7 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade text-center" id="readingHole">
+        <div class="tab-pane fade <c:if test="${param.tab.equals('2')}">show active</c:if> text-center" id="readingHole">
             <h3>Читальний зал</h3>
             <div class="row justify-content-center">
                 <div class="col-auto">
@@ -154,6 +154,7 @@
                                 <th>Edition</th>
                                 <th>Language</th>
                                 <th>Date</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <c:if test="${requestScope.orderList.size() > 0}">
@@ -182,6 +183,10 @@
                                         <td>${order.book.edition.name}</td>
                                         <td>${order.book.language}</td>
                                         <td>${order.endDate}</td>
+                                        <td>
+                                            <a type="button" class="btn btn-outline-danger"
+                                               href="${pageContext.request.contextPath}/app/reader/home?orderId=${order.id}&tab=2">Скасувати замовлення</a>
+                                        </td>
                                     </tr>
                                 </c:if>
                             </c:forEach>
