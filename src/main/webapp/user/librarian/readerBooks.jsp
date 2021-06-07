@@ -95,6 +95,9 @@
             </c:if>
         </div>
     </div>
+    <div>
+        <a href="${pageContext.request.contextPath}/app/librarian/home"><fmt:message key="global.to.home.page"/></a>
+    </div>
 </div>
 </body>
 </html>
