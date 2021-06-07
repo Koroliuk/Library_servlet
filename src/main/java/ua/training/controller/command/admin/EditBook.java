@@ -26,29 +26,28 @@ public class EditBook implements Command {
         request.setAttribute("action", "edit");
 
         String id = request.getParameter("id");
-        String title = request.getParameter("title");
-        String authorsString = request.getParameter("authors");
-        String description = request.getParameter("description");
-        String language = request.getParameter("bookLanguage");
-        String editionName = request.getParameter("edition");
+        String titleUa = request.getParameter("titleUa");
+        String authorsStringUa = request.getParameter("authorsUa");
+        String descriptionUa = request.getParameter("descriptionUa");
+        String languageUa = request.getParameter("bookLanguageUa");
+        String editionNameUa = request.getParameter("editionUa");
+        String titleEn = request.getParameter("titleEn");
+        String authorsStringEn = request.getParameter("authorsEn");
+        String descriptionEn = request.getParameter("descriptionEn");
+        String languageEn = request.getParameter("bookLanguageEn");
+        String editionNameEn = request.getParameter("editionEn");
         String publicationDateString = request.getParameter("publicationDate");
         String stringPrice = request.getParameter("price");
+        String currency = request.getParameter("currency");
         String stringCount = request.getParameter("count");
 
-        if (id == null || id.equals("")) {
-            return "/user/admin/bookForm.jsp?bookError";
-        }
-        boolean condition1 = title == null || description == null || title.equals("") || description.equals("");
-        boolean condition2 = language == null || editionName == null || language.equals("") || editionName.equals("");
-        boolean condition3 = stringPrice == null || stringPrice.equals("") || stringCount == null || stringCount.equals("");
-        boolean condition4 = authorsString == null || authorsString.equals("") || publicationDateString == null || publicationDateString.equals("");
-        if (condition1 || condition2 || condition3 || condition4) {
-            Optional<Book> optionalBook = bookService.findById(Long.parseLong(id));
-            if (optionalBook.isPresent()) {
-                request.setAttribute("book", optionalBook.get());
+        List<String> params = Arrays.asList(titleUa, titleEn, authorsStringUa, authorsStringEn, descriptionUa, descriptionEn,
+                languageUa, languageEn, editionNameUa, editionNameEn, currency, stringPrice, stringCount, publicationDateString);
+        for (String param : params) {
+            if (param == null || param.equals("")) {
+                Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
+                optionalBook1.ifPresent(value -> request.setAttribute("book", value));
                 return "/user/admin/bookForm.jsp";
-            } else {
-                return "/user/admin/bookForm.jsp?bookError";
             }
         }
         LocalDate publicationData = LocalDate.parse(publicationDateString);
@@ -57,41 +56,50 @@ public class EditBook implements Command {
         boolean condition5 = publicationData.isAfter(LocalDate.now()) || publicationData.isEqual(LocalDate.now());
         boolean condition6 = price <= 0 || count <= 0;
         if (condition5 || condition6) {
-            return "/user/admin/bookForm.jsp?validError";
+            Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
+            optionalBook1.ifPresent(value -> request.setAttribute("book", value));
+            return "/user/admin/bookForm.jsp?validError=true";
         }
-        List<String> authorNames = Arrays.asList(authorsString.split(","));
-//        Optional<Book> optionalBook = bookService.findByTitleAndAuthorsNames(title, authorNames);
-//        if (optionalBook.isPresent()) {
-//            return "/user/admin/bookForm.jsp?createError";
-//        }
-//
-//        Edition edition = new Edition.Builder()
-//                .name(editionName)
-//                .build();
-//
-//        List<Author> authors = new ArrayList<>();
-//        for (String authorName: authorNames) {
-//            Author author = new Author.Builder()
-//                    .name(authorName)
-//                    .build();
-//            authors.add(author);
-//        }
-//
-//        Book book = new Book.Builder()
-//                .id(Long.parseLong(id))
-//                .title(title)
-//                .description(description)
-//                .language(language)
-//                .edition(edition)
-//                .publicationDate(publicationData)
-//                .price(price)
-//                .count(count)
-//                .authors(authors)
-//                .build();
-//
-//        bookService.updateBook(book);
-//        Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
-//        optionalBook1.ifPresent(value -> request.setAttribute("book", value));
+        List<String> authorNamesUa = Arrays.asList(authorsStringUa.split(","));
+        List<String> authorNamesEn = Arrays.asList(authorsStringEn.split(","));
+        float priceUa;
+        if (currency.equals("uan")) {
+            priceUa = price;
+        } else {
+            priceUa = price*30;
+        }
+        Edition edition = new Edition.Builder()
+                .name(editionNameUa)
+                .anotherName(editionNameEn)
+                .build();
+
+        List<Author> authors = new ArrayList<>();
+        for (int i = 0; i < authorNamesUa.size(); i++) {
+            Author author = new Author.Builder()
+                    .name(authorNamesUa.get(i))
+                    .anotherName(authorNamesEn.get(i))
+                    .build();
+            authors.add(author);
+        }
+
+        Book book = new Book.Builder()
+                .id(Long.parseLong(id))
+                .title(titleUa)
+                .anotherTitle(titleEn)
+                .description(descriptionUa)
+                .anotherDescription(descriptionEn)
+                .language(languageUa)
+                .anotherLanguage(languageEn)
+                .edition(edition)
+                .publicationDate(publicationData)
+                .price(priceUa)
+                .count(count)
+                .authors(authors)
+                .build();
+
+        bookService.updateBook(book);
+        Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
+        optionalBook1.ifPresent(value -> request.setAttribute("book", value));
         return "/user/admin/bookForm.jsp?id="+id+"&successCreation=true";
     }
 }

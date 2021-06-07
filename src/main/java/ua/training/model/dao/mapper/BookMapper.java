@@ -17,12 +17,13 @@ public class BookMapper implements ObjectMapper<Book> {
                 .id(resultSet.getInt("id"))
                 .title(resultSet.getString("title_ua"))
                 .anotherLanguage(resultSet.getString("title_en"))
-                .description(resultSet.getString("description"))
-                .description(resultSet.getString("description"))
-                .language(resultSet.getString("language"))
+                .description(resultSet.getString("description_ua"))
+                .anotherDescription(resultSet.getString("description_en"))
+                .language(resultSet.getString("language_ua"))
+                .anotherLanguage(resultSet.getString("language_en"))
                 .edition(edition)
                 .publicationDate(LocalDate.parse(resultSet.getString("publication_date")))
-                .price(resultSet.getFloat("price"))
+                .price(resultSet.getFloat("price_uan"))
                 .count(resultSet.getInt("count"))
                 .build();
     }
