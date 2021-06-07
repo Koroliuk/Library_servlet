@@ -32,11 +32,13 @@
             key="header.library.name"/></span>
     <div class="d-flex flex-row mr-3">
         <form class="mr-2">
-            <select class="custom-select" id="language" name="language" onchange="submit()">
-                <option value="en" ${language == 'en' ? 'selected' : ''}><fmt:message
-                        key="header.language.english"/></option>
-                <option value="ua" ${language == 'ua' ? 'selected' : ''}><fmt:message
-                        key="header.language.ukrainian"/></option>
+            <select class="custom-select" id="language" name="language" onChange="window.document.location.href=this.options[this.selectedIndex].value;">
+                <option value="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page}&sortBy=${param.sortBy}&sortType=${param.sortType}&language=en"
+                ${language == 'en' ? 'selected' : ''}>
+                    <fmt:message key="header.language.english"/></option>
+                <option value="${pageContext.request.contextPath}/app/search?keyWords=${param.keyWords}&page=${param.page}&sortBy=${param.sortBy}&sortType=${param.sortType}&language=ua"
+                ${language == 'ua' ? 'selected' : ''}>
+                    <fmt:message key="header.language.ukrainian"/></option>
             </select>
         </form>
         <c:if test="${sessionScope.userLogin == null}">
@@ -124,6 +126,11 @@
                                 <c:if test="${sessionScope.role == 'READER'}">
                                     <td>
                                         <a id="btn${book.id}" type="button" class="btn btn-outline-info" onclick="checkAmountOfBook(${book.count}, ${book.id})" href="${pageContext.request.contextPath}/app/reader/orderBook?bookId=${book.id}&userLogin=${sessionScope.userLogin}">Замовити</a>
+                                    </td>
+                                </c:if>
+                                <c:if test="${sessionScope.role != 'READER'}">
+                                    <td>
+                                        <span>-</span>
                                     </td>
                                 </c:if>
                             </tr>
