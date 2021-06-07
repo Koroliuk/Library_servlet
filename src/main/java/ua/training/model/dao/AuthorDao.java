@@ -9,4 +9,6 @@ public interface AuthorDao extends GenericDao<Author> {
     Optional<Author> findByNames(String name1, String name2);
 
     List<Author> getAuthorsByBookId(long id);
+    List<Author> getAuthorsByBookIdUa(long id);
+    List<Author> getAuthorsByBookIdEn(long id);
 }
