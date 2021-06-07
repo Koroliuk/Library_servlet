@@ -66,7 +66,7 @@
             </form>
         </div>
         <c:if test="${sessionScope.userLogin == null}">
-            <span class="text-info mt-2 mb-2">Увійдйть для замовлення книги</span>
+            <a href="${pageContext.request.contextPath}/app/login" class="text-info mt-2 mb-2">Увійдйть для замовлення книги</a>
         </c:if>
         <span class="text-danger mb-2 mt-2" id="warning" hidden>Немає доступних екземплярів, спробуйте пізніше</span>
         <div class="row justify-content-center">
