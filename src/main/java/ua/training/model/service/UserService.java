@@ -14,6 +14,8 @@ public class UserService {
     public void singUpUser(User user) {
         try (UserDao userDao = daoFactory.createUserDao()) {
             userDao.create(user);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -32,6 +34,8 @@ public class UserService {
     public void delete(long id) {
         try (UserDao userDao = daoFactory.createUserDao()) {
             userDao.delete(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

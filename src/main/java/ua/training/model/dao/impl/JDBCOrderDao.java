@@ -2,6 +2,7 @@ package ua.training.model.dao.impl;
 
 import ua.training.model.dao.OrderDao;
 import ua.training.model.dao.mapper.OrderMapper;
+import ua.training.model.entity.Book;
 import ua.training.model.entity.Order;
 import ua.training.model.entity.enums.OrderStatus;
 
@@ -18,22 +19,31 @@ public class JDBCOrderDao implements OrderDao {
     }
 
     @Override
-    public void create(Order entity) {
-        try (PreparedStatement statement =
-                     connection.prepareStatement(SQLConstants.CREATE_ORDER, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setLong(1, entity.getUser().getId());
-            statement.setLong(2, entity.getBook().getId());
-            statement.setObject(3, entity.getStartDate());
-            statement.setObject(4, entity.getEndDate());
-            statement.setString(5, entity.getOrderStatus().name());
-            if (statement.executeUpdate() > 0) {
-                try (ResultSet resultSet = statement.getGeneratedKeys()) {
+    public void create(Order entity) throws SQLException {
+        try (PreparedStatement createOrder =
+                     connection.prepareStatement(SQLConstants.CREATE_ORDER, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement reserveBook = connection.prepareStatement(SQLConstants.UPDATE_AMOUNT_OF_BOOK)) {
+            connection.setAutoCommit(false);
+            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            createOrder.setLong(1, entity.getUser().getId());
+            createOrder.setLong(2, entity.getBook().getId());
+            createOrder.setObject(3, entity.getStartDate());
+            createOrder.setObject(4, entity.getEndDate());
+            createOrder.setString(5, entity.getOrderStatus().name());
+            if (createOrder.executeUpdate() > 0) {
+                try (ResultSet resultSet = createOrder.getGeneratedKeys()) {
                     if (resultSet.next()) {
                         entity.setId(resultSet.getInt(1));
+                        reserveBook.setInt(1, entity.getBook().getCount()-1);
+                        reserveBook.setLong(2, entity.getBook().getId());
+                        reserveBook.executeUpdate();
+                        connection.commit();
+                        connection.setAutoCommit(true);
                     }
                 }
              }
         } catch (SQLException e) {
+            connection.rollback();
             e.printStackTrace();
         }
     }
