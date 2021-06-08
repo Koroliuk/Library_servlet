@@ -99,7 +99,10 @@ public class AddBook implements Command {
                 .authors(authors)
                 .build();
 
-        bookService.createBook(book);
+        boolean result = bookService.createBook(book);
+        if (!result) {
+            return "/error/error.jsp";
+        }
         return "/user/admin/bookForm.jsp?successCreation=true";
     }
 }

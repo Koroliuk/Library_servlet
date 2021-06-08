@@ -97,7 +97,10 @@ public class EditBook implements Command {
                 .authors(authors)
                 .build();
 
-        bookService.updateBook(book);
+        boolean result = bookService.updateBook(book);
+        if (!result) {
+            return "/error/error.jsp";
+        }
         Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
         optionalBook1.ifPresent(value -> request.setAttribute("book", value));
         return "/user/admin/bookForm.jsp?id="+id+"&successCreation=true";

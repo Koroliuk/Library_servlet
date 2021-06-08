@@ -8,6 +8,7 @@ public abstract class SQLConstants {
     public static final String GET_USER_BY_LOGIN = "SELECT * FROM users WHERE login = ?";
     public static final String GET_ALL_USERS = "SELECT * FROM users";
     public static final String DELETE_USER_BY_ID = "DELETE FROM users WHERE id = ?";
+    public static final String UPDATE_USER = "UPDATE users SET (login, password_hash, is_blocked) = (?, ?, ?) WHERE  id = ? ;";
 
     public static final String CREATE_AUTHOR = "INSERT INTO author (full_name_ua, full_name_en) VALUES (?, ?)";
     public static final String GET_AUTHOR_BY_ID = "SELECT * FROM author WHERE id = ?";
@@ -18,15 +19,22 @@ public abstract class SQLConstants {
     public static final String CREATE_EDITION = "INSERT INTO edition (edition_name_ua, edition_name_en) VALUES (?, ?)";
     public static final String GET_EDITION_BY_NAME = "SELECT * FROM edition WHERE edition_name_ua = ? AND edition_name_en = ?";
 
-    public static final String CREATE_BOOK = "INSERT INTO book (title, description, edition_id, language, " +
-            "publication_date, price, count) values (?, ?, ?, ?, ?, ?, ?)";
-    public static final String UPDATE_PARTIAL_BOOK = "UPDATE book SET (title, description, language, edition_id," +
-            " publication_date, price, count) = (?, ?, ?, ?, ?, ?, ?) WHERE id = ?";
+    public static final String CREATE_BOOK = "INSERT INTO book (title_ua, description_ua, edition_id, language_ua, " +
+            "publication_date, price_uan, count, title_en, description_en, language_en) " +
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static final String UPDATE_PARTIAL_BOOK = "UPDATE book SET (title_ua, description_ua, language_ua, " +
+            "edition_id, publication_date, price_uan, count, title_en, description_en, language_en) = " +
+            "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) WHERE id = ?";
+    public static final String UPDATE_AMOUNT_OF_BOOK = "UPDATE book SET count=? WHERE id = ?";
+    public static final String GET_ALL_BOOKS = "SELECT * FROM book INNER JOIN edition ON edition_id = edition.id";
     public static final String GET_PARTIAL_BOOK_BY_ID = "SELECT * FROM book INNER JOIN edition ON " +
             "edition_id = edition.id WHERE book.id = ?;";
     public static final String GET_PARTIAL_BOOK_BY_TITLE_AND_AUTHORS = "SELECT * FROM book INNER JOIN edition ON" +
             " edition_id = edition.id WHERE title = ? AND (SELECT CAST(ARRAY(SELECT full_name FROM authorship " +
             "INNER JOIN author ON author_id = author.id WHERE book_id = book.id) AS VARCHAR)) = ?;";
+    public static final String GET_AMOUNT_OF_BOOKS_WITH_KEY_WORD = "SELECT COUNT(*) FROM book INNER JOIN authorship ON " +
+            "book.id = authorship.book_id INNER JOIN author ON author_id = author.id WHERE author.full_name_ua LIKE '%' " +
+            "|| ? || '%' OR book.title_ua LIKE '%' || ? || '%' ;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_ID_INC_UA = "SELECT DISTINCT book.id, title_ua, description_ua, " +
             "language_ua, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
@@ -41,22 +49,22 @@ public abstract class SQLConstants {
             "language_ua, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_ua LIKE '%' || ? || '%' OR title_ua LIKE '%' || ? || '%'" +
-            "ORDER BY title LIMIT ? OFFSET ?;";
+            "ORDER BY title_ua LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_TITLE_DEC_UA = "SELECT DISTINCT book.id, title_ua, description_ua, " +
             "language_ua, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_ua LIKE '%' || ? || '%' OR title_ua LIKE '%' || ? || '%'" +
-            "ORDER BY title DESC LIMIT ? OFFSET ?;";
+            "ORDER BY title_ua DESC LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_INC_UA = "SELECT DISTINCT book.id, title_ua, description_ua, " +
             "language_ua, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_ua LIKE '%' || ? || '%' OR title_ua LIKE '%' || ? || '%'" +
-            "ORDER BY edition_name LIMIT ? OFFSET ?;";
+            "ORDER BY edition_name_ua LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_DEC_UA = "SELECT DISTINCT book.id, title_ua, description_ua, " +
             "language_ua, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_ua LIKE '%' || ? || '%' OR title_ua LIKE '%' || ? || '%'" +
-            "ORDER BY edition_name DESC LIMIT ? OFFSET ?;";
+            "ORDER BY edition_name_ua DESC LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_DATE_INC_UA = "SELECT DISTINCT book.id, title_ua, description_ua, " +
             "language_ua, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
@@ -92,22 +100,22 @@ public abstract class SQLConstants {
             "language_en, edition_id, edition_name_en, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_en LIKE '%' || ? || '%' OR title_en LIKE '%' || ? || '%'" +
-            "ORDER BY title LIMIT ? OFFSET ?;";
+            "ORDER BY title_en LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_TITLE_DEC_EN = "SELECT DISTINCT book.id, title_en, description_en, " +
             "language_en, edition_id, edition_name_en, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_en LIKE '%' || ? || '%' OR title_en LIKE '%' || ? || '%'" +
-            "ORDER BY title DESC LIMIT ? OFFSET ?;";
+            "ORDER BY title_en DESC LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_INC_EN = "SELECT DISTINCT book.id, title_en, description_en, " +
             "language_en, edition_id, edition_name_en, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_en LIKE '%' || ? || '%' OR title_en LIKE '%' || ? || '%'" +
-            "ORDER BY edition_name LIMIT ? OFFSET ?;";
+            "ORDER BY edition_name_en LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_DEC_EN = "SELECT DISTINCT book.id, title_en, description_en, " +
             "language_en, edition_id, edition_name_en, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_en LIKE '%' || ? || '%' OR title_en LIKE '%' || ? || '%'" +
-            "ORDER BY edition_name DESC LIMIT ? OFFSET ?;";
+            "ORDER BY edition_name_en DESC LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_DATE_INC_EN = "SELECT DISTINCT book.id, title_en, description_en, " +
             "language_en, edition_id, edition_name_en, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
@@ -129,58 +137,6 @@ public abstract class SQLConstants {
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_en LIKE '%' || ? || '%' OR title_en LIKE '%' || ? || '%'" +
             "ORDER BY (CAST(ARRAY(SELECT full_name_en FROM author INNER JOIN authorship a ON author.id = a.author_id WHERE book_id = book.id ORDER BY full_name_en) AS VARCHAR)) DESC LIMIT ? OFFSET ?;";
-    public static final String GET_ALL_BOOKS = "SELECT * FROM book INNER JOIN edition ON edition_id = edition.id";
-    public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_ID_INC = "SELECT DISTINCT book.id, title, description, " +
-            "language, edition_id, edition_name, publication_date, price, count FROM book INNER JOIN edition " +
-            "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-            "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%'" +
-            "ORDER BY book.idLIMIT ? OFFSET ?;";
-    public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_ID_DEC = "SELECT DISTINCT book.id, title, description, " +
-            "language, edition_id, edition_name, publication_date, price, count FROM book INNER JOIN edition " +
-            "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-            "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%'" +
-            "ORDER BY book.id DESC LIMIT ? OFFSET ?;";
-    public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_TITLE_INC = "SELECT DISTINCT book.id, title, description, " +
-            "language, edition_id, edition_name, publication_date, price, count FROM book INNER JOIN edition " +
-            "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-            "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%'" +
-            "ORDER BY title LIMIT ? OFFSET ?;";
-    public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_TITLE_DEC = "SELECT DISTINCT book.id, title, description, " +
-            "language, edition_id, edition_name, publication_date, price, count FROM book INNER JOIN edition " +
-            "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-            "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%'" +
-            "ORDER BY title DESC LIMIT ? OFFSET ?;";
-    public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_INC = "SELECT DISTINCT book.id, title, description, " +
-            "language, edition_id, edition_name, publication_date, price, count FROM book INNER JOIN edition " +
-            "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-            "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%'" +
-            "ORDER BY edition_name LIMIT ? OFFSET ?;";
-    public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_DEC = "SELECT DISTINCT book.id, title, description, " +
-            "language, edition_id, edition_name, publication_date, price, count FROM book INNER JOIN edition " +
-            "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-            "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%'" +
-            "ORDER BY edition_name DESC LIMIT ? OFFSET ?;";
-    public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_DATE_INC = "SELECT DISTINCT book.id, title, description, " +
-            "language, edition_id, edition_name, publication_date, price, count FROM book INNER JOIN edition " +
-            "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-            "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%'" +
-            "ORDER BY publication_date LIMIT ? OFFSET ?;";
-    public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_DATE_DEC = "SELECT DISTINCT book.id, title, description, " +
-            "language, edition_id, edition_name, publication_date, price, count FROM book INNER JOIN edition " +
-            "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-            "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%'" +
-            "ORDER BY publication_date DESC LIMIT ? OFFSET ?;";
-    public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_AUTHOR_INC = "SELECT DISTINCT book.id, title, description, " +
-            "language, edition_id, edition_name, publication_date, price, count, (CAST(ARRAY(SELECT full_name FROM author INNER JOIN authorship a ON author.id = a.author_id WHERE book_id = book.id ORDER BY full_name) AS VARCHAR)) FROM book INNER JOIN edition " +
-            "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-            "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%'" +
-            "ORDER BY (CAST(ARRAY(SELECT full_name FROM author INNER JOIN authorship a ON author.id = a.author_id " +
-            "WHERE book_id = book.id ORDER BY full_name) AS VARCHAR)) LIMIT ? OFFSET ?;";
-    public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_AUTHOR_DEC = "SELECT DISTINCT book.id, title, description, " +
-            "language, edition_id, edition_name, publication_date, price, count, (CAST(ARRAY(SELECT full_name FROM author INNER JOIN authorship a ON author.id = a.author_id WHERE book_id = book.id ORDER BY full_name) AS VARCHAR)) FROM book INNER JOIN edition " +
-            "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
-            "ON author_id = author.id WHERE full_name LIKE '%' || ? || '%' OR title LIKE '%' || ? || '%'" +
-            "ORDER BY (CAST(ARRAY(SELECT full_name FROM author INNER JOIN authorship a ON author.id = a.author_id WHERE book_id = book.id ORDER BY full_name) AS VARCHAR)) DESC LIMIT ? OFFSET ?;";
     public static final String DELETE_BOOK = "DELETE FROM book WHERE id = ?";
     public static final String SET_AUTHORSHIP = "INSERT INTO authorship (author_id, book_id) VALUES (?, ?)";
     public static final String UNSET_AUTHORSHIP = "DELETE FROM authorship WHERE book_id = ? AND author_id = ?";
@@ -190,31 +146,10 @@ public abstract class SQLConstants {
             "VALUES (?, ?, ?, ?, ?::\"order_status\")";
     public static final String UPDATE_ORDER = "UPDATE orders SET (user_id, book_id, start_date, end_date, status) = " +
             "(?, ?, ?, ?, ?::\"order_status\") WHERE id = ?";
+    public static final String CHANGE_ORDER_STATUS_TO_OVERDUE = "UPDATE orders SET status = 'OVERDUE'::\"order_status\" WHERE id = ?";
     public static final String GET_ORDER_BY_ID = "SELECT * FROM orders WHERE id = ?";
+    public static final String GET_ORDER_BY_USER_ID = "SELECT * FROM orders WHERE user_id = ?;";
     public static final String GET_ALL_ORDERS = "SELECT * FROM orders";
-
-    public static String crateGetBookByKeyWord(String inputQuery, String sort, String sortType, int page) {
-        StringBuilder result = new StringBuilder(inputQuery);
-        if (sort.equals("title")) {
-            result.append(" ").append("ORDER BY title");
-        } else if (sort.equals("author")) {
-            result.append(" ").append("ORDER BY ");
-        } else if (sort.equals("edition")) {
-            result.append(" ").append("ORDER BY edition_name");
-        } else if (sort.equals("date")) {
-            result.append(" ").append("ORDER BY publication_date");
-        } else {
-            result.append(" ").append("ORDER BY id");
-        }
-        if (sortType.equals("dec")) {
-            result.append(" ").append("DESC");
-        }
-        int offsetPosition = (page - 1) * 7;
-        result.append(" ")
-                .append("LIMIT").append(" ")
-                .append(7).append(" ")
-                .append("OFFSET").append(" ")
-                .append(offsetPosition);
-        return result.toString();
-    }
+    public static final String GET_ORDERS_BY_STATUS = "SELECT * FROM orders WHERE status = ?::\"order_status\";";
+    public static final String DELETE_ORDER_BY_ID = "DELETE FROM orders WHERE id = ? ;";
 }

@@ -26,7 +26,7 @@ public class Servlet extends HttpServlet {
         commandMap.put("login", new Login(new UserService()));
         commandMap.put("logout", new Logout());
         commandMap.put("search", new Search(new BookService()));
-        commandMap.put("reader/home", new ReaderHome(new OrderService()));
+        commandMap.put("reader/home", new ReaderHome(new OrderService(), new UserService()));
         commandMap.put("reader/orderBook", new OrderBook(new UserService(), new BookService(), new OrderService()));
         commandMap.put("librarian/home", new LibrarianHome(new OrderService(), new UserService()));
         commandMap.put("librarian/getReaderBooks", new GetReaderBooks(new OrderService(), new UserService()));
