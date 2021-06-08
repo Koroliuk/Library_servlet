@@ -23,8 +23,12 @@ public class UnBlockUser implements Command {
         Optional<User> optionalUser = userService.findById(Long.parseLong(userId));
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            userService.unBlockUser(user);
-            return "redirect:/admin/home";
+            boolean result = userService.unBlockUser(user);
+            if (!result) {
+                return "/error/error.jsp";
+            } else {
+                return "redirect:/admin/home";
+            }
         }
         return "/error/error.jsp";
     }}

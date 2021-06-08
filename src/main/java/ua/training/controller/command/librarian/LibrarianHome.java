@@ -31,10 +31,16 @@ public class LibrarianHome implements Command {
             return "/user/librarian/home.jsp";
         }
         if (action.equals("add")) {
-            orderService.approveOrder(Long.parseLong(orderId));
+            boolean result = orderService.approveOrder(Long.parseLong(orderId));
+            if (!result) {
+                return "/error/error.jsp";
+            }
         }
         if (action.equals("delete")) {
-            orderService.cancelOrder(Long.parseLong(orderId));
+            boolean result = orderService.cancelOrder(Long.parseLong(orderId));
+            if (!result) {
+                return "/error/error.jsp";
+            }
         }
         List<User> userList = userService.findAll();
         List<Order> orderList = orderService.findAllWithStatus(OrderStatus.RECEIVED);

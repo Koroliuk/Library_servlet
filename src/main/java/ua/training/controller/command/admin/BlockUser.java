@@ -25,13 +25,17 @@ public class BlockUser implements Command {
         Optional<User> optionalUser = userService.findById(Long.parseLong(userId));
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            userService.blockUser(user);
-            HashSet<String> loggedUsers = (HashSet<String>) request.getSession().getServletContext().getAttribute("loggedUsers");
-            if (loggedUsers != null) {
-                loggedUsers.remove(user.getLogin());
+            boolean result = userService.blockUser(user);
+            if (!result) {
+                return "/error/error.jsp";
+            } else {
+                HashSet<String> loggedUsers = (HashSet<String>) request.getSession().getServletContext().getAttribute("loggedUsers");
+                if (loggedUsers != null) {
+                    loggedUsers.remove(user.getLogin());
+                }
+                request.getSession().getServletContext().setAttribute("loggedUsers", loggedUsers);
+                return "redirect:/admin/home";
             }
-            request.getSession().getServletContext().setAttribute("loggedUsers", loggedUsers);
-            return "redirect:/admin/home";
         }
         return "/error/error.jsp";
     }

@@ -30,7 +30,7 @@ public class GetReaderBooks implements Command {
         Optional<User> optionalUser = userService.findById(Long.parseLong(userId));
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            List<Order> orderList = orderService.findByUserLogin(user.getLogin()).stream()
+            List<Order> orderList = orderService.findByUserId(Long.parseLong(userId)).stream()
                     .filter((order) -> order.getOrderStatus() != OrderStatus.APPROVED
                             || order.getOrderStatus() != OrderStatus.OVERDUE).collect(Collectors.toList());
             request.setAttribute("orderList", orderList);

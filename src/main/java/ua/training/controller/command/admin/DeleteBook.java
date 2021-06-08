@@ -24,7 +24,10 @@ public class DeleteBook implements Command {
         if (bookId == null || bookId.equals("")) {
             return "/user/admin/home.jsp";
         }
-        bookService.deleteBook(Long.parseLong(bookId));
+        boolean result = bookService.deleteBook(Long.parseLong(bookId));
+        if (!result) {
+            return "/error/error,jsp";
+        }
         List<User> userList = userService.findAll();
         List<Book> bookList = bookService.findAll();
         request.setAttribute("userList", userList);

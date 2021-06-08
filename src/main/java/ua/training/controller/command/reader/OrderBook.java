@@ -33,7 +33,7 @@ public class OrderBook implements Command {
         String endDate = request.getParameter("endDate");
 
         Optional<User> optionalUser = userService.findByLogin(userLogin);
-        Optional<Book> optionalBook = bookService.findById(Long.parseLong(bookId));
+        Optional<Book> optionalBook = bookService.findByIdLocated(Long.parseLong(bookId));
         if (!optionalUser.isPresent())  {
             return "/error/error.jsp";
         }
@@ -56,6 +56,7 @@ public class OrderBook implements Command {
             return "/user/reader/orderBook.jsp?amountError=true";
         }
         OrderStatus status;
+        boolean result;
         if (orderType.equals("subscription")) {
             status = OrderStatus.RECEIVED;
             if (startDate == null || startDate.equals("") || endDate == null || endDate.equals("")) {
@@ -74,7 +75,7 @@ public class OrderBook implements Command {
                     .endDate(LocalDate.parse(endDate))
                     .orderStatus(status)
                     .build();
-            orderService.orderBook(order);
+            result =  orderService.orderBook(order);
         } else {
             status = OrderStatus.READER_HOLE;
             Order order = new Order.Builder()
@@ -84,7 +85,10 @@ public class OrderBook implements Command {
                     .endDate(LocalDate.parse(startDate))
                     .orderStatus(status)
                     .build();
-            orderService.orderBook(order);
+            result = orderService.orderBook(order);
+        }
+        if (!result) {
+            return "/error/error.jsp";
         }
         return "redirect:/reader/home?successOrder=true";
     }
