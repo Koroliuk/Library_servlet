@@ -1,6 +1,5 @@
 package ua.training.model.service;
 
-import ua.training.controller.filters.LocalizationFilter;
 import ua.training.model.dao.*;
 import ua.training.model.entity.Author;
 import ua.training.model.entity.Book;
@@ -14,19 +13,15 @@ public class BookService {
 
     public void createBook(Book book) {
         try (BookDao bookDao = daoFactory.createBookDao()) {
-
             Edition edition = getEditionOrNew(book.getEdition());
             book.setEdition(edition);
-
             List<Author> authorList = book.getAuthors();
             for (int i = 0; i < authorList.size(); i++) {
                 Author author = getAuthorOrNew(authorList.get(i));
                 authorList.set(i, author);
             }
             book.setAuthors(authorList);
-
             bookDao.create(book);
-
             for (Author author : book.getAuthors()) {
                 bookDao.setAuthorship(book, author);
             }
@@ -38,10 +33,8 @@ public class BookService {
     public void updateBook(Book book) {
         try (BookDao bookDao = daoFactory.createBookDao();
             AuthorDao authorDao = daoFactory.createAuthorDao()) {
-
             Edition edition = getEditionOrNew(book.getEdition());
             book.setEdition(edition);
-
             List<Author> currAuthors = authorDao.getAuthorsByBookId(book.getId());
             List<Author> newAuthors = book.getAuthors();
             for (Author author: currAuthors) {
@@ -49,7 +42,6 @@ public class BookService {
                     bookDao.unSetAuthorship(book, author);
                 }
             }
-
             for (Author authorI: newAuthors) {
                 Author author = getAuthorOrNew(authorI);
                 if (!currAuthors.contains(author)) {
@@ -57,7 +49,6 @@ public class BookService {
                 }
             }
             book.setAuthors(newAuthors);
-
             bookDao.update(book);
         }
     }
@@ -165,14 +156,15 @@ public class BookService {
     public Author getAuthorOrNew(Author author) {
         try (AuthorDao authorDao = daoFactory.createAuthorDao()) {
             Optional<Author> optionalAuthor = authorDao.findByNames(author.getName(), author.getAnotherName());
-            if (optionalAuthor.isPresent()) {
-                author = optionalAuthor.get();
-            } else {
+            if (!optionalAuthor.isPresent()) {
                 authorDao.create(author);
                 optionalAuthor = authorDao.findByNames(author.getName(), author.getAnotherName());
                 if (optionalAuthor.isPresent()) {
                     author = optionalAuthor.get();
                 }
+            } else {
+                author = optionalAuthor.get();
+
             }
             return author;
         } catch (SQLException e) {

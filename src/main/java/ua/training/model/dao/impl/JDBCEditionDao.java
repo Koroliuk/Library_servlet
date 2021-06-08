@@ -22,10 +22,9 @@ public class JDBCEditionDao implements EditionDao {
             statement.setString(1, entity.getName());
             statement.setString(2, entity.getAnotherName());
             if (statement.executeUpdate() > 0) {
-                try (ResultSet resultSet = statement.getGeneratedKeys()) {
-                    if (resultSet.next()) {
-                        entity.setId(resultSet.getInt("id"));
-                    }
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    entity.setId(resultSet.getInt("id"));
                 }
             }
         } catch (SQLException e) {
@@ -43,12 +42,11 @@ public class JDBCEditionDao implements EditionDao {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_EDITION_BY_NAME)) {
             statement.setString(1, name1);
             statement.setString(2, name2);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    EditionMapper mapper = new EditionMapper();
-                    Edition edition = mapper.extractFromResultSet(resultSet);
-                    return Optional.of(edition);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                EditionMapper mapper = new EditionMapper();
+                Edition edition = mapper.extractFromResultSet(resultSet);
+                return Optional.of(edition);
             }
         } catch (SQLException e) {
             e.printStackTrace();

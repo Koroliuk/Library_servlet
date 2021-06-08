@@ -33,10 +33,9 @@ public class JDBCBookDao implements BookDao {
             statement.setString(9, entity.getAnotherDescription());
             statement.setString(10, entity.getAnotherLanguage());
             if (statement.executeUpdate() > 0) {
-                try (ResultSet resultSet = statement.getGeneratedKeys()) {
-                    if (resultSet.next()) {
-                        entity.setId(resultSet.getInt(1));
-                    }
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    entity.setId(resultSet.getInt(1));
                 }
             }
         } catch (SQLException e) {
@@ -67,12 +66,11 @@ public class JDBCBookDao implements BookDao {
     public Optional<Book> findById(long id) {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_ID)) {
             statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    BookMapper mapper = new BookMapper();
-                    Book book = mapper.extractFromResultSet(resultSet);
-                    return Optional.of(book);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                BookMapper mapper = new BookMapper();
+                Book book = mapper.extractFromResultSet(resultSet);
+                return Optional.of(book);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,12 +82,11 @@ public class JDBCBookDao implements BookDao {
     public Optional<Book> findByIdWithLocaled(long id) {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_ID)) {
             statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    BookMapper mapper = new BookMapper();
-                    Book book = mapper.extractFromResultSetLocaled(resultSet);
-                    return Optional.of(book);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                BookMapper mapper = new BookMapper();
+                Book book = mapper.extractFromResultSetLocaled(resultSet);
+                return Optional.of(book);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,12 +110,11 @@ public class JDBCBookDao implements BookDao {
                      connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_TITLE_AND_AUTHORS)) {
             statement.setString(1, title);
             statement.setString(2, stringNamesArray.toString());
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    BookMapper mapper = new BookMapper();
-                    Book book = mapper.extractFromResultSet(resultSet);
-                    return Optional.of(book);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                BookMapper mapper = new BookMapper();
+                Book book = mapper.extractFromResultSet(resultSet);
+                return Optional.of(book);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -137,12 +133,11 @@ public class JDBCBookDao implements BookDao {
             int offsetPosition = (page-1)*4;
             statement.setInt(3, 4);
             statement.setInt(4, offsetPosition);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    BookMapper mapper = new BookMapper();
-                    Book book = mapper.extractFromResultSetLocaled(resultSet);
-                    bookList.add(book);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                BookMapper mapper = new BookMapper();
+                Book book = mapper.extractFromResultSetLocaled(resultSet);
+                bookList.add(book);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -155,12 +150,10 @@ public class JDBCBookDao implements BookDao {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_AMOUNT_OF_BOOKS_WITH_KEY_WORD)) {
             statement.setString(1, keyWord);
             statement.setString(2, keyWord);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getLong(1);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getLong(1);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }

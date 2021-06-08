@@ -1,7 +1,5 @@
 package ua.training.model.service;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
-import ua.training.controller.filters.LocalizationFilter;
 import ua.training.model.dao.*;
 import ua.training.model.entity.Book;
 import ua.training.model.entity.Order;
