@@ -31,17 +31,16 @@ public class JDBCOrderDao implements OrderDao {
             createOrder.setObject(4, entity.getEndDate());
             createOrder.setString(5, entity.getOrderStatus().name());
             if (createOrder.executeUpdate() > 0) {
-                try (ResultSet resultSet = createOrder.getGeneratedKeys()) {
-                    if (resultSet.next()) {
-                        entity.setId(resultSet.getInt(1));
-                        reserveBook.setInt(1, entity.getBook().getCount()-1);
-                        reserveBook.setLong(2, entity.getBook().getId());
-                        reserveBook.executeUpdate();
-                        connection.commit();
-                        connection.setAutoCommit(true);
-                    }
+                ResultSet resultSet = createOrder.getGeneratedKeys();
+                if (resultSet.next()) {
+                    entity.setId(resultSet.getInt(1));
+                    reserveBook.setInt(1, entity.getBook().getCount() - 1);
+                    reserveBook.setLong(2, entity.getBook().getId());
+                    reserveBook.executeUpdate();
+                    connection.commit();
+                    connection.setAutoCommit(true);
                 }
-             }
+            }
         } catch (SQLException e) {
             connection.rollback();
             e.printStackTrace();
@@ -122,12 +121,11 @@ public class JDBCOrderDao implements OrderDao {
         String query = "SELECT * FROM orders WHERE user_id = ?;";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, userId);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    OrderMapper orderMapper = new OrderMapper();
-                    Order order = orderMapper.extractFromResultSet(resultSet);
-                    orderList.add(order);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                OrderMapper orderMapper = new OrderMapper();
+                Order order = orderMapper.extractFromResultSet(resultSet);
+                orderList.add(order);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -141,12 +139,11 @@ public class JDBCOrderDao implements OrderDao {
         String query = "SELECT * FROM orders WHERE status = ?::\"order_status\";";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, orderStatus.name());
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    OrderMapper orderMapper = new OrderMapper();
-                    Order order = orderMapper.extractFromResultSet(resultSet);
-                    orderList.add(order);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                OrderMapper orderMapper = new OrderMapper();
+                Order order = orderMapper.extractFromResultSet(resultSet);
+                orderList.add(order);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

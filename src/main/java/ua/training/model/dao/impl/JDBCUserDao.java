@@ -15,6 +15,7 @@ public class JDBCUserDao implements UserDao {
     public JDBCUserDao(Connection connection) {
         this.connection = connection;
     }
+
     @Override
     public void create(User entity) {
         try (PreparedStatement statement =
@@ -24,10 +25,9 @@ public class JDBCUserDao implements UserDao {
             statement.setString(3, entity.getRole().name());
             statement.setBoolean(4, entity.isBlocked());
             if (statement.executeUpdate() > 0) {
-                try (ResultSet resultSet = statement.getGeneratedKeys()) {
-                    if (resultSet.next()) {
-                        entity.setId(resultSet.getInt("id"));
-                    }
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    entity.setId(resultSet.getInt("id"));
                 }
             }
         } catch (SQLException e) {
@@ -39,12 +39,11 @@ public class JDBCUserDao implements UserDao {
     public Optional<User> findById(long id) {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_USER_BY_ID)) {
             statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    UserMapper mapper = new UserMapper();
-                    User user = mapper.extractFromResultSet(resultSet);
-                    return Optional.of(user);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                UserMapper mapper = new UserMapper();
+                User user = mapper.extractFromResultSet(resultSet);
+                return Optional.of(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,12 +55,11 @@ public class JDBCUserDao implements UserDao {
     public Optional<User> findByLogin(String login) {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_USER_BY_LOGIN)) {
             statement.setString(1, login);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    UserMapper mapper = new UserMapper();
-                    User user = mapper.extractFromResultSet(resultSet);
-                    return Optional.of(user);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                UserMapper mapper = new UserMapper();
+                User user = mapper.extractFromResultSet(resultSet);
+                return Optional.of(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -73,12 +71,11 @@ public class JDBCUserDao implements UserDao {
     public List<User> findAll() {
         List<User> userList = new ArrayList<>();
         try (Statement statement = connection.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery(SQLConstants.GET_ALL_USERS)) {
-                while (resultSet.next()) {
-                    UserMapper mapper = new UserMapper();
-                    User user = mapper.extractFromResultSet(resultSet);
-                    userList.add(user);
-                }
+            ResultSet resultSet = statement.executeQuery(SQLConstants.GET_ALL_USERS);
+            while (resultSet.next()) {
+                UserMapper mapper = new UserMapper();
+                User user = mapper.extractFromResultSet(resultSet);
+                userList.add(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -88,8 +85,7 @@ public class JDBCUserDao implements UserDao {
 
     @Override
     public void update(User entity) {
-        String query = "UPDATE users SET (login, password_hash, is_blocked) = (?, ?, ?) WHERE  id = ? ;";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.UPDATE_USER)) {
             statement.setString(1, entity.getLogin());
             statement.setString(2, entity.getPasswordHash());
             statement.setBoolean(3, entity.isBlocked());

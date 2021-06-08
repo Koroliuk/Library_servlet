@@ -142,8 +142,8 @@
                                         <td>${book.price}</td>
                                         <td>${book.count}</td>
                                         <td class="justify-content-sm-between" style="width: 200px;">
-                                            <a type="button" class="btn btn-outline-warning" href="${pageContext.request.contextPath}/app/admin/editBook?id=${book.id}">Edit</a>
-                                            <a type="button" class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/admin/deleteBook?id=${book.id}">Delete</a>
+                                            <a type="button" class="btn btn-outline-warning" href="${pageContext.request.contextPath}/app/admin/editBook?id=${book.id}&tab=2">Edit</a>
+                                            <a type="button" class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/admin/deleteBook?id=${book.id}&tab=2">Delete</a>
                                         </td>
                                     </tr>
                                 </c:forEach>
