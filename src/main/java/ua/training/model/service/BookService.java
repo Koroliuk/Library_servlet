@@ -7,64 +7,79 @@ import ua.training.model.entity.Edition;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BookService {
     private final DaoFactory daoFactory = DaoFactory.getInstance();
 
-    public void createBook(Book book) {
+    public boolean createBook(Book book) {
         try (BookDao bookDao = daoFactory.createBookDao()) {
             Edition edition = getEditionOrNew(book.getEdition());
             book.setEdition(edition);
-            List<Author> authorList = book.getAuthors();
-            for (int i = 0; i < authorList.size(); i++) {
-                Author author = getAuthorOrNew(authorList.get(i));
-                authorList.set(i, author);
-            }
+            List<Author> authorList = book.getAuthors().stream().map(this::getAuthorOrNew).collect(Collectors.toList());
             book.setAuthors(authorList);
             bookDao.create(book);
-            for (Author author : book.getAuthors()) {
-                bookDao.setAuthorship(book, author);
-            }
+            book.getAuthors().forEach((author) -> bookDao.setAuthorship(book, author));
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    public void updateBook(Book book) {
+    public boolean updateBook(Book book) {
         try (BookDao bookDao = daoFactory.createBookDao();
             AuthorDao authorDao = daoFactory.createAuthorDao()) {
             Edition edition = getEditionOrNew(book.getEdition());
             book.setEdition(edition);
             List<Author> currAuthors = authorDao.getAuthorsByBookId(book.getId());
             List<Author> newAuthors = book.getAuthors();
-            for (Author author: currAuthors) {
-                if (!newAuthors.contains(author)) {
-                    bookDao.unSetAuthorship(book, author);
-                }
-            }
-            for (Author authorI: newAuthors) {
-                Author author = getAuthorOrNew(authorI);
-                if (!currAuthors.contains(author)) {
-                    bookDao.setAuthorship(book, author);
-                }
-            }
+            currAuthors.stream().filter((author -> !newAuthors.contains(author))).forEach((author) -> bookDao.unSetAuthorship(book, author));
+            newAuthors.stream().filter((author -> !currAuthors.contains(author))).forEach((author -> bookDao.setAuthorship(book, author)));
             book.setAuthors(newAuthors);
             bookDao.update(book);
+            return true;
         }
     }
 
-    public void deleteBook(long id) {
-        try (BookDao bookDao = daoFactory.createBookDao();
-            AuthorDao authorDao = daoFactory.createAuthorDao()) {
+    public boolean deleteBook(long id) {
+        try (BookDao bookDao = daoFactory.createBookDao()) {
             Optional<Book> optionalBook = bookDao.findById(id);
             if (optionalBook.isPresent()) {
                 Book book = optionalBook.get();
-                List<Author> authors = authorDao.getAuthorsByBookId(id);
-                book.setAuthors(authors);
                 bookDao.delete(book.getId());
+                return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Optional<Book> findByIdLocated(long id) {
+        try (BookDao bookDao = daoFactory.createBookDao()) {
+            return bookDao.findByIdWithLocaled(id);
+        }
+    }
+
+    public Optional<Book> findById(long id) {
+        try (BookDao bookDao = daoFactory.createBookDao()) {
+            return bookDao.findById(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    public List<Book> findAll() {
+        try (BookDao bookDao = daoFactory.createBookDao()) {
+            return bookDao.findAll();
+        }
+    }
+
+    public List<Book> findAllByKeyWord(String keyWord, String sortBy, String sortType, int page) {
+        try (BookDao bookDao = daoFactory.createBookDao()) {
+            return bookDao.findByKeyWord(keyWord, sortBy, sortType, page);
         }
     }
 
@@ -84,69 +99,13 @@ public class BookService {
         }
     }
 
-    public Optional<Book> findById(long id) {
-        try (BookDao bookDao = daoFactory.createBookDao();
-            AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            Optional<Book> optionalBook = bookDao.findByIdWithLocaled(id);
-            if (optionalBook.isPresent()) {
-                Book book = optionalBook.get();
-                book.setAuthors(authorDao.getAuthorsByBookIdLocaled(id));
-                return Optional.of(book);
-            }
-            return Optional.empty();
-        }
-    }
-
-    public Optional<Book> findByIdAll(long id) {
-        try (BookDao bookDao = daoFactory.createBookDao();
-             AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            Optional<Book> optionalBook = bookDao.findById(id);
-            if (optionalBook.isPresent()) {
-                Book book = optionalBook.get();
-                book.setAuthors(authorDao.getAuthorsByBookId(id));
-                return Optional.of(book);
-            }
-            return Optional.empty();
-        }
-    }
-
-    public List<Book> findAll() {
-        try (BookDao bookDao = daoFactory.createBookDao();
-            AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            List<Book> bookList = bookDao.findAll();
-            for (Book book : bookList) {
-                List<Author> authors = authorDao.getAuthorsByBookIdLocaled(book.getId());
-                book.setAuthors(authors);
-            }
-            return bookList;
-        }
-    }
-
-    public List<Book> findAllByKeyWord(String keyWord, String sortBy, String sortType, int page) {
-        try (BookDao bookDao = daoFactory.createBookDao();
-             AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            List<Book> bookList = bookDao.findByKeyWord(keyWord, sortBy, sortType, page);
-            for (Book book : bookList) {
-                List<Author> authorList = authorDao.getAuthorsByBookIdLocaled(book.getId());
-                book.setAuthors(authorList);
-            }
-            return bookList;
-        }
-    }
-
     public Edition getEditionOrNew(Edition edition) {
         try (EditionDao editionDao = daoFactory.createEditionDao()) {
-            Optional<Edition> optionalEdition = editionDao.findByNames(edition.getName(), edition.getAnotherName());
-            if (optionalEdition.isPresent()) {
-                edition = optionalEdition.get();
-            } else {
-                editionDao.create(edition);
-                optionalEdition = editionDao.findByNames(edition.getName(), edition.getAnotherName());
-                if (optionalEdition.isPresent()) {
-                    edition = optionalEdition.get();
-                }
-            }
-            return edition;
+            String name = edition.getName();
+            String anotherName = edition.getAnotherName();
+            return editionDao.findByNames(name, anotherName)
+                    .orElse(editionDao.create(edition)
+                            .orElseThrow(RuntimeException::new));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -155,18 +114,11 @@ public class BookService {
 
     public Author getAuthorOrNew(Author author) {
         try (AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            Optional<Author> optionalAuthor = authorDao.findByNames(author.getName(), author.getAnotherName());
-            if (!optionalAuthor.isPresent()) {
-                authorDao.create(author);
-                optionalAuthor = authorDao.findByNames(author.getName(), author.getAnotherName());
-                if (optionalAuthor.isPresent()) {
-                    author = optionalAuthor.get();
-                }
-            } else {
-                author = optionalAuthor.get();
-
-            }
-            return author;
+            String name = author.getName();
+            String anotherName = author.getAnotherName();
+            return authorDao.findByNames(name, anotherName)
+                    .orElse(authorDao.create(author)
+                            .orElseThrow(RuntimeException::new));
         } catch (SQLException e) {
             e.printStackTrace();
         }

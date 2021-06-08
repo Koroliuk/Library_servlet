@@ -11,12 +11,23 @@ import java.util.Optional;
 public class UserService {
     DaoFactory daoFactory = DaoFactory.getInstance();
 
-    public void singUpUser(User user) {
+    public boolean singUpUser(User user) {
         try (UserDao userDao = daoFactory.createUserDao()) {
             userDao.create(user);
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    public Optional<User> findById(long id) {
+        try (UserDao userDao = daoFactory.createUserDao()) {
+            return userDao.findById(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     public Optional<User> findByLogin(String login) {
@@ -31,31 +42,29 @@ public class UserService {
         }
     }
 
-    public void delete(long id) {
+    public boolean delete(long id) {
         try (UserDao userDao = daoFactory.createUserDao()) {
             userDao.delete(id);
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    public void blockUser(User user) {
+    public boolean blockUser(User user) {
         try (UserDao userDao = daoFactory.createUserDao()) {
             user.setBlocked(true);
             userDao.update(user);
+            return true;
         }
     }
 
-    public void unBlockUser(User user) {
+    public boolean unBlockUser(User user) {
         try (UserDao userDao = daoFactory.createUserDao()) {
             user.setBlocked(false);
             userDao.update(user);
-        }
-    }
-
-    public Optional<User> findById(long id) {
-        try (UserDao userDao = daoFactory.createUserDao()) {
-            return userDao.findById(id);
+            return true;
         }
     }
 }
