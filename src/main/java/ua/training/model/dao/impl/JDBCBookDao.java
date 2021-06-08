@@ -2,6 +2,7 @@ package ua.training.model.dao.impl;
 
 import ua.training.controller.filters.LocalizationFilter;
 import ua.training.model.dao.BookDao;
+import ua.training.model.dao.mapper.AuthorMapper;
 import ua.training.model.dao.mapper.BookMapper;
 import ua.training.model.entity.Author;
 import ua.training.model.entity.Book;
@@ -19,7 +20,7 @@ public class JDBCBookDao implements BookDao {
     }
 
     @Override
-    public void create(Book entity) {
+    public Optional<Book> create(Book entity) {
         try (PreparedStatement statement =
                      connection.prepareStatement(SQLConstants.CREATE_BOOK, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, entity.getTitle());
@@ -36,11 +37,13 @@ public class JDBCBookDao implements BookDao {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if (resultSet.next()) {
                     entity.setId(resultSet.getInt(1));
+                    return Optional.of(entity);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return Optional.empty();
     }
 
     @Override
@@ -48,7 +51,6 @@ public class JDBCBookDao implements BookDao {
         try (PreparedStatement deleteAuthorship = connection.prepareStatement(SQLConstants.UNSET_AUTHORSHIP_BY_BOOK_ID);
              PreparedStatement deleteBook = connection.prepareStatement(SQLConstants.DELETE_BOOK)) {
             connection.setAutoCommit(false);
-            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             deleteAuthorship.setLong(1, id);
             deleteAuthorship.executeUpdate();
             deleteBook.setLong(1, id);
@@ -63,16 +65,21 @@ public class JDBCBookDao implements BookDao {
 
 
     @Override
-    public Optional<Book> findById(long id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_ID)) {
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                BookMapper mapper = new BookMapper();
-                Book book = mapper.extractFromResultSet(resultSet);
-                return Optional.of(book);
+    public Optional<Book> findById(long id) throws SQLException {
+        try (PreparedStatement getBookStatement = connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_ID);
+            PreparedStatement getAuthorsStatement = connection.prepareStatement(SQLConstants.GET_AUTHORS_BY_BOOK_ID)) {
+            connection.setAutoCommit(false);
+            getBookStatement.setLong(1, id);
+            ResultSet bookResultSet = getBookStatement.executeQuery();
+            Book book = null;
+            if (bookResultSet.next()) {
+                book = getBookWithAuthors(getAuthorsStatement, bookResultSet);
             }
+            connection.commit();
+            connection.setAutoCommit(true);
+            return book == null ? Optional.empty() : Optional.of(book);
         } catch (SQLException e) {
+            connection.rollback();
             e.printStackTrace();
         }
         return Optional.empty();
@@ -80,14 +87,18 @@ public class JDBCBookDao implements BookDao {
 
     @Override
     public Optional<Book> findByIdWithLocaled(long id) {
-        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_ID)) {
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                BookMapper mapper = new BookMapper();
-                Book book = mapper.extractFromResultSetLocaled(resultSet);
-                return Optional.of(book);
+        try (PreparedStatement getBookStatement = connection.prepareStatement(SQLConstants.GET_PARTIAL_BOOK_BY_ID);
+             PreparedStatement getAuthorsStatement = connection.prepareStatement(SQLConstants.GET_AUTHORS_BY_BOOK_ID)) {
+            connection.setAutoCommit(false);
+            getBookStatement.setLong(1, id);
+            ResultSet bookResultSet = getBookStatement.executeQuery();
+            Book book = null;
+            if (bookResultSet.next()) {
+                book = getBookWithAuthors(getAuthorsStatement, bookResultSet);
             }
+            connection.commit();
+            connection.setAutoCommit(true);
+            return book == null ? Optional.empty() : Optional.of(book);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -127,7 +138,8 @@ public class JDBCBookDao implements BookDao {
         List<Book> bookList = new ArrayList<>();
         String query = chooseSortingQuery(sortBy, sortType);
         try (PreparedStatement statement =
-                     connection.prepareStatement(query)) {
+                     connection.prepareStatement(query);
+            PreparedStatement findAuthors = connection.prepareStatement(SQLConstants.GET_AUTHORS_BY_BOOK_ID)) {
             statement.setString(1, keyWord);
             statement.setString(2, keyWord);
             int offsetPosition = (page-1)*4;
@@ -135,8 +147,7 @@ public class JDBCBookDao implements BookDao {
             statement.setInt(4, offsetPosition);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                BookMapper mapper = new BookMapper();
-                Book book = mapper.extractFromResultSetLocaled(resultSet);
+                Book book = getBookWithAuthors(findAuthors, resultSet);
                 bookList.add(book);
             }
         } catch (SQLException e) {
@@ -161,26 +172,18 @@ public class JDBCBookDao implements BookDao {
     }
 
     @Override
-    public void updateAmount(Book entity) {
-        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.UPDATE_AMOUNT_OF_BOOK)) {
-            statement.setInt(1, entity.getCount());
-            statement.setLong(2, entity.getId());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public List<Book> findAll() {
         List<Book> bookList = new ArrayList<>();
-        try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(SQLConstants.GET_ALL_BOOKS);
+        try (Statement getBookStatement = connection.createStatement();
+            PreparedStatement getAuthorsStatement = connection.prepareStatement(SQLConstants.GET_AUTHORS_BY_BOOK_ID)) {
+            ResultSet resultSet = getBookStatement.executeQuery(SQLConstants.GET_ALL_BOOKS);
+            connection.setAutoCommit(false);
             while (resultSet.next()) {
-                BookMapper mapper = new BookMapper();
-                Book book = mapper.extractFromResultSetLocaled(resultSet);
+                Book book = getBookWithAuthors(getAuthorsStatement, resultSet);
                 bookList.add(book);
             }
+            connection.commit();
+            connection.setAutoCommit(true);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -201,6 +204,17 @@ public class JDBCBookDao implements BookDao {
             statement.setString(9, entity.getAnotherDescription());
             statement.setString(10, entity.getAnotherLanguage());
             statement.setLong(11, entity.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateAmount(Book entity) {
+        try (PreparedStatement statement = connection.prepareStatement(SQLConstants.UPDATE_AMOUNT_OF_BOOK)) {
+            statement.setInt(1, entity.getCount());
+            statement.setLong(2, entity.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -236,6 +250,21 @@ public class JDBCBookDao implements BookDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private Book getBookWithAuthors(PreparedStatement getAuthorsStatement, ResultSet resultSet) throws SQLException {
+        BookMapper bookMapper = new BookMapper();
+        Book book = bookMapper.extractFromResultSetLocaled(resultSet);
+        getAuthorsStatement.setLong(1, book.getId());
+        List<Author> authors = new ArrayList<>();
+        ResultSet resultSet1 = getAuthorsStatement.executeQuery();
+        while (resultSet1.next()) {
+            AuthorMapper authorMapper = new AuthorMapper();
+            Author author = authorMapper.extractFromResultSetWithIdLocaled(resultSet1, "author_id");
+            authors.add(author);
+        }
+        book.setAuthors(authors);
+        return book;
     }
 
     private String chooseSortingQuery(String sortBy, String sortType) {

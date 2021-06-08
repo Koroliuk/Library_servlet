@@ -7,7 +7,5 @@ import java.util.Optional;
 
 public interface AuthorDao extends GenericDao<Author> {
     Optional<Author> findByNames(String name1, String name2);
-
     List<Author> getAuthorsByBookId(long id);
-    List<Author> getAuthorsByBookIdLocaled(long id);
 }

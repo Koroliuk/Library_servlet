@@ -17,33 +17,33 @@ public class JDBCAuthorDao implements AuthorDao {
     }
 
     @Override
-    public void create(Author author) {
+    public Optional<Author> create(Author author) {
         try (PreparedStatement statement =
                      connection.prepareStatement(SQLConstants.CREATE_AUTHOR, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(2, author.getAnotherName());
             statement.setString(1, author.getName());
             if (statement.executeUpdate() > 0) {
-                try (ResultSet resultSet = statement.getGeneratedKeys()) {
-                    if (resultSet.next()) {
-                        author.setId(resultSet.getInt("id"));
-                    }
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    author.setId(resultSet.getInt("id"));
+                    return Optional.of(author);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return Optional.empty();
     }
 
     @Override
     public Optional<Author> findById(long id) {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_AUTHOR_BY_ID)) {
             statement.setLong(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    AuthorMapper mapper = new AuthorMapper();
-                    Author author = mapper.extractFromResultSet(resultSet);
-                    return Optional.of(author);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                AuthorMapper mapper = new AuthorMapper();
+                Author author = mapper.extractFromResultSet(resultSet);
+                return Optional.of(author);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,12 +56,11 @@ public class JDBCAuthorDao implements AuthorDao {
         try (PreparedStatement statement = connection.prepareStatement(SQLConstants.GET_AUTHOR_BY_NAME)) {
             statement.setString(1, name1);
             statement.setString(2, name2);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    AuthorMapper mapper = new AuthorMapper();
-                    Author author = mapper.extractFromResultSet(resultSet);
-                    return Optional.of(author);
-                }
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                AuthorMapper mapper = new AuthorMapper();
+                Author author = mapper.extractFromResultSet(resultSet);
+                return Optional.of(author);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -93,24 +92,6 @@ public class JDBCAuthorDao implements AuthorDao {
                 while (resultSet.next()) {
                     AuthorMapper mapper = new AuthorMapper();
                     Author author = mapper.extractFromResultSetWithId(resultSet, "author_id");
-                    authors.add(author);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return authors;
-    }
-
-    @Override
-    public List<Author> getAuthorsByBookIdLocaled(long id) {
-        List<Author> authors = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SQLConstants.GET_AUTHORS_BY_BOOK_ID)) {
-            preparedStatement.setLong(1, id);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    AuthorMapper mapper = new AuthorMapper();
-                    Author author = mapper.extractFromResultSetWithIdLocaled(resultSet, "author_id");
                     authors.add(author);
                 }
             }
