@@ -40,7 +40,11 @@ public class Signup implements Command {
                 .role(Role.READER)
                 .isBlocked(false)
                 .build();
-        userService.singUpUser(user);
-        return "/signup.jsp?successEvent=true";
+        boolean result = userService.singUpUser(user);
+        if (!result) {
+            return "/error/error.jsp";
+        } else {
+            return "/signup.jsp?successEvent=true";
+        }
     }
 }

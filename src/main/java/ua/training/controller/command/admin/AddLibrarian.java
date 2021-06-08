@@ -40,7 +40,11 @@ public class AddLibrarian implements Command {
                 .role(Role.LIBRARIAN)
                 .isBlocked(false)
                 .build();
-        userService.singUpUser(user);
-        return "/user/admin/librarianForm.jsp?successEvent=true";
+        boolean result = userService.singUpUser(user);
+        if (!result) {
+            return "/error/error.jsp";
+        } else {
+            return "/user/admin/librarianForm.jsp?successEvent=true";
+        }
     }
 }
