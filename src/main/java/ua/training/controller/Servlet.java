@@ -58,13 +58,16 @@ public class Servlet extends HttpServlet {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        logger.info("Received request uri: "+path);
         path = path.replaceAll(".*/app/" , "");
         Command command = commandMap.getOrDefault(path, (r) -> "/index.jsp");
         String page = command.execute(request);
         if (page.contains("redirect:")) {
-            logger.info("Redirect to "+page);
-            response.sendRedirect(page.replace("redirect:", "/app"));
+            String newPath = page.replace("redirect:", "/app");
+            logger.info("Redirect to: "+newPath);
+            response.sendRedirect(newPath);
         } else {
+            logger.info("Forward to: "+page);
             request.getRequestDispatcher(page).forward(request, response);
         }
     }
