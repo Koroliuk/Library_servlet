@@ -1,5 +1,7 @@
 package ua.training.controller.command.reader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.training.controller.command.Command;
 import ua.training.model.entity.Order;
 import ua.training.model.entity.User;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class ReaderHome implements Command {
+    private static final Logger logger = LogManager.getLogger();
     private final OrderService orderService;
     private final UserService userService;
 
@@ -32,8 +35,10 @@ public class ReaderHome implements Command {
         }
         boolean result = orderService.deleteOrder(Long.parseLong(orderId));
         if (!result) {
+            logger.error("An error occurred when deleting order with id="+orderId);
             return "/error/error.jsp";
         }
+        logger.info("Successfully deleted order with id="+orderId);
         List<Order> orderList = orderService.findByUserId(user.getId());
         request.setAttribute("orderList", orderList);
         return "/user/reader/home.jsp?tab="+tab;
