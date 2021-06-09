@@ -1,5 +1,7 @@
 package ua.training.controller.command.librarian;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.training.controller.command.Command;
 import ua.training.model.entity.Order;
 import ua.training.model.entity.User;
@@ -13,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class GetReaderBooks implements Command {
+    private static final Logger logger = LogManager.getLogger();
     private final OrderService orderService;
     private final UserService userService;
 
@@ -28,13 +31,14 @@ public class GetReaderBooks implements Command {
             return "/user/librarian/readerBooks.jsp";
         }
         Optional<User> optionalUser = userService.findById(Long.parseLong(userId));
-        if (optionalUser.isPresent()) {
+        if (optionalUser.isPresent())  {
             User user = optionalUser.get();
-            List<Order> orderList = orderService.findByUserLogin(user.getLogin()).stream()
+            List<Order> orderList = orderService.findByUserId(Long.parseLong(userId)).stream()
                     .filter((order) -> order.getOrderStatus() != OrderStatus.APPROVED
                             || order.getOrderStatus() != OrderStatus.OVERDUE).collect(Collectors.toList());
             request.setAttribute("orderList", orderList);
             request.setAttribute("user", user);
+            logger.info("Request for user subscriptions with id="+userId);
             return "/user/librarian/readerBooks.jsp";
         }
         return "/error/error.jsp";
