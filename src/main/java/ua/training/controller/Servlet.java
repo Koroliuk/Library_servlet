@@ -1,5 +1,7 @@
 package ua.training.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.training.controller.command.*;
 import ua.training.controller.command.admin.*;
 import ua.training.controller.command.librarian.GetReaderBooks;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Servlet extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger();
     private final Map<String, Command> commandMap = new HashMap<>();
 
     public void init() {
@@ -26,7 +29,7 @@ public class Servlet extends HttpServlet {
         commandMap.put("login", new Login(new UserService()));
         commandMap.put("logout", new Logout());
         commandMap.put("search", new Search(new BookService()));
-        commandMap.put("reader/home", new ReaderHome(new OrderService()));
+        commandMap.put("reader/home", new ReaderHome(new OrderService(), new UserService()));
         commandMap.put("reader/orderBook", new OrderBook(new UserService(), new BookService(), new OrderService()));
         commandMap.put("librarian/home", new LibrarianHome(new OrderService(), new UserService()));
         commandMap.put("librarian/getReaderBooks", new GetReaderBooks(new OrderService(), new UserService()));
@@ -55,12 +58,16 @@ public class Servlet extends HttpServlet {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        logger.info("Received request uri: "+path);
         path = path.replaceAll(".*/app/" , "");
         Command command = commandMap.getOrDefault(path, (r) -> "/index.jsp");
         String page = command.execute(request);
         if (page.contains("redirect:")) {
-            response.sendRedirect(page.replace("redirect:", "/app"));
+            String newPath = page.replace("redirect:", "/app");
+            logger.info("Redirect to: "+newPath);
+            response.sendRedirect(newPath);
         } else {
+            logger.info("Forward to: "+page);
             request.getRequestDispatcher(page).forward(request, response);
         }
     }

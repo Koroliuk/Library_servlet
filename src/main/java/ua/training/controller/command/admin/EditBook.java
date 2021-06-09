@@ -1,5 +1,7 @@
 package ua.training.controller.command.admin;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.training.controller.command.Command;
 import ua.training.model.entity.Author;
 import ua.training.model.entity.Book;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class EditBook implements Command {
+    private static final Logger logger = LogManager.getLogger();
     private final BookService bookService;
 
     public EditBook(BookService bookService) {
@@ -45,7 +48,7 @@ public class EditBook implements Command {
                 languageUa, languageEn, editionNameUa, editionNameEn, currency, stringPrice, stringCount, publicationDateString);
         for (String param : params) {
             if (param == null || param.equals("")) {
-                Optional<Book> optionalBook1 = bookService.findByIdAll(Long.parseLong(id));
+                Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
                 optionalBook1.ifPresent(value -> request.setAttribute("book", value));
                 return "/user/admin/bookForm.jsp";
             }
@@ -56,7 +59,7 @@ public class EditBook implements Command {
         boolean condition5 = publicationData.isAfter(LocalDate.now()) || publicationData.isEqual(LocalDate.now());
         boolean condition6 = price <= 0 || count <= 0;
         if (condition5 || condition6) {
-            Optional<Book> optionalBook1 = bookService.findByIdAll(Long.parseLong(id));
+            Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
             optionalBook1.ifPresent(value -> request.setAttribute("book", value));
             return "/user/admin/bookForm.jsp?validError=true";
         }
@@ -97,9 +100,14 @@ public class EditBook implements Command {
                 .authors(authors)
                 .build();
 
-        bookService.updateBook(book);
-        Optional<Book> optionalBook1 = bookService.findByIdAll(Long.parseLong(id));
+        boolean result = bookService.updateBook(book);
+        if (!result) {
+            logger.error("An error occurred when editing book with id="+id);
+            return "/error/error.jsp";
+        }
+        Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
         optionalBook1.ifPresent(value -> request.setAttribute("book", value));
+        logger.info("Edited book with id="+id);
         return "/user/admin/bookForm.jsp?id="+id+"&successCreation=true";
     }
 }

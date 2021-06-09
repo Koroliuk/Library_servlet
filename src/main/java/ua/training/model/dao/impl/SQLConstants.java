@@ -146,6 +146,10 @@ public abstract class SQLConstants {
             "VALUES (?, ?, ?, ?, ?::\"order_status\")";
     public static final String UPDATE_ORDER = "UPDATE orders SET (user_id, book_id, start_date, end_date, status) = " +
             "(?, ?, ?, ?, ?::\"order_status\") WHERE id = ?";
+    public static final String CHANGE_ORDER_STATUS_TO_OVERDUE = "UPDATE orders SET status = 'OVERDUE'::\"order_status\" WHERE id = ?";
     public static final String GET_ORDER_BY_ID = "SELECT * FROM orders WHERE id = ?";
+    public static final String GET_ORDER_BY_USER_ID = "SELECT * FROM orders WHERE user_id = ?;";
     public static final String GET_ALL_ORDERS = "SELECT * FROM orders";
+    public static final String GET_ORDERS_BY_STATUS = "SELECT * FROM orders WHERE status = ?::\"order_status\";";
+    public static final String DELETE_ORDER_BY_ID = "DELETE FROM orders WHERE id = ? ;";
 }

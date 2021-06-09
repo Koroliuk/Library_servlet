@@ -1,5 +1,7 @@
 package ua.training.controller.command.admin;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.training.controller.command.Command;
 import ua.training.model.entity.Author;
 import ua.training.model.entity.Book;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class AddBook implements Command {
+    private static final Logger logger = LogManager.getLogger();
     private final BookService bookService;
 
     public AddBook(BookService bookService) {
@@ -99,7 +102,13 @@ public class AddBook implements Command {
                 .authors(authors)
                 .build();
 
-        bookService.createBook(book);
+        boolean result = bookService.createBook(book);
+        if (!result) {
+            logger.error("An error occurred when creating book with title="+titleUa+"/"+titleEn+"" +
+                    " and authors="+authorsStringUa+"/"+authorsStringEn);
+            return "/error/error.jsp";
+        }
+        logger.info("Created book with title="+titleUa+"/"+titleEn+" and authors="+authorsStringUa+"/"+authorsStringEn);
         return "/user/admin/bookForm.jsp?successCreation=true";
     }
 }

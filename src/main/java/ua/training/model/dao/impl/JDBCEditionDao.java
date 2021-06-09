@@ -16,7 +16,7 @@ public class JDBCEditionDao implements EditionDao {
     }
 
     @Override
-    public void create(Edition entity) {
+    public Optional<Edition> create(Edition entity) {
         try (PreparedStatement statement =
                      connection.prepareStatement(SQLConstants.CREATE_EDITION, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, entity.getName());
@@ -25,11 +25,13 @@ public class JDBCEditionDao implements EditionDao {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if (resultSet.next()) {
                     entity.setId(resultSet.getInt("id"));
+                    return Optional.of(entity);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return Optional.empty();
     }
 
     @Override

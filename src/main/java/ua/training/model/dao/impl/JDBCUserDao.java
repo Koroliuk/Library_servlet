@@ -17,7 +17,7 @@ public class JDBCUserDao implements UserDao {
     }
 
     @Override
-    public void create(User entity) {
+    public Optional<User> create(User entity) {
         try (PreparedStatement statement =
                      connection.prepareStatement(SQLConstants.CREATE_USER, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, entity.getLogin());
@@ -28,11 +28,13 @@ public class JDBCUserDao implements UserDao {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if (resultSet.next()) {
                     entity.setId(resultSet.getInt("id"));
+                    return Optional.of(entity);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return Optional.empty();
     }
 
     @Override

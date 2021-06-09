@@ -1,5 +1,7 @@
 package ua.training.controller.command.admin;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.training.controller.command.Command;
 import ua.training.model.entity.Book;
 import ua.training.model.entity.User;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class DeleteBook implements Command {
+    private static final Logger logger = LogManager.getLogger();
     private final UserService userService;
     private final BookService bookService;
 
@@ -24,11 +27,16 @@ public class DeleteBook implements Command {
         if (bookId == null || bookId.equals("")) {
             return "/user/admin/home.jsp";
         }
-        bookService.deleteBook(Long.parseLong(bookId));
+        boolean result = bookService.deleteBook(Long.parseLong(bookId));
+        if (!result) {
+            logger.error("An error occurred when deleting book with id="+bookId);
+            return "/error/error,jsp";
+        }
         List<User> userList = userService.findAll();
         List<Book> bookList = bookService.findAll();
         request.setAttribute("userList", userList);
         request.setAttribute("bookList", bookList);
+        logger.info("Deleted book with id="+bookId);
         return "/user/admin/home.jsp";
     }
 }

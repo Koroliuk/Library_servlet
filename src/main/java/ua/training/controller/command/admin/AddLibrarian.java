@@ -1,5 +1,7 @@
 package ua.training.controller.command.admin;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.training.controller.command.Command;
 import ua.training.model.entity.User;
 import ua.training.model.entity.enums.Role;
@@ -10,6 +12,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class AddLibrarian implements Command {
+    private static final Logger logger = LogManager.getLogger();
     private final UserService userService;
 
     public AddLibrarian(UserService userService) {
@@ -40,7 +43,13 @@ public class AddLibrarian implements Command {
                 .role(Role.LIBRARIAN)
                 .isBlocked(false)
                 .build();
-        userService.singUpUser(user);
-        return "/user/admin/librarianForm.jsp?successEvent=true";
+        boolean result = userService.singUpUser(user);
+        if (!result) {
+            logger.error("An error occurred when creating librarian with login="+login);
+            return "/error/error.jsp";
+        } else {
+            logger.info("Created librarian with login="+login);
+            return "/user/admin/librarianForm.jsp?successEvent=true";
+        }
     }
 }

@@ -1,5 +1,7 @@
 package ua.training.controller.command.admin;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.training.controller.command.Command;
 import ua.training.model.entity.Book;
 import ua.training.model.entity.User;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class DeleteLibrarian implements Command {
+    private static final Logger logger = LogManager.getLogger();
     private final UserService userService;
     private final BookService bookService;
 
@@ -24,11 +27,16 @@ public class DeleteLibrarian implements Command {
         if (librarianId == null || librarianId.equals("")) {
             return "/user/admin/home.jsp";
         }
-        userService.delete(Long.parseLong(librarianId));
+        boolean result = userService.delete(Long.parseLong(librarianId));
+        if (!result) {
+            logger.error("An error occurred when deleting librarian with id="+librarianId);
+            return "/error/error.jsp";
+        }
         List<User> userList = userService.findAll();
         List<Book> bookList = bookService.findAll();
         request.setAttribute("userList", userList);
         request.setAttribute("bookList", bookList);
+        logger.info("Deleted librarian with id="+librarianId);
         return "/user/admin/home.jsp";
     }
 }

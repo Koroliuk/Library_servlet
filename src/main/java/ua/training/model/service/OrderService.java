@@ -7,106 +7,98 @@ import ua.training.model.entity.User;
 import ua.training.model.entity.enums.OrderStatus;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class OrderService {
     DaoFactory daoFactory = DaoFactory.getInstance();
 
-    public void orderBook(Order order) {
+    public boolean orderBook(Order order) {
         try (OrderDao orderDao = daoFactory.createOrderDao()) {
             orderDao.create(order);
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public List<Order> findAllWithStatus(OrderStatus orderStatus) {
         try (OrderDao orderDao = daoFactory.createOrderDao();
             UserDao userDao = daoFactory.createUserDao();
-            AuthorDao authorDao = daoFactory.createAuthorDao();
             BookDao bookDao = daoFactory.createBookDao()) {
             List<Order> orderList = orderDao.findOrdersWithOrderStatus(orderStatus);
-            for (Order order: orderList) {
-                Optional<User> optionalUser = userDao.findById(order.getUser().getId());
-                Optional<Book> optionalBook = bookDao.findByIdWithLocaled(order.getBook().getId());
-                optionalUser.ifPresent(order::setUser);
-                optionalBook.ifPresent(order::setBook);
-                Book book = order.getBook();
-                book.setAuthors(authorDao.getAuthorsByBookIdLocaled(book.getId()));
-            }
-            return orderList;
+            return getOrders(userDao, bookDao, orderList);
         }
     }
 
-    public void approveOrder(long orderId) {
-        try (OrderDao orderDao = daoFactory.createOrderDao()) {
-            Optional<Order> optionalOrder = orderDao.findById(orderId);
-            if (optionalOrder.isPresent()) {
-                Order order = optionalOrder.get();
-                order.setOrderStatus(OrderStatus.APPROVED);
-                orderDao.update(order);
+    private List<Order> getOrders(UserDao userDao, BookDao bookDao, List<Order> orderList) {
+        List<Order> list = new ArrayList<>();
+        try {
+            for (Order order : orderList) {
+                User user = userDao.findById(order.getUser().getId()).orElse(new User.Builder().build());
+                Book book = bookDao.findByIdWithLocaled(order.getBook().getId()).orElse(new Book.Builder().build());
+                order.setUser(user);
+                order.setBook(book);
+                list.add(order);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return list;
     }
 
-    public List<Order> findByUserLogin(String userLogin) {
+    public List<Order> findByUserId(long userId) {
         try (UserDao userDao = daoFactory.createUserDao();
             OrderDao orderDao = daoFactory.createOrderDao();
-            BookDao bookDao = daoFactory.createBookDao();
-            AuthorDao authorDao = daoFactory.createAuthorDao()) {
-            Optional<User> optionalUser = userDao.findByLogin(userLogin);
-            if (optionalUser.isPresent()) {
-                User user = optionalUser.get();
-                List<Order> orderList = orderDao.findUserOrdersById(user.getId());
-                for (Order order: orderList) {
-                    optionalUser = userDao.findById(order.getUser().getId());
-                    optionalUser.ifPresent(order::setUser);
-                    Optional<Book> optionalBook = bookDao.findByIdWithLocaled(order.getBook().getId());
-                    optionalBook.ifPresent(order::setBook);
-                    Book book = order.getBook();
-                    book.setAuthors(authorDao.getAuthorsByBookIdLocaled(book.getId()));
-                    if (LocalDate.now().isAfter(order.getEndDate())) {
-                        if (order.getOrderStatus() == OrderStatus.APPROVED) {
-                            order.setOrderStatus(OrderStatus.OVERDUE);
-                            orderDao.update(order);
-                        }
-                        if (order.getOrderStatus() == OrderStatus.READER_HOLE) {
-                            orderDao.delete(order.getId());
-                        }
-                    }
-                }
-                return orderList;
-            }
+            BookDao bookDao = daoFactory.createBookDao()) {
+            List<Order> orderList = orderDao.findUserOrdersById(userId);
+            return getOrders(userDao, bookDao, orderList);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public void cancelOrder(long id) {
-        try (OrderDao orderDao = daoFactory.createOrderDao();
-            BookDao bookDao = daoFactory.createBookDao()) {
+    public boolean approveOrder(long orderId) {
+        try (OrderDao orderDao = daoFactory.createOrderDao()) {
+            Optional<Order> optionalOrder = orderDao.findById(orderId);
+            if (optionalOrder.isPresent()) {
+                Order order = optionalOrder.get();
+                order.setOrderStatus(OrderStatus.APPROVED);
+                orderDao.update(order);
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean cancelOrder(long id) {
+        try (OrderDao orderDao = daoFactory.createOrderDao()) {
             Optional<Order> optionalOrder = orderDao.findById(id);
             if (optionalOrder.isPresent()) {
                 Order order = optionalOrder.get();
                 order.setOrderStatus(OrderStatus.CANCELED);
-                orderDao.update(order);
-                Optional<Book> optionalBook = bookDao.findById(order.getBook().getId());
-                Book book = optionalBook.get();
-                book.setCount(book.getCount()+1);
-                bookDao.updateAmount(book);
+                orderDao.cancelOrder(order);
+                return true;
             }
-        }
-    }
-
-    public void deleteOrder(long id) {
-        try (OrderDao orderDao = daoFactory.createOrderDao()) {
-            orderDao.delete(id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    public boolean deleteOrder(long id) {
+        try (OrderDao orderDao = daoFactory.createOrderDao()) {
+            orderDao.delete(id);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
