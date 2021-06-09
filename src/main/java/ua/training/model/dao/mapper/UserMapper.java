@@ -10,13 +10,12 @@ public class UserMapper implements ObjectMapper<User> {
 
     @Override
     public User extractFromResultSet(ResultSet resultSet) throws SQLException {
-        User user = new User.Builder()
+        return new User.Builder()
                 .id(resultSet.getLong("id"))
                 .login(resultSet.getString("login"))
                 .password_hash(resultSet.getString("password_hash"))
                 .role( Role.valueOf(resultSet.getString("user_role")))
                 .isBlocked(resultSet.getBoolean("is_blocked"))
                 .build();
-        return user;
     }
 }

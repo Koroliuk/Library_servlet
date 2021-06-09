@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserService {
-    DaoFactory daoFactory = DaoFactory.getInstance();
+    private final DaoFactory daoFactory = DaoFactory.getInstance();
 
     public boolean singUpUser(User user) {
         try (UserDao userDao = daoFactory.createUserDao()) {
