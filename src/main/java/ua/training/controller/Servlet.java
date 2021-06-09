@@ -1,5 +1,7 @@
 package ua.training.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.training.controller.command.*;
 import ua.training.controller.command.admin.*;
 import ua.training.controller.command.librarian.GetReaderBooks;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Servlet extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger();
     private final Map<String, Command> commandMap = new HashMap<>();
 
     public void init() {
@@ -59,6 +62,7 @@ public class Servlet extends HttpServlet {
         Command command = commandMap.getOrDefault(path, (r) -> "/index.jsp");
         String page = command.execute(request);
         if (page.contains("redirect:")) {
+            logger.info("Redirect to "+page);
             response.sendRedirect(page.replace("redirect:", "/app"));
         } else {
             request.getRequestDispatcher(page).forward(request, response);
