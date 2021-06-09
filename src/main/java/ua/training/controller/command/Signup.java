@@ -46,9 +46,8 @@ public class Signup implements Command {
         if (!result) {
             logger.error("An error occurred while registering user with login '"+login+"'");
             return "/error/error.jsp";
-        } else {
-            logger.info("User with login '"+login+"' successfully registered");
-            return "/signup.jsp?successEvent=true";
         }
+        logger.info("User with login '"+login+"' successfully registered");
+        return "/signup.jsp?successEvent=true";
     }
 }
