@@ -1,5 +1,7 @@
 package ua.training.controller.command.reader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.training.controller.command.Command;
 import ua.training.model.entity.Book;
 import ua.training.model.entity.Order;
@@ -14,6 +16,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public class OrderBook implements Command {
+    private static final Logger logger = LogManager.getLogger();
     private final UserService userService;
     private final BookService bookService;
     private final OrderService orderService;
@@ -88,8 +91,10 @@ public class OrderBook implements Command {
             result = orderService.orderBook(order);
         }
         if (!result) {
+            logger.error("An error occurred when user '"+userLogin+"' ordering book with id"+bookId);
             return "/error/error.jsp";
         }
+        logger.info("User '"+userLogin+"' successfully ordered book with id="+bookId);
         return "redirect:/reader/home?successOrder=true";
     }
 }

@@ -1,5 +1,7 @@
 package ua.training.controller.command.admin;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.training.controller.command.Command;
 import ua.training.model.entity.Author;
 import ua.training.model.entity.Book;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class EditBook implements Command {
+    private static final Logger logger = LogManager.getLogger();
     private final BookService bookService;
 
     public EditBook(BookService bookService) {
@@ -99,10 +102,12 @@ public class EditBook implements Command {
 
         boolean result = bookService.updateBook(book);
         if (!result) {
+            logger.error("An error occurred when editing book with id="+id);
             return "/error/error.jsp";
         }
         Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
         optionalBook1.ifPresent(value -> request.setAttribute("book", value));
+        logger.info("Edited book with id="+id);
         return "/user/admin/bookForm.jsp?id="+id+"&successCreation=true";
     }
 }
