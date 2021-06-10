@@ -61,13 +61,10 @@ public class AddBook implements Command {
         List<String> authorNamesUa = Arrays.asList(authorsStringUa.split(","));
         List<String> authorNamesEn = Arrays.asList(authorsStringEn.split(","));
         float priceUa;
-        float priceEn;
         if (currency.equals("uan")) {
             priceUa = price;
-            priceEn = price/30;
         } else {
             priceUa = price*30;
-            priceEn = price;
         }
         Optional<Book> optionalBook = bookService.findByTitleAndAuthorsNames(titleUa, authorNamesUa, authorNamesEn);
         if (optionalBook.isPresent()) {
