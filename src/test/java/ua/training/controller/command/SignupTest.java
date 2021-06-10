@@ -50,7 +50,6 @@ public class SignupTest {
     public void executeWithAlreadyExistUser() {
         String login = "user1";
         User user = new User.Builder()
-                .id(1)
                 .login(login)
                 .build();
         when(mockedRequest.getParameter("login")).thenReturn(login);
