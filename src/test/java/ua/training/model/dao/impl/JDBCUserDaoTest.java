@@ -81,21 +81,6 @@ public class JDBCUserDaoTest {
         assertEquals(Optional.empty(), result);
     }
 
-//    @Test
-//    public void findByIdExistingUser() throws SQLException {
-//        User user = new User.Builder()
-//                .id(1)
-//                .login("login1")
-//                .password_hash("12e23cec2e")
-//                .isBlocked(false)
-//                .role(Role.READER)
-//                .build();
-//        when(mockedConnection.prepareStatement(SQLConstants.GET_USER_BY_ID)).thenReturn(mockedStatement);
-//        when(mockedStatement.executeQuery()).thenReturn(mockedResultSet);
-//        when(mockedResultSet.next()).thenReturn(true);
-//        userDao.findById(1);
-//    }
-
     @Test
     public void findByIdNotExistingUser() throws SQLException {
         when(mockedConnection.prepareStatement(SQLConstants.GET_USER_BY_ID)).thenReturn(mockedStatement);
@@ -128,15 +113,7 @@ public class JDBCUserDaoTest {
 
         assertEquals(0, resultList.size());
     }
-//
-//    @Test
-//    public void findByLogin() {
-//    }
-//
-//    @Test
-//    public void findAll() {
-//    }
-//
+
     @Test
     public void update() throws SQLException {
         User user = new User.Builder()
