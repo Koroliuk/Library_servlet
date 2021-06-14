@@ -20,6 +20,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ *  Class of the main servlet of the project
+ *
+ **/
 public class Servlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger();
     private final Map<String, Command> commandMap = new HashMap<>();

@@ -5,6 +5,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Locale;
 
+/**
+ *
+ *  Class of localization filter
+ *
+ */
 public class LocalizationFilter implements Filter {
     public static Locale locale = new Locale("en");
 
