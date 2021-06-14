@@ -41,49 +41,49 @@ public abstract class SQLConstants {
             "ON author_id = author.id WHERE full_name_uk LIKE '%' || ? || '%' OR title_uk LIKE '%' || ? || '%'" +
             "ORDER BY book.id LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_ID_DEC_UA = "SELECT DISTINCT book.id, title_uk, description_uk, " +
-            "language_uk, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
+            "language_uk, edition_id, edition_name_uk, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_uk LIKE '%' || ? || '%' OR title_uk LIKE '%' || ? || '%'" +
             "ORDER BY book.id DESC LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_TITLE_INC_UA = "SELECT DISTINCT book.id, title_uk, description_uk, " +
-            "language_uk, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
+            "language_uk, edition_id, edition_name_uk, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_uk LIKE '%' || ? || '%' OR title_uk LIKE '%' || ? || '%'" +
             "ORDER BY title_uk LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_TITLE_DEC_UA = "SELECT DISTINCT book.id, title_uk, description_uk, " +
-            "language_uk, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
+            "language_uk, edition_id, edition_name_uk, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_uk LIKE '%' || ? || '%' OR title_uk LIKE '%' || ? || '%'" +
             "ORDER BY title_uk DESC LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_INC_UA = "SELECT DISTINCT book.id, title_uk, description_uk, " +
-            "language_uk, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
+            "language_uk, edition_id, edition_name_uk, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_uk LIKE '%' || ? || '%' OR title_uk LIKE '%' || ? || '%'" +
             "ORDER BY edition_name_uk LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_EDITION_DEC_UA = "SELECT DISTINCT book.id, title_uk, description_uk, " +
-            "language_uk, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
+            "language_uk, edition_id, edition_name_uk, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_uk LIKE '%' || ? || '%' OR title_uk LIKE '%' || ? || '%'" +
             "ORDER BY edition_name_uk DESC LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_DATE_INC_UA = "SELECT DISTINCT book.id, title_uk, description_uk, " +
-            "language_uk, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
+            "language_uk, edition_id, edition_name_uk, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_uk LIKE '%' || ? || '%' OR title_uk LIKE '%' || ? || '%'" +
             "ORDER BY publication_date LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_DATE_DEC_UA = "SELECT DISTINCT book.id, title_uk, description_uk, " +
-            "language_uk, edition_id, edition_name_ua, publication_date, price_uan, count FROM book INNER JOIN edition " +
+            "language_uk, edition_id, edition_name_uk, publication_date, price_uan, count FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_uk LIKE '%' || ? || '%' OR title_uk LIKE '%' || ? || '%'" +
             "ORDER BY publication_date DESC LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_AUTHOR_INC_UA = "SELECT DISTINCT book.id, title_uk, description_uk, " +
-            "language_uk, edition_id, edition_name_ua, publication_date, price_uan, count, (CAST(ARRAY(SELECT full_name FROM author" +
+            "language_uk, edition_id, edition_name_uk, publication_date, price_uan, count, (CAST(ARRAY(SELECT full_name FROM author" +
             " INNER JOIN authorship a ON author.id = a.author_id WHERE book_id = book.id ORDER BY full_name_uk) AS VARCHAR)) FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_uk LIKE '%' || ? || '%' OR title_uk LIKE '%' || ? || '%'" +
             "ORDER BY (CAST(ARRAY(SELECT full_name_uk FROM author INNER JOIN authorship a ON author.id = a.author_id " +
-            "WHERE book_id = book.id ORDER BY full_name_ua) AS VARCHAR)) LIMIT ? OFFSET ?;";
+            "WHERE book_id = book.id ORDER BY full_name_uk) AS VARCHAR)) LIMIT ? OFFSET ?;";
     public static final String GET_PARTIAL_BOOKS_BY_KEYWORD_SORTED_BY_AUTHOR_DEC_UA = "SELECT DISTINCT book.id, title_uk, description_uk, " +
-            "language_uk, edition_id, edition_name_ua, publication_date, price_uan, count, (CAST(ARRAY(SELECT full_name_uk FROM author " +
+            "language_uk, edition_id, edition_name_uk, publication_date, price_uan, count, (CAST(ARRAY(SELECT full_name_uk FROM author " +
             "INNER JOIN authorship a ON author.id = a.author_id WHERE book_id = book.id ORDER BY full_name_uk) AS VARCHAR)) FROM book INNER JOIN edition " +
             "ON edition_id = edition.id INNER JOIN authorship ON book.id = authorship.book_id INNER JOIN author " +
             "ON author_id = author.id WHERE full_name_uk LIKE '%' || ? || '%' OR title_uk LIKE '%' || ? || '%'" +
