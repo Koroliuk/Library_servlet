@@ -12,7 +12,7 @@ public class AuthorMapper implements ObjectMapper<Author> {
     public Author extractFromResultSet(ResultSet resultSet) throws SQLException {
         return new Author.Builder()
                 .id(resultSet.getInt("id"))
-                .name(resultSet.getString("full_name_ua"))
+                .name(resultSet.getString("full_name_uk"))
                 .anotherName(resultSet.getString("full_name_en"))
                 .build();
     }
@@ -20,16 +20,16 @@ public class AuthorMapper implements ObjectMapper<Author> {
     public Author extractFromResultSetWithId(ResultSet resultSet, String id) throws SQLException {
         return new Author.Builder()
                 .id(resultSet.getInt(id))
-                .name(resultSet.getString("full_name_ua"))
+                .name(resultSet.getString("full_name_uk"))
                 .anotherName(resultSet.getString("full_name_en"))
                 .build();
     }
 
     public Author extractFromResultSetWithIdLocaled(ResultSet resultSet, String id) throws SQLException {
-        String local = LocalizationFilter.locale.toString();
+        String language = LocalizationFilter.locale.getLanguage();
         return new Author.Builder()
                 .id(resultSet.getInt(id))
-                .name(resultSet.getString("full_name_"+local))
+                .name(resultSet.getString("full_name_"+language))
                 .build();
     }
 }

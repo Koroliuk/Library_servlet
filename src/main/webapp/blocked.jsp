@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="language"
-       value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}"
+       value="${not empty param.language ? param.language : not empty language ? language : sessionScope.language}"
        scope="session"/>
 <fmt:setLocale value="${language}"/>
 <fmt:setBundle basename="messages"/>
@@ -31,7 +31,7 @@
             <select class="custom-select" id="language" name="language" onchange="submit()">
                 <option value="en" ${language == 'en' ? 'selected' : ''}><fmt:message
                         key="header.language.english"/></option>
-                <option value="ua" ${language == 'ua' ? 'selected' : ''}><fmt:message
+                <option value="uk" ${language == 'uk' ? 'selected' : ''}><fmt:message
                         key="header.language.ukrainian"/></option>
             </select>
         </form>
@@ -52,6 +52,22 @@
 <body>
     <div class="container text-center" style="margin-top: 10%;">
         <h3>Обліковий запис заблоковано!<br/>Зверністься до адміністратора</h3>
+    </div>
+    <div>
+        <c:if test="${sessionScope.userLogin == null}">
+            <a href="${pageContext.request.contextPath}/index.jsp"><fmt:message key="global.to.home.page"/></a>
+        </c:if>
+        <c:if test="${sessionScope.userLogin != null}">
+            <c:if test="${sessionScope.role == 'READER'}">
+                <a href="${pageContext.request.contextPath}/app/reader/home"><fmt:message key="global.to.home.page"/></a>
+            </c:if>
+            <c:if test="${sessionScope.role == 'LIBRARIAN'}">
+                <a href="${pageContext.request.contextPath}/app/librarian/home"><fmt:message key="global.to.home.page"/></a>
+            </c:if>
+            <c:if test="${sessionScope.role == 'ADMIN'}">
+                <a href="${pageContext.request.contextPath}/app/admin/home"><fmt:message key="global.to.home.page"/></a>
+            </c:if>
+        </c:if>
     </div>
 </body>
 <footer class="navbar fixed-bottom d-flex flex-row justify-content-sm-between align-items-center bg-light text-lg-start p-3">

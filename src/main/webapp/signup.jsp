@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="language"
-       value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}"
+       value="${not empty param.language ? param.language : not empty language ? language : sessionScope.language}"
        scope="session"/>
 <fmt:setLocale value="${language}"/>
 <fmt:setBundle basename="messages"/>
@@ -32,7 +32,7 @@
             <select class="custom-select" id="language" name="language" onchange="submit()">
                 <option value="en" ${language == 'en' ? 'selected' : ''}><fmt:message
                         key="header.language.english"/></option>
-                <option value="ua" ${language == 'ua' ? 'selected' : ''}><fmt:message
+                <option value="uk" ${language == 'uk' ? 'selected' : ''}><fmt:message
                         key="header.language.ukrainian"/></option>
             </select>
         </form>
