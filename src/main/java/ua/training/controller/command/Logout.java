@@ -20,6 +20,6 @@ public class Logout implements Command {
         request.getSession().setAttribute("userLogin", null);
         request.getSession().setAttribute("role", null);
         logger.info("Logout user with login '"+login+"'");
-        return "redirect:/index.jsp";
+        return "redirect:/";
     }
 }

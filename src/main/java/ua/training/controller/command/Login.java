@@ -31,15 +31,15 @@ public class Login implements Command {
         boolean isLoginValid = Pattern.matches(loginPattern, login);
         boolean isPasswordValid = Pattern.matches(passwordPattern, password);
         if (!isLoginValid || !isPasswordValid) {
-            return "/login.jsp?validError=true";
+            return "redirect:/login?validError=true";
         }
         Optional<User> optionalUser = userService.findByLogin(login);
         if (!optionalUser.isPresent()) {
-            return "/login.jsp?loginError=true";
+            return "redirect:/login?loginError=true";
         }
         User user = optionalUser.get();
         if (!password.equals(user.getPasswordHash())) {
-            return "/login.jsp?passwordError=true";
+            return "redirect:/login?passwordError=true";
         }
         if (user.isBlocked()) {
             logger.info("An attempt was made to login to a blocked account");
@@ -62,7 +62,7 @@ public class Login implements Command {
             logger.info("Successfully login user '"+login+"' as admin");
             return "redirect:/admin/home";
         } else {
-            return "/login.jsp?loginError=true";
+            return "redirect:/login?loginError=true";
         }
     }
 }

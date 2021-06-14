@@ -30,7 +30,7 @@ public abstract class SQLConstants {
     public static final String GET_PARTIAL_BOOK_BY_ID = "SELECT * FROM book INNER JOIN edition ON " +
             "edition_id = edition.id WHERE book.id = ?;";
     public static final String GET_PARTIAL_BOOK_BY_TITLE_AND_AUTHORS = "SELECT * FROM book INNER JOIN edition ON" +
-            " edition_id = edition.id WHERE title = ? AND (SELECT CAST(ARRAY(SELECT full_name FROM authorship " +
+            " edition_id = edition.id WHERE title_ua = ? AND (SELECT CAST(ARRAY(SELECT full_name_ua FROM authorship " +
             "INNER JOIN author ON author_id = author.id WHERE book_id = book.id) AS VARCHAR)) = ?;";
     public static final String GET_AMOUNT_OF_BOOKS_WITH_KEY_WORD = "SELECT COUNT(*) FROM book INNER JOIN authorship ON " +
             "book.id = authorship.book_id INNER JOIN author ON author_id = author.id WHERE author.full_name_ua LIKE '%' " +

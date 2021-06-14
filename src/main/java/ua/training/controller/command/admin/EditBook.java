@@ -50,7 +50,7 @@ public class EditBook implements Command {
             if (param == null || param.equals("")) {
                 Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
                 optionalBook1.ifPresent(value -> request.setAttribute("book", value));
-                return "/user/admin/bookForm.jsp";
+                return "/user/admin/bookForm.jsp?id="+id;
             }
         }
         LocalDate publicationData = LocalDate.parse(publicationDateString);
@@ -61,7 +61,7 @@ public class EditBook implements Command {
         if (condition5 || condition6) {
             Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
             optionalBook1.ifPresent(value -> request.setAttribute("book", value));
-            return "/user/admin/bookForm.jsp?validError=true";
+            return "redirect:/admin/editBook?id="+id+"&validError=true";
         }
         List<String> authorNamesUa = Arrays.asList(authorsStringUa.split(","));
         List<String> authorNamesEn = Arrays.asList(authorsStringEn.split(","));
@@ -108,6 +108,6 @@ public class EditBook implements Command {
         Optional<Book> optionalBook1 = bookService.findById(Long.parseLong(id));
         optionalBook1.ifPresent(value -> request.setAttribute("book", value));
         logger.info("Edited book with id="+id);
-        return "/user/admin/bookForm.jsp?id="+id+"&successCreation=true";
+        return "redirect:/admin/editBook?id="+id+"&successCreation=true";
     }
 }

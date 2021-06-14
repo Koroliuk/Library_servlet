@@ -95,7 +95,7 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade <c:if test="${param.tab.equals('3')}">show active</c:if> text-center" id="books">
+        <div class="tab-pane fade <c:if test="${param.tab.equals('2')}">show active</c:if> text-center" id="books">
             <div>
                 <span class="h5">Книги: </span><a class="btn btn-outline-primary btn-sm mt-2 mb-2" href="${pageContext.request.contextPath}/app/admin/addBook">Add
                 book</a>
@@ -142,8 +142,8 @@
                                         <td>${book.price}</td>
                                         <td>${book.count}</td>
                                         <td class="justify-content-sm-between" style="width: 200px;">
-                                            <a type="button" class="btn btn-outline-warning" href="${pageContext.request.contextPath}/app/admin/editBook?id=${book.id}&tab=2">Edit</a>
-                                            <a type="button" class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/admin/deleteBook?id=${book.id}&tab=2">Delete</a>
+                                            <a type="button" class="btn btn-outline-warning" href="${pageContext.request.contextPath}/app/admin/editBook?id=${book.id}">Edit</a>
+                                            <a type="button" class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/admin/deleteBook?id=${book.id}">Delete</a>
                                         </td>
                                     </tr>
                                 </c:forEach>

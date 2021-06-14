@@ -50,26 +50,26 @@ public class OrderBook implements Command {
         request.setAttribute("book", book);
 
         if (bookId.equals("") || userLogin == null || userLogin.equals("")) {
-            return "/user/reader/orderBook.jsp";
+            return "/user/reader/orderBook.jsp?bookId="+bookId;
         }
         if (orderType == null || orderType.equals("")) {
-            return "/user/reader/orderBook.jsp";
+            return "/user/reader/orderBook.jsp?bookId="+bookId;
         }
         if (book.getCount() == 0) {
-            return "/user/reader/orderBook.jsp?amountError=true";
+            return "redirect:/reader/orderBook?bookId="+bookId+"&amountError=true";
         }
         OrderStatus status;
         boolean result;
         if (orderType.equals("subscription")) {
             status = OrderStatus.RECEIVED;
             if (startDate == null || startDate.equals("") || endDate == null || endDate.equals("")) {
-                return "/user/reader/orderBook.jsp?validError=true";
+                return "redirect:/reader/orderBook?bookId="+bookId+"&validError=true";
             }
             LocalDate start = LocalDate.parse(startDate);
             LocalDate end = LocalDate.parse(endDate);
             LocalDate now = LocalDate.now();
             if ((now.isAfter(start)) || (now.isAfter(end)) || end.isBefore(start)) {
-                return "/user/reader/orderBook.jsp?validError=true";
+                return "redirect:/reader/orderBook?bookId="+bookId+"&validError=true";
             }
             Order order = new Order.Builder()
                     .book(book)
