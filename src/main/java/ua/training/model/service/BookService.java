@@ -100,29 +100,29 @@ public class BookService {
     }
 
     public Edition getEditionOrNew(Edition edition) {
+        Edition result = null;
         try (EditionDao editionDao = daoFactory.createEditionDao()) {
             String name = edition.getName();
             String anotherName = edition.getAnotherName();
-            return editionDao.findByNames(name, anotherName)
-                    .orElse(editionDao.create(edition)
-                            .orElseThrow(RuntimeException::new));
-        } catch (SQLException e) {
+            result = editionDao.findByNames(name, anotherName)
+                    .orElse(editionDao.create(edition).orElseThrow(NoSuchElementException::new));
+        } catch (SQLException | NoSuchElementException e) {
             e.printStackTrace();
         }
-        return null;
+        return result;
     }
 
     public Author getAuthorOrNew(Author author) {
+        Author result = null;
         try (AuthorDao authorDao = daoFactory.createAuthorDao()) {
             String name = author.getName();
             String anotherName = author.getAnotherName();
-            return authorDao.findByNames(name, anotherName)
-                    .orElse(authorDao.create(author)
-                            .orElseThrow(RuntimeException::new));
-        } catch (SQLException e) {
+            result = authorDao.findByNames(name, anotherName)
+                    .orElse(authorDao.create(author).orElseThrow(NoSuchElementException::new));
+        } catch (SQLException | NoSuchElementException e) {
             e.printStackTrace();
         }
-        return null;
+        return result;
     }
 
     public long getBookAmountWithKeyWord(String keyWord) {

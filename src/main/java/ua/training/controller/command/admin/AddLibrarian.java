@@ -31,11 +31,11 @@ public class AddLibrarian implements Command {
         boolean isLoginValid = Pattern.matches(loginPattern, login);
         boolean isPasswordValid = Pattern.matches(passwordPattern, password);
         if (!isLoginValid || !isPasswordValid) {
-            return "/user/admin/librarianForm.jsp?validError=true";
+            return "redirect:/admin/librarianForm.jsp?validError=true";
         }
         Optional<User> optionalUser = userService.findByLogin(login);
         if (optionalUser.isPresent()) {
-            return "/user/admin/librarianForm.jsp?loginError=true";
+            return "redirect:/admin/librarianForm.jsp?loginError=true";
         }
         User user = new User.Builder()
                 .login(login)
@@ -49,7 +49,7 @@ public class AddLibrarian implements Command {
             return "/error/error.jsp";
         } else {
             logger.info("Created librarian with login="+login);
-            return "/user/admin/librarianForm.jsp?successEvent=true";
+            return "redirect:/admin/addLibrarian?successEvent=true";
         }
     }
 }

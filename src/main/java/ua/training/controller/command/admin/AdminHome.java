@@ -20,10 +20,14 @@ public class AdminHome implements Command {
 
     @Override
     public String execute(HttpServletRequest request) {
+        String tab = request.getParameter("tab");
         List<User> userList = userService.findAll();
         List<Book> bookList = bookService.findAll();
         request.setAttribute("userList", userList);
         request.setAttribute("bookList", bookList);
-        return "/user/admin/home.jsp";
+        if (tab == null || tab.equals("")) {
+            return "/user/admin/home.jsp";
+        }
+        return "/user/admin/home.jsp?tab="+tab;
     }
 }

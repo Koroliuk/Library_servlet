@@ -70,10 +70,20 @@ public class JDBCBookDao implements BookDao {
             PreparedStatement getAuthorsStatement = connection.prepareStatement(SQLConstants.GET_AUTHORS_BY_BOOK_ID)) {
             connection.setAutoCommit(false);
             getBookStatement.setLong(1, id);
-            ResultSet bookResultSet = getBookStatement.executeQuery();
             Book book = null;
+            ResultSet bookResultSet = getBookStatement.executeQuery();
             if (bookResultSet.next()) {
-                book = getBookWithAuthors(getAuthorsStatement, bookResultSet);
+                BookMapper bookMapper = new BookMapper();
+                book = bookMapper.extractFromResultSet(bookResultSet);
+                getAuthorsStatement.setLong(1, book.getId());
+                List<Author> authors = new ArrayList<>();
+                ResultSet authorsResultSet = getAuthorsStatement.executeQuery();
+                while (authorsResultSet.next()) {
+                    AuthorMapper authorMapper = new AuthorMapper();
+                    Author author = authorMapper.extractFromResultSet(authorsResultSet);
+                    authors.add(author);
+                }
+                book.setAuthors(authors);
             }
             connection.commit();
             connection.setAutoCommit(true);

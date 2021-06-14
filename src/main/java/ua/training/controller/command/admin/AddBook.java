@@ -56,7 +56,7 @@ public class AddBook implements Command {
         boolean condition5 = publicationData.isAfter(LocalDate.now()) || publicationData.isEqual(LocalDate.now());
         boolean condition6 = price <= 0 || count <= 0;
         if (condition5 || condition6) {
-            return "/user/admin/bookForm.jsp?validError=true";
+            return "redirect:/admin/addBook?validError=true";
         }
         List<String> authorNamesUa = Arrays.asList(authorsStringUa.split(","));
         List<String> authorNamesEn = Arrays.asList(authorsStringEn.split(","));
@@ -68,7 +68,7 @@ public class AddBook implements Command {
         }
         Optional<Book> optionalBook = bookService.findByTitleAndAuthorsNames(titleUa, authorNamesUa, authorNamesEn);
         if (optionalBook.isPresent()) {
-            return "/user/admin/bookForm.jsp?createError=true";
+            return "redirect:/admin/addBook?createError=true";
         }
 
         Edition edition = new Edition.Builder()
@@ -106,6 +106,6 @@ public class AddBook implements Command {
             return "/error/error.jsp";
         }
         logger.info("Created book with title="+titleUa+"/"+titleEn+" and authors="+authorsStringUa+"/"+authorsStringEn);
-        return "/user/admin/bookForm.jsp?successCreation=true";
+        return "redirect:/admin/addBook?successCreation=true";
     }
 }
