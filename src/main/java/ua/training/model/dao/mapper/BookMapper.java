@@ -4,6 +4,7 @@ import ua.training.controller.filters.LocalizationFilter;
 import ua.training.model.entity.Book;
 import ua.training.model.entity.Edition;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -24,7 +25,7 @@ public class BookMapper implements ObjectMapper<Book> {
                 .anotherLanguage(resultSet.getString("language_en"))
                 .edition(edition)
                 .publicationDate(LocalDate.parse(resultSet.getString("publication_date")))
-                .price(resultSet.getFloat("price_uan"))
+                .price(new BigDecimal(resultSet.getString("price_uan")))
                 .count(resultSet.getInt("count"))
                 .build();
     }
@@ -35,6 +36,10 @@ public class BookMapper implements ObjectMapper<Book> {
                 .id(resultSet.getLong("edition_id"))
                 .name(resultSet.getString("edition_name_"+language))
                 .build();
+        BigDecimal price = new BigDecimal(resultSet.getString("price_uan"));
+        if (language.equals("en")) {
+            price = price.divide(new BigDecimal(30), BigDecimal.ROUND_CEILING);
+        }
         return new Book.Builder()
                 .id(resultSet.getInt("id"))
                 .title(resultSet.getString("title_"+language))
@@ -42,7 +47,7 @@ public class BookMapper implements ObjectMapper<Book> {
                 .language(resultSet.getString("language_"+language))
                 .edition(edition)
                 .publicationDate(LocalDate.parse(resultSet.getString("publication_date")))
-                .price(resultSet.getFloat("price_uan"))
+                .price(price)
                 .count(resultSet.getInt("count"))
                 .build();
     }

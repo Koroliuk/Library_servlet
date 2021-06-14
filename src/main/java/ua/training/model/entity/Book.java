@@ -1,5 +1,6 @@
 package ua.training.model.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +16,7 @@ public class Book {
     private String anotherLanguage;
     private Edition edition;
     private LocalDate publicationDate;
-    private float price;
+    private BigDecimal price;
     private int count;
 
     public static class Builder {
@@ -29,7 +30,7 @@ public class Book {
         private String anotherLanguage;
         private Edition edition;
         private LocalDate publicationDate;
-        private float price;
+        private BigDecimal price;
         private int count;
 
         public Builder id(long id) {
@@ -82,7 +83,7 @@ public class Book {
             return this;
         }
 
-        public Builder price(float price) {
+        public Builder price(BigDecimal price) {
             this.price = price;
             return this;
         }
@@ -168,11 +169,11 @@ public class Book {
         this.publicationDate = publicationDate;
     }
 
-    public float getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
