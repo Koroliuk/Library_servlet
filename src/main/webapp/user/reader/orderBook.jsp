@@ -5,7 +5,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="language"
-       value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}"
+       value="${not empty param.language ? param.language : not empty language ? language : sessionScope.language}"
        scope="session"/>
 <fmt:setLocale value="${language}"/>
 <fmt:setBundle basename="messages"/>
@@ -37,7 +37,7 @@
                 ${language == 'en' ? 'selected' : ''}>
                     <fmt:message key="header.language.english"/></option>
                 <option value="${pageContext.request.contextPath}/app/reader/orderBook?bookId=${param.bookId}&userLogin=${param.userLogin}&language=ua"
-                ${language == 'ua' ? 'selected' : ''}>
+                ${language == 'uk' ? 'selected' : ''}>
                     <fmt:message key="header.language.ukrainian"/></option>
             </select>
         </form>
@@ -138,67 +138,5 @@
     </div>
 </div>
 </body>
-<footer class="navbar fixed-bottom d-flex flex-row justify-content-sm-between align-items-center bg-light text-lg-start p-3">
-    <div>
-        <p>
-            <fmt:message key="footer.licence"/>
-            <a href="https://github.com/Koroliuk/Library_servlet/blob/main/LICENSE">
-                GNU GPLv3 License
-            </a>.
-            <br>
-            <a href="https://github.com/Koroliuk/Library_servlet"><fmt:message key="footer.project.github"/></a><br/>
-            <span>@2021</span>
-        </p>
-    </div>
-    <div>
-        <p>
-            <fmt:message key="footer.questions"/>
-            <a href="https://github.com/Koroliuk/Library_servlet/issues/new">GitHub</a>.
-        </p>
-    </div>
-</footer>
-<script type="text/javascript" src="${pageContext.request.contextPath}/user/reader/js/orderBook.js">
-</script>
-<script type="text/javascript">
-    Date.prototype.withoutTime = function () {
-        const date = new Date(this);
-        date.setHours(0, 0, 0, 0);
-        return date;
-    }
-
-    const form = document.getElementById('orderForm');
-    const startDate = document.getElementById('startDate');
-    const endDate = document.getElementById('endDate');
-    const warning1 = document.getElementById('warning1');
-    const warning2 = document.getElementById('warning2');
-    const warning3 = document.getElementById('warning3');
-
-    startDate.addEventListener('input', () => {
-        const orderType = document.getElementById("orderType").value;
-        if (orderType === 'readingHole') {
-            endDate.value = startDate.value;
-        }
-        const now = new Date().withoutTime();
-        const start = Date.parse(startDate.value);
-        warning1.hidden = start >= now;
-    });
-
-    endDate.addEventListener('input', () => {
-        const now = new Date().withoutTime();
-        const end = Date.parse(endDate.value);
-        warning1.hidden = end >= now;    });
-
-    form.addEventListener('submit', (event) => {
-        const now = new Date().withoutTime();
-        const start = Date.parse(startDate.value);
-        const end = Date.parse(endDate.value);
-        if (start < now || end < now || start > end) {
-            warning3.hidden = false;
-            event.preventDefault();
-            return false;
-        }
-        warning3.hidden = true;
-        return true;
-    });
-</script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/user/reader/js/orderBook.js"></script>
 </html>

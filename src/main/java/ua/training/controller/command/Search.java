@@ -24,11 +24,11 @@ public class Search implements Command {
         String sortType = request.getParameter("sortType");
         List<Book> bookList;
         if (pageString == null || pageString.equals("")) {
-            return "/search?page=1";
+            return "redirect:/search?page=1";
         }
         int page = Integer.parseInt(pageString.trim());
         if ((sortBy != null && !sortBy.equals("")) && (sortType == null || sortType.equals(""))) {
-            return "/search?page=1&sortBy=id&sortType=inc&keyWords="+keyWords;
+            return "redirect:/search?page=1&sortBy=id&sortType=inc&keyWords="+keyWords;
         }
         if (sortBy == null) {
             sortBy = "id";

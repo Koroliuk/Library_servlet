@@ -25,18 +25,14 @@ public class DeleteBook implements Command {
     public String execute(HttpServletRequest request) {
         String bookId = request.getParameter("id");
         if (bookId == null || bookId.equals("")) {
-            return "/user/admin/home.jsp";
+            return "redirect:/admin/home?tab=2";
         }
         boolean result = bookService.deleteBook(Long.parseLong(bookId));
         if (!result) {
             logger.error("An error occurred when deleting book with id="+bookId);
-            return "/error/error,jsp";
+            return "/error/error.jsp";
         }
-        List<User> userList = userService.findAll();
-        List<Book> bookList = bookService.findAll();
-        request.setAttribute("userList", userList);
-        request.setAttribute("bookList", bookList);
         logger.info("Deleted book with id="+bookId);
-        return "/user/admin/home.jsp";
+        return "redirect:/admin/home?tab=2";
     }
 }

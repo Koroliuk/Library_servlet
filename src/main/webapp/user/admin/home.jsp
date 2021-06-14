@@ -3,7 +3,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}" scope="session" />
+<c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : sessionScope.language}" scope="session" />
 <fmt:setLocale value="${language}" />
 <fmt:setBundle basename="messages" />
 <!DOCTYPE html>
@@ -32,7 +32,7 @@
             <select class="custom-select" id="language" name="language" onchange="submit()">
                 <option value="en" ${language == 'en' ? 'selected' : ''}><fmt:message
                         key="header.language.english"/></option>
-                <option value="ua" ${language == 'ua' ? 'selected' : ''}><fmt:message
+                <option value="uk" ${language == 'uk' ? 'selected' : ''}><fmt:message
                         key="header.language.ukrainian"/></option>
             </select>
         </form>
@@ -95,7 +95,7 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade <c:if test="${param.tab.equals('3')}">show active</c:if> text-center" id="books">
+        <div class="tab-pane fade <c:if test="${param.tab.equals('2')}">show active</c:if> text-center" id="books">
             <div>
                 <span class="h5">Книги: </span><a class="btn btn-outline-primary btn-sm mt-2 mb-2" href="${pageContext.request.contextPath}/app/admin/addBook">Add
                 book</a>
@@ -139,11 +139,14 @@
                                         <td>${book.edition.name}</td>
                                         <td>${book.publicationDate}</td>
                                         <td>${book.description}</td>
-                                        <td>${book.price}</td>
+                                        <td>
+                                            <c:if test="${language == 'en'}"><span>${book.price}$</span></c:if>
+                                            <c:if test="${language == 'uk'}"><span>${book.price}₴</span></c:if>
+                                        </td>
                                         <td>${book.count}</td>
                                         <td class="justify-content-sm-between" style="width: 200px;">
-                                            <a type="button" class="btn btn-outline-warning" href="${pageContext.request.contextPath}/app/admin/editBook?id=${book.id}&tab=2">Edit</a>
-                                            <a type="button" class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/admin/deleteBook?id=${book.id}&tab=2">Delete</a>
+                                            <a type="button" class="btn btn-outline-warning" href="${pageContext.request.contextPath}/app/admin/editBook?id=${book.id}">Edit</a>
+                                            <a type="button" class="btn btn-outline-danger" href="${pageContext.request.contextPath}/app/admin/deleteBook?id=${book.id}">Delete</a>
                                         </td>
                                     </tr>
                                 </c:forEach>

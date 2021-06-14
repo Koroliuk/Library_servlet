@@ -100,29 +100,44 @@ public class BookService {
     }
 
     public Edition getEditionOrNew(Edition edition) {
+        Edition result = null;
         try (EditionDao editionDao = daoFactory.createEditionDao()) {
             String name = edition.getName();
             String anotherName = edition.getAnotherName();
-            return editionDao.findByNames(name, anotherName)
-                    .orElse(editionDao.create(edition)
-                            .orElseThrow(RuntimeException::new));
+            Optional<Edition> optionalEdition = editionDao.findByNames(name, anotherName);
+            if (optionalEdition.isPresent()) {
+                result = optionalEdition.get();
+            } else {
+                optionalEdition = editionDao.create(edition);
+                if (optionalEdition.isPresent()) {
+                    result = edition;
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return result;
     }
 
     public Author getAuthorOrNew(Author author) {
+        Author result = null;
         try (AuthorDao authorDao = daoFactory.createAuthorDao()) {
             String name = author.getName();
             String anotherName = author.getAnotherName();
-            return authorDao.findByNames(name, anotherName)
-                    .orElse(authorDao.create(author)
-                            .orElseThrow(RuntimeException::new));
+            Optional<Author> optionalEdition = authorDao.findByNames(name, anotherName);
+            if (optionalEdition.isPresent()) {
+                result = optionalEdition.get();
+            } else {
+                optionalEdition = authorDao.create(author);
+                if (optionalEdition.isPresent()) {
+                    result = author;
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+
+        return result;
     }
 
     public long getBookAmountWithKeyWord(String keyWord) {

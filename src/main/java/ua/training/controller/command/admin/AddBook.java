@@ -9,6 +9,7 @@ import ua.training.model.entity.Edition;
 import ua.training.model.service.BookService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -51,24 +52,24 @@ public class AddBook implements Command {
             }
         }
         LocalDate publicationData = LocalDate.parse(publicationDateString);
-        float price = Float.parseFloat(stringPrice);
+        BigDecimal price = BigDecimal.valueOf(Double.parseDouble(stringPrice));
         int count = Integer.parseInt(stringCount);
         boolean condition5 = publicationData.isAfter(LocalDate.now()) || publicationData.isEqual(LocalDate.now());
-        boolean condition6 = price <= 0 || count <= 0;
+        boolean condition6 = price.compareTo(BigDecimal.ZERO) <= 0 || count <= 0;
         if (condition5 || condition6) {
-            return "/user/admin/bookForm.jsp?validError=true";
+            return "redirect:/admin/addBook?validError=true";
         }
         List<String> authorNamesUa = Arrays.asList(authorsStringUa.split(","));
         List<String> authorNamesEn = Arrays.asList(authorsStringEn.split(","));
-        float priceUa;
+        BigDecimal priceUa;
         if (currency.equals("uan")) {
             priceUa = price;
         } else {
-            priceUa = price*30;
+            priceUa = price.multiply(new BigDecimal(30));
         }
         Optional<Book> optionalBook = bookService.findByTitleAndAuthorsNames(titleUa, authorNamesUa, authorNamesEn);
         if (optionalBook.isPresent()) {
-            return "/user/admin/bookForm.jsp?createError=true";
+            return "redirect:/admin/addBook?createError=true";
         }
 
         Edition edition = new Edition.Builder()
@@ -106,6 +107,6 @@ public class AddBook implements Command {
             return "/error/error.jsp";
         }
         logger.info("Created book with title="+titleUa+"/"+titleEn+" and authors="+authorsStringUa+"/"+authorsStringEn);
-        return "/user/admin/bookForm.jsp?successCreation=true";
+        return "redirect:/admin/addBook?successCreation=true";
     }
 }

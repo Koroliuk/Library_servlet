@@ -2,16 +2,23 @@ package ua.training.controller.listener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ua.training.controller.filters.LocalizationFilter;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import java.util.HashSet;
 
+/**
+ *
+ * Session listening class that provides user lookout
+ *
+ **/
 public class SessionListener implements HttpSessionListener {
     private static final Logger logger = LogManager.getLogger();
 
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {
+        httpSessionEvent.getSession().setAttribute("language", LocalizationFilter.locale.getLanguage());
     }
 
     @Override

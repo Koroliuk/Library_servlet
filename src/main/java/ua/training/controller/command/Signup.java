@@ -30,11 +30,11 @@ public class Signup implements Command {
         boolean isLoginValid = Pattern.matches(loginPattern, login);
         boolean isPasswordValid = Pattern.matches(passwordPattern, password);
         if (!isLoginValid || !isPasswordValid) {
-            return "/signup.jsp?validError=true";
+            return "redirect:/signup?validError=true";
         }
         Optional<User> optionalUser = userService.findByLogin(login);
         if (optionalUser.isPresent()) {
-            return "/signup.jsp?loginError=true";
+            return "redirect:/signup?loginError=true";
         }
         User user = new User.Builder()
                 .login(login)
@@ -48,6 +48,6 @@ public class Signup implements Command {
             return "/error/error.jsp";
         }
         logger.info("User with login '"+login+"' successfully registered");
-        return "/signup.jsp?successEvent=true";
+        return "redirect:/signup?successEvent=true";
     }
 }

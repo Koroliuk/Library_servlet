@@ -25,7 +25,7 @@ public class DeleteLibrarian implements Command {
     public String execute(HttpServletRequest request) {
         String librarianId = request.getParameter("id");
         if (librarianId == null || librarianId.equals("")) {
-            return "/user/admin/home.jsp";
+            return "redirect:/admin/home?tab=1";
         }
         boolean result = userService.delete(Long.parseLong(librarianId));
         if (!result) {
@@ -37,6 +37,6 @@ public class DeleteLibrarian implements Command {
         request.setAttribute("userList", userList);
         request.setAttribute("bookList", bookList);
         logger.info("Deleted librarian with id="+librarianId);
-        return "/user/admin/home.jsp";
+        return "redirect:/admin/home?tab=1";
     }
 }

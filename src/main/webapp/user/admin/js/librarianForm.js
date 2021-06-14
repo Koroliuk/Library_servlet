@@ -1,4 +1,4 @@
-const form = document.getElementById('signupForm');
+const form = document.getElementById('form');
 const login = document.getElementById('login');
 const password = document.getElementById('password');
 const loginMessage = document.getElementById("loginMessage");
@@ -6,9 +6,6 @@ const passwordMessage = document.getElementById("passwordMessage");
 
 const loginRegExp = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{4,20}$/;
 const passwordRegExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,30}$/;
-
-loginMessage.className = "text-danger";
-passwordMessage.className = "text-danger";
 
 login.addEventListener("input", () => {
     const loginTest = loginRegExp.test(login.value);

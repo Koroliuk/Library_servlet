@@ -28,7 +28,7 @@ public class JDBCBookDao implements BookDao {
             statement.setLong(3, entity.getEdition().getId());
             statement.setString(4, entity.getLanguage());
             statement.setObject(5, entity.getPublicationDate());
-            statement.setFloat(6, entity.getPrice());
+            statement.setString(6, String.valueOf(entity.getPrice()));
             statement.setInt(7, entity.getCount());
             statement.setString(8, entity.getAnotherTitle());
             statement.setString(9, entity.getAnotherDescription());
@@ -70,10 +70,20 @@ public class JDBCBookDao implements BookDao {
             PreparedStatement getAuthorsStatement = connection.prepareStatement(SQLConstants.GET_AUTHORS_BY_BOOK_ID)) {
             connection.setAutoCommit(false);
             getBookStatement.setLong(1, id);
-            ResultSet bookResultSet = getBookStatement.executeQuery();
             Book book = null;
+            ResultSet bookResultSet = getBookStatement.executeQuery();
             if (bookResultSet.next()) {
-                book = getBookWithAuthors(getAuthorsStatement, bookResultSet);
+                BookMapper bookMapper = new BookMapper();
+                book = bookMapper.extractFromResultSet(bookResultSet);
+                getAuthorsStatement.setLong(1, book.getId());
+                List<Author> authors = new ArrayList<>();
+                ResultSet authorsResultSet = getAuthorsStatement.executeQuery();
+                while (authorsResultSet.next()) {
+                    AuthorMapper authorMapper = new AuthorMapper();
+                    Author author = authorMapper.extractFromResultSet(authorsResultSet);
+                    authors.add(author);
+                }
+                book.setAuthors(authors);
             }
             connection.commit();
             connection.setAutoCommit(true);
@@ -197,7 +207,7 @@ public class JDBCBookDao implements BookDao {
             statement.setString(2, entity.getDescription());
             statement.setString(3, entity.getLanguage());
             statement.setLong(4, entity.getEdition().getId());
-            statement.setFloat(6, entity.getPrice());
+            statement.setString(6, String.valueOf(entity.getPrice()));
             statement.setObject(5, entity.getPublicationDate());
             statement.setInt(7, entity.getCount());
             statement.setString(8, entity.getAnotherTitle());
@@ -268,7 +278,7 @@ public class JDBCBookDao implements BookDao {
     }
 
     private String chooseSortingQuery(String sortBy, String sortType) {
-        if (LocalizationFilter.locale.toString().equals("ua")) {
+        if (LocalizationFilter.locale.getLanguage().equals("uk")) {
             return chooseSortingQueryUa(sortBy, sortType);
         } else {
             return chooseSortingQueryEn(sortBy, sortType);
