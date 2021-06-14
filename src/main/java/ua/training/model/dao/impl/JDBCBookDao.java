@@ -278,7 +278,7 @@ public class JDBCBookDao implements BookDao {
     }
 
     private String chooseSortingQuery(String sortBy, String sortType) {
-        if (LocalizationFilter.locale.toString().equals("ua")) {
+        if (LocalizationFilter.locale.getLanguage().equals("uk")) {
             return chooseSortingQueryUa(sortBy, sortType);
         } else {
             return chooseSortingQueryEn(sortBy, sortType);

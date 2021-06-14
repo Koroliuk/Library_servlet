@@ -2,6 +2,7 @@ package ua.training.controller.listener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ua.training.controller.filters.LocalizationFilter;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -12,6 +13,7 @@ public class SessionListener implements HttpSessionListener {
 
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {
+        httpSessionEvent.getSession().setAttribute("language", LocalizationFilter.locale.getLanguage());
     }
 
     @Override

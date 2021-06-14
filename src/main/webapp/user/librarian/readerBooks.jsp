@@ -5,7 +5,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="language"
-       value="${not empty param.language ? param.language : not empty language ? language : pageContext.request.locale}"
+       value="${not empty param.language ? param.language : not empty language ? language : sessionScope.language}"
        scope="session"/>
 <fmt:setLocale value="${language}"/>
 <fmt:setBundle basename="messages"/>
@@ -37,7 +37,7 @@
                 ${language == 'en' ? 'selected' : ''}>
                     <fmt:message key="header.language.english"/></option>
                 <option value="${pageContext.request.contextPath}/app/librarian/getReaderBooks?userId=${param.userId}&language=ua"
-                ${language == 'ua' ? 'selected' : ''}>
+                ${language == 'uk' ? 'selected' : ''}>
                     <fmt:message key="header.language.ukrainian"/></option>
             </select>
         </form>
