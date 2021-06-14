@@ -139,7 +139,10 @@
                                         <td>${book.edition.name}</td>
                                         <td>${book.publicationDate}</td>
                                         <td>${book.description}</td>
-                                        <td>${book.price}</td>
+                                        <td>
+                                            <c:if test="${language == 'en'}"><span>${book.price}$</span></c:if>
+                                            <c:if test="${language == 'uk'}"><span>${book.price}₴</span></c:if>
+                                        </td>
                                         <td>${book.count}</td>
                                         <td class="justify-content-sm-between" style="width: 200px;">
                                             <a type="button" class="btn btn-outline-warning" href="${pageContext.request.contextPath}/app/admin/editBook?id=${book.id}">Edit</a>
