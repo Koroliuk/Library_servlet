@@ -3,6 +3,11 @@ package ua.training.controller.filters;
 import javax.servlet.*;
 import java.io.IOException;
 
+/**
+ *
+ *   Filter class that provides UTF-8 encoding of requests and responses
+ *
+ */
 public class EncodingFilter implements Filter {
 
     @Override

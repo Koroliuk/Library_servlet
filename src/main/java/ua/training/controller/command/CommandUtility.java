@@ -9,8 +9,21 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ *
+ *  The class that provides the authorization process
+ *
+ */
 public class CommandUtility {
 
+    /**
+     * A method that checks whether the user is already authorized,
+     * if not then adds it to the logged in users
+     * @param request - input servlet request
+     * @param login - user login
+     * @return true - when user is logged
+     *         false - otherwise
+     */
     public static boolean checkUserIsLogged(HttpServletRequest request, String login) {
         HashSet<String> loggedUsers = (HashSet<String>) request.getSession().getServletContext().getAttribute("loggedUsers");
         if (loggedUsers == null) {
@@ -24,6 +37,12 @@ public class CommandUtility {
         return false;
     }
 
+    /**
+     * A method that stores user credentials in a session
+     * @param request - input servlet request
+     * @param role - user role
+     * @param login - user login
+     */
     public static void setUserRole(HttpServletRequest request, Role role, String login) {
         HttpSession session = request.getSession();
         session.setAttribute("userLogin", login);
