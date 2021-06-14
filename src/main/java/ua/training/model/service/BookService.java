@@ -104,9 +104,16 @@ public class BookService {
         try (EditionDao editionDao = daoFactory.createEditionDao()) {
             String name = edition.getName();
             String anotherName = edition.getAnotherName();
-            result = editionDao.findByNames(name, anotherName)
-                    .orElse(editionDao.create(edition).orElseThrow(NoSuchElementException::new));
-        } catch (SQLException | NoSuchElementException e) {
+            Optional<Edition> optionalEdition = editionDao.findByNames(name, anotherName);
+            if (optionalEdition.isPresent()) {
+                result = optionalEdition.get();
+            } else {
+                optionalEdition = editionDao.create(edition);
+                if (optionalEdition.isPresent()) {
+                    result = edition;
+                }
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
@@ -117,11 +124,19 @@ public class BookService {
         try (AuthorDao authorDao = daoFactory.createAuthorDao()) {
             String name = author.getName();
             String anotherName = author.getAnotherName();
-            result = authorDao.findByNames(name, anotherName)
-                    .orElse(authorDao.create(author).orElseThrow(NoSuchElementException::new));
-        } catch (SQLException | NoSuchElementException e) {
+            Optional<Author> optionalEdition = authorDao.findByNames(name, anotherName);
+            if (optionalEdition.isPresent()) {
+                result = optionalEdition.get();
+            } else {
+                optionalEdition = authorDao.create(author);
+                if (optionalEdition.isPresent()) {
+                    result = author;
+                }
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return result;
     }
 
