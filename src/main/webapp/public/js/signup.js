@@ -7,6 +7,9 @@ const passwordMessage = document.getElementById("passwordMessage");
 const loginRegExp = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{4,20}$/;
 const passwordRegExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,30}$/;
 
+loginMessage.className = "text-danger";
+passwordMessage.className = "text-danger";
+
 login.addEventListener("input", () => {
     const loginTest = loginRegExp.test(login.value);
     if (loginTest) {
@@ -24,18 +27,14 @@ login.addEventListener("input", () => {
 password.addEventListener("input", () => {
     const passwordTest = passwordRegExp.test(password.value);
     if (passwordTest) {
-        password.className = "valid";
         passwordMessage.innerText = "";
-        passwordMessage.className = "error";
     } else {
-        password.className = "invalid";
         const passwordLength = password.value.length
         if (passwordLength < 8 || passwordLength > 30) {
             passwordMessage.innerText = passwordValidateMessage1;
         } else {
             passwordMessage.innerText = passwordValidateMessage2;
         }
-        passwordMessage.className = "error active";
     }
 });
 
@@ -43,18 +42,12 @@ form.addEventListener("submit", (event) => {
     const loginTest = loginRegExp.test(login.value);
     const passwordTest = loginRegExp.test(password.value);
     if (!loginTest) {
-        login.className = "invalid";
         event.preventDefault();
         return false;
     }
     if (!passwordTest) {
-        password.className = "invalid";
         event.preventDefault();
         return false;
     }
-    login.className = "valid";
-    password.className = "valid";
-    loginMessage.className = "error";
-    passwordMessage.className = "error";
     return true;
 });
