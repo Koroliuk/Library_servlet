@@ -35,7 +35,8 @@ public class BookService {
             List<Author> currAuthors = authorDao.getAuthorsByBookId(book.getId());
             List<Author> newAuthors = book.getAuthors();
             currAuthors.stream().filter((author -> !newAuthors.contains(author))).forEach((author) -> bookDao.unSetAuthorship(book, author));
-            newAuthors.stream().filter((author -> !currAuthors.contains(author))).forEach((author -> bookDao.setAuthorship(book, author)));
+            newAuthors.stream().filter((author -> !currAuthors.contains(author)))
+                    .forEach((author -> bookDao.setAuthorship(book, getAuthorOrNew(author))));
             book.setAuthors(newAuthors);
             bookDao.update(book);
             return true;

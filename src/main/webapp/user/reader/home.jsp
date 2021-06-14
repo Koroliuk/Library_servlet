@@ -3,6 +3,7 @@
 <%@ page import="ua.training.model.entity.Order" %>
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="java.time.Period" %>
+<%@ page import="java.math.BigDecimal" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -121,8 +122,8 @@
                                                 LocalDate now = LocalDate.now();
                                                 LocalDate end = order.getEndDate();
                                                 int amountOfDays = Period.between(end, now).getDays();
-                                                float fine = (float) (amountOfDays * book.getPrice() * 0.01);
-                                                request.setAttribute("fine", fine);
+                                                BigDecimal fine = book.getPrice().multiply(new BigDecimal(amountOfDays)).multiply(BigDecimal.valueOf(0.01));
+                                                request.setAttribute("fine",q fine);
                                             %>
                                             <td>
                                                 <a type="button" class="btn btn-outline-warning"

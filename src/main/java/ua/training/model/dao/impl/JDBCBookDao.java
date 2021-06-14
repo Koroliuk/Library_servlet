@@ -28,7 +28,7 @@ public class JDBCBookDao implements BookDao {
             statement.setLong(3, entity.getEdition().getId());
             statement.setString(4, entity.getLanguage());
             statement.setObject(5, entity.getPublicationDate());
-            statement.setString(6, String.valueOf(entity.getPrice()));
+            statement.setBigDecimal(6, entity.getPrice());
             statement.setInt(7, entity.getCount());
             statement.setString(8, entity.getAnotherTitle());
             statement.setString(9, entity.getAnotherDescription());
@@ -207,7 +207,7 @@ public class JDBCBookDao implements BookDao {
             statement.setString(2, entity.getDescription());
             statement.setString(3, entity.getLanguage());
             statement.setLong(4, entity.getEdition().getId());
-            statement.setString(6, String.valueOf(entity.getPrice()));
+            statement.setBigDecimal(6, entity.getPrice());
             statement.setObject(5, entity.getPublicationDate());
             statement.setInt(7, entity.getCount());
             statement.setString(8, entity.getAnotherTitle());
