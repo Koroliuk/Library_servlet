@@ -123,7 +123,7 @@
                                                 LocalDate end = order.getEndDate();
                                                 int amountOfDays = Period.between(end, now).getDays();
                                                 BigDecimal fine = book.getPrice().multiply(new BigDecimal(amountOfDays)).multiply(BigDecimal.valueOf(0.01));
-                                                request.setAttribute("fine",q fine);
+                                                request.setAttribute("fine", fine);
                                             %>
                                             <td>
                                                 <a type="button" class="btn btn-outline-warning"
